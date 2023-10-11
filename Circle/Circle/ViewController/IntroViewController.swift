@@ -6,30 +6,67 @@
 //
 
 import UIKit
+import SnapKit
 
 class IntroViewController: UIViewController {
     
-    var spinningCirclesView: SpinningCirclesView!
-
+    var viewList: [UIView] = []
+    
+    var spinningCirclesView = SpinningCirclesView()
+    
+    var startButton: UIButton = IntroView().startButton()
+    var introMainTitleLabel: UILabel = IntroView().introMainTitleLabel()
+    var introSubTitleLabel: UILabel = IntroView().introSubTitleLabel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        addOnView()
+        viewLayout()
+        startAnimation()
+    }
+    
+    private func addOnView() {
+        viewList = [spinningCirclesView, startButton, introMainTitleLabel, introSubTitleLabel]
         
+        for uiView in viewList {
+            view.addSubview(uiView)
+        }
+    }
+    
+    private func viewLayout() {
         view.backgroundColor = .black
 
-        spinningCirclesView = SpinningCirclesView(frame: view.bounds)
-        view.addSubview(spinningCirclesView)
-
-        startAnimation()
+        startButton.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview().offset(300)
+            make.size.equalTo(CGSize(width: 50, height: 50))
+        }
+        
+        spinningCirclesView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(285)
+        }
+        
+        introMainTitleLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(spinningCirclesView.snp.bottom).offset(100)
+        }
+        
+        introSubTitleLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(introMainTitleLabel.snp.bottom).offset(5)
+        }
     }
 
     func startAnimation() {
         let animation = CAKeyframeAnimation(keyPath: "transform.rotation.z")
         animation.values = [0, CGFloat.pi / 4, CGFloat.pi / 2, CGFloat.pi * 3 / 4, CGFloat.pi, CGFloat.pi * 5 / 4, CGFloat.pi * 3 / 2, CGFloat.pi * 7 / 4, CGFloat.pi * 2]
         animation.keyTimes = [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1]
-        animation.duration = 5.0
+        animation.duration = 10.0
         animation.repeatCount = .infinity
 
-       view.layer.add(animation, forKey: nil)
+        spinningCirclesView.layer.add(animation, forKey: nil)
 
         for (index, smallCircle) in spinningCirclesView.smallCircleViews.enumerated() {
             let smallAnimation = CAKeyframeAnimation(keyPath: "transform.rotation.z")
