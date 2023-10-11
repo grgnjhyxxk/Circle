@@ -10,13 +10,13 @@ import SnapKit
 
 class IntroViewController: UIViewController {
     
-    var viewList: [UIView] = []
+    private var viewList: [UIView] = []
     
-    var spinningCirclesView = SpinningCirclesView()
+    private var spinningCirclesView = SpinningCirclesView()
     
-    var startButton: UIButton = IntroView().startButton()
-    var introMainTitleLabel: UILabel = IntroView().introMainTitleLabel()
-    var introSubTitleLabel: UILabel = IntroView().introSubTitleLabel()
+    private var startButton: UIButton = IntroView().startButton()
+    private var introMainTitleLabel: UILabel = IntroView().introMainTitleLabel()
+    private var introSubTitleLabel: UILabel = IntroView().introSubTitleLabel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,7 +59,7 @@ class IntroViewController: UIViewController {
         }
     }
 
-    func startAnimation() {
+    private func startAnimation() {
         let animation = CAKeyframeAnimation(keyPath: "transform.rotation.z")
         animation.values = [0, CGFloat.pi / 4, CGFloat.pi / 2, CGFloat.pi * 3 / 4, CGFloat.pi, CGFloat.pi * 5 / 4, CGFloat.pi * 3 / 2, CGFloat.pi * 7 / 4, CGFloat.pi * 2]
         animation.keyTimes = [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1]
