@@ -27,6 +27,11 @@ class IntroViewController: UIViewController {
         addTargets()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        startAnimation()
+    }
+    
     private func addOnView() {
         viewList = [spinningCirclesView, startButton, introMainTitleLabel, introSubTitleLabel]
         
@@ -44,6 +49,8 @@ class IntroViewController: UIViewController {
             make.size.equalTo(CGSize(width: 50, height: 50))
         }
         
+        spinningCirclesView.setCircleSizes(bigCircleSize: 80, smallCircleSize: 18, radius: 70)
+
         spinningCirclesView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalToSuperview().offset(285)
@@ -67,10 +74,11 @@ class IntroViewController: UIViewController {
     @objc private func startButtonTouchAction() {
         let viewController = MainViewController()
         
-        viewController.modalPresentationStyle = .overFullScreen
-        
-        present(viewController, animated: true)
+        if let navigationController = self.view.window?.rootViewController as? UINavigationController {
+            navigationController.pushViewController(viewController, animated: true)
+        }
     }
+
     
     private func startAnimation() {
         let animation = CAKeyframeAnimation(keyPath: "transform.rotation.z")
