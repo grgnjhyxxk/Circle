@@ -12,9 +12,9 @@ class IntroView: UIView {
     func startButton() -> UIButton {
         let button = UIButton()
         
-        let image = UIImage(systemName: "arrowtriangle.up")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .ultraLight))
+        let image = UIImage(systemName: "chevron.left.2")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 25, weight: .ultraLight))
         
-        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 1, bottom: 4, right: 0)
+//        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 1, bottom: 4, right: 0)
 
         button.setImage(image, for: .normal)
         button.tintColor = UIColor.white.withAlphaComponent(0.75)
@@ -55,35 +55,44 @@ class SpinningCirclesView: UIView {
     
     var colors: [UIColor] = [UIColor.red, UIColor.orange, UIColor.yellow, UIColor.green, UIColor.blue, UIColor.purple, UIColor.black, UIColor.white]
     
+    var bigCircleSize: CGFloat = 80
+    var smallCircleSize: CGFloat = 18
+    var radius: CGFloat = 70
+    
+    func setCircleSizes(bigCircleSize: CGFloat, smallCircleSize: CGFloat, radius: CGFloat) {
+        self.bigCircleSize = bigCircleSize
+        self.smallCircleSize = smallCircleSize
+        self.radius = radius
+        setupViews()
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupViews()
     }
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        setupViews()
     }
 
     private func setupViews() {
-        bigCircleView = UIView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
+        bigCircleView = UIView(frame: CGRect(x: 0, y: 0, width: bigCircleSize, height: bigCircleSize))
         bigCircleView.center = center
         bigCircleView.backgroundColor = .black
-        bigCircleView.layer.cornerRadius = 40
+        bigCircleView.layer.cornerRadius = bigCircleSize / 2
         
         bigCircleView.layer.borderWidth = 1.5
         bigCircleView.layer.borderColor = UIColor.white.withAlphaComponent(0.75).cgColor
         
         addSubview(bigCircleView)
 
-        let radius: CGFloat = 70
+        let radius: CGFloat = radius
         let angleStep = CGFloat(2 * Double.pi / 8)
 
         for i in 0..<8 {
             let angle = CGFloat(i) * angleStep
-            let smallCircleView = UIView(frame: CGRect(x: 0, y: 0, width: 18, height: 18))
-            smallCircleView.backgroundColor = colors[i]
-            smallCircleView.layer.cornerRadius = 9
+            let smallCircleView = UIView(frame: CGRect(x: 0, y: 0, width: smallCircleSize, height: smallCircleSize))
+            smallCircleView.backgroundColor = .clear
+            smallCircleView.layer.cornerRadius = smallCircleSize / 2
             
             smallCircleView.layer.borderWidth = 1.5
             smallCircleView.layer.borderColor = UIColor.white.withAlphaComponent(0.75).cgColor
