@@ -13,6 +13,8 @@ class MainViewController: UIViewController {
     
     private var viewList: [UIView] = []
 
+    private var spinningCirclesView = SpinningCirclesView()
+
     private var collectionView: UICollectionView!
     private let cellIdentifier = "MainViewCustomCollectionCell"
     
@@ -38,7 +40,7 @@ class MainViewController: UIViewController {
     }
 
     private func addOnView() {
-        viewList = [collectionView]
+        viewList = [spinningCirclesView, collectionView]
 
         for uiView in viewList {
             view.addSubview(uiView)
@@ -47,6 +49,13 @@ class MainViewController: UIViewController {
 
     private func viewLayout() {
         view.backgroundColor = .black
+        
+        spinningCirclesView.setCircleSizes(bigCircleSize: 26, smallCircleSize: 6, radius: 20)
+        
+        spinningCirclesView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(90)
+        }
         
         collectionView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
