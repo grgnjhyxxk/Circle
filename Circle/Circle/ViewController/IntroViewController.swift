@@ -24,6 +24,7 @@ class IntroViewController: UIViewController {
         addOnView()
         viewLayout()
         startAnimation()
+        addTargets()
     }
     
     private func addOnView() {
@@ -58,7 +59,19 @@ class IntroViewController: UIViewController {
             make.top.equalTo(introMainTitleLabel.snp.bottom).offset(5)
         }
     }
-
+    
+    private func addTargets() {
+        startButton.addTarget(self, action: #selector(startButtonTouchAction), for: .touchUpInside)
+    }
+    
+    @objc private func startButtonTouchAction() {
+        let viewController = MainViewController()
+        
+        viewController.modalPresentationStyle = .overFullScreen
+        
+        present(viewController, animated: true)
+    }
+    
     private func startAnimation() {
         let animation = CAKeyframeAnimation(keyPath: "transform.rotation.z")
         animation.values = [0, CGFloat.pi / 4, CGFloat.pi / 2, CGFloat.pi * 3 / 4, CGFloat.pi, CGFloat.pi * 5 / 4, CGFloat.pi * 3 / 2, CGFloat.pi * 7 / 4, CGFloat.pi * 2]
