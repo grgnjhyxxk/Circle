@@ -110,7 +110,9 @@ extension MainViewController: UICollectionViewDataSource {
 
 extension MainViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        UIView.transition(with: MainViewTitleLabel, duration: 0.5, options: .transitionCrossDissolve, animations: {
+            self.MainViewTitleLabel.text = self.titleLabelList[indexPath.row]
+        }, completion: nil)
         collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-        MainViewTitleLabel.text = titleLabelList[indexPath.row]
     }
 }
