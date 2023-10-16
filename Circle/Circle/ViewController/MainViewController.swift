@@ -13,11 +13,11 @@ class MainViewController: UIViewController {
     
     private var viewList: [UIView] = []
     private let titleLabelList: [String] = ["Vitality", "Radiance", "Clarity", "Balance", "Calm", "Harmony", "Serenity", "Purity"]
-    var colors: [UIColor] = [UIColor.red, UIColor.orange, UIColor.yellow, UIColor.green, UIColor.blue, UIColor.purple, UIColor.black, UIColor.white]
+    private var colors: [UIColor] = [UIColor.red, UIColor.orange, UIColor.yellow, UIColor.green, UIColor.blue, UIColor.purple, UIColor.black, UIColor.white]
 
     private var spinningCirclesView = SpinningCirclesView()
-
     private var collectionView: UICollectionView!
+    
     private let cellIdentifier = "MainViewCustomCollectionCell"
     
     private var MainViewTitleLabel: UILabel = MainView().MainViewTitleLabel()
@@ -29,12 +29,6 @@ class MainViewController: UIViewController {
         addOnView()
         viewLayout()
         spinningCirclesView.startAnimation()
- 
-        let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .plain, target: self, action: #selector(backButtonAction))
-        backButton.tintColor = UIColor.white
-        navigationItem.leftBarButtonItem = backButton
-        
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
 
     private func setupCollectionView() {
@@ -82,10 +76,6 @@ class MainViewController: UIViewController {
             make.centerX.equalToSuperview()
             make.top.equalTo(spinningCirclesView.snp.bottom).offset(35)
         }
-    }
-    
-    @objc func backButtonAction() {
-        navigationController?.popViewController(animated: true)
     }
 }
 
