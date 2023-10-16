@@ -109,17 +109,27 @@ class IntroViewController: UIViewController {
         passwordTextField.alpha = 0
         separator.alpha = 0
         registerButton.alpha = 0
+        recoverCredentialsButton.alpha = 0
     }
     
     private func addTargets() {
         startButton.addTarget(self, action: #selector(startButtonTouchAction), for: .touchUpInside)
+        registerButton.addTarget(self, action: #selector(signUpButtonTouchAction), for: .touchUpInside)
+    }
+    
+    @objc private func signUpButtonTouchAction() {
+        let viewController = ProfileNameViewController()
+        
+        if let navigationController = self.view.window?.rootViewController as? UINavigationController {
+            navigationController.pushViewController(viewController, animated: true)
+        }
     }
     
     @objc private func startButtonTouchAction() {
         if let image = self.startButton.imageView?.image, image == UIImage(systemName: "chevron.left.2")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 25, weight: .ultraLight)) {
             UIView.animate(withDuration: 0.5, animations: {
                 self.spinningCirclesView.snp.updateConstraints { make in
-                    make.top.equalToSuperview().offset(190)
+                    make.top.equalToSuperview().offset(170)
                 }
                 
                 self.introMainTitleLabel.snp.updateConstraints { make in
@@ -138,8 +148,11 @@ class IntroViewController: UIViewController {
                 UIView.animate(withDuration: 0.3) {
                     self.idTextField.alpha = 1
                     self.passwordTextField.alpha = 1
-                    self.separator.alpha = 1
-                    self.registerButton.alpha = 1
+                    UIView.animate(withDuration: 0.3, delay: 0.3, options: [], animations: {
+                        self.separator.alpha = 1
+                        self.registerButton.alpha = 1
+                        self.recoverCredentialsButton.alpha = 1
+                    }, completion: nil)
                 }
             }
             
