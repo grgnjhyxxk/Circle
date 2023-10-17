@@ -40,7 +40,7 @@ class SpinningCirclesView: UIView {
         bigCircleView.layer.cornerRadius = bigCircleSize / 2
         
         bigCircleView.layer.borderWidth = 1.5
-        bigCircleView.layer.borderColor = UIColor.white.withAlphaComponent(0.75).cgColor
+        bigCircleView.layer.borderColor = UIColor.white.withAlphaComponent(1).cgColor
         
         addSubview(bigCircleView)
 
@@ -54,7 +54,7 @@ class SpinningCirclesView: UIView {
             smallCircleView.layer.cornerRadius = smallCircleSize / 2
             
             smallCircleView.layer.borderWidth = 1.5
-            smallCircleView.layer.borderColor = UIColor.white.withAlphaComponent(0.75).cgColor
+            smallCircleView.layer.borderColor = UIColor.white.withAlphaComponent(1).cgColor
             
             smallCircleView.center = CGPoint(x: bigCircleView.center.x + radius * cos(angle), y: bigCircleView.center.y + radius * sin(angle))
             addSubview(smallCircleView)
@@ -83,5 +83,20 @@ extension SpinningCirclesView {
 
             smallCircle.layer.add(smallAnimation, forKey: nil)
         }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(appWillEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+    }
+    
+    @objc func appDidEnterBackground() {
+        layer.removeAnimation(forKey: "rotationAnimation")
+        for smallCircle in smallCircleViews {
+            smallCircle.layer.removeAnimation(forKey: "rotationAnimation")
+        }
+    }
+    
+    @objc func appWillEnterForeground() {
+        startAnimation()
     }
 }
