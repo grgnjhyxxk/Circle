@@ -12,7 +12,7 @@ class IntroView: UIView {
     func startButton() -> UIButton {
         let button = UIButton()
         
-        let image = UIImage(systemName: "chevron.left.2")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .ultraLight))
+        let image = UIImage(systemName: "chevron.left.2")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .thin))
         
 //        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 1, bottom: 4, right: 0)
 
@@ -30,7 +30,7 @@ class IntroView: UIView {
         
         label.text = "Circle"
         label.textColor = UIColor.white
-        label.font = UIFont(name: "NotoSans-ExtraLight", size: 42)
+        label.font = UIFont(name: "PetitFormalScript-Regular", size: 52)
 
         return label
     }
@@ -91,7 +91,7 @@ class IntroView: UIView {
         
         label.text = "또는"
         label.textColor = UIColor.white.withAlphaComponent(0.5)
-        label.font = UIFont(name: "NotoSans-ExtraLight", size: 13)
+        label.font = UIFont(name: "NotoSans-ExtraLight", size: 13.5)
         
         return label
     }
@@ -100,9 +100,19 @@ class IntroView: UIView {
         let button = UIButton()
         
         button.setTitle("회원가입", for: .normal)
-        button.setTitleColor(UIColor.white.withAlphaComponent(0.75), for: .normal)
-        button.titleLabel?.font = UIFont(name: "NotoSans-ExtraLight", size: 14)
+        button.setTitleColor(UIColor.white.withAlphaComponent(0.85), for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         
+        if let image = UIImage(systemName: "chevron.right")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 14, weight: .light)) {
+            button.setImage(image, for: .normal)
+        }
+        
+        button.tintColor = UIColor.white.withAlphaComponent(0.85)
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 4.5, bottom: 0, right: 0)
+        button.semanticContentAttribute = .forceRightToLeft
+        button.contentVerticalAlignment = .center
+        button.contentHorizontalAlignment = .leading
+
         return button
     }
     
@@ -110,8 +120,18 @@ class IntroView: UIView {
         let button = UIButton()
         
         button.setTitle("로그인 문제 해결", for: .normal)
-        button.setTitleColor(UIColor.white.withAlphaComponent(0.75), for: .normal)
-        button.titleLabel?.font = UIFont(name: "NotoSans-ExtraLight", size: 14)
+        button.setTitleColor(UIColor.white.withAlphaComponent(0.85), for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+
+        if let image = UIImage(systemName: "chevron.right")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 14, weight: .light)) {
+            button.setImage(image, for: .normal)
+        }
+        
+        button.tintColor = UIColor.white.withAlphaComponent(0.85)
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 4.5, bottom: 0, right: 0)
+        button.semanticContentAttribute = .forceRightToLeft
+        button.contentVerticalAlignment = .center
+        button.contentHorizontalAlignment = .leading
         
         return button
     }

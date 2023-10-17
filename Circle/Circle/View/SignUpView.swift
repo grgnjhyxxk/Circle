@@ -14,7 +14,7 @@ class SignUpView: UIView {
         
         label.text = ""
         label.textColor = UIColor.white
-        label.font = UIFont(name: "NotoSans-Thin", size: 32)
+        label.font = UIFont.boldSystemFont(ofSize: 32)
         
         return label
     }
@@ -34,7 +34,7 @@ class SignUpView: UIView {
     func mainTextField() -> UITextField {
         let textField = UITextField()
         
-        textField.font = UIFont(name: "NotoSans-ExtraLight", size: 13)
+        textField.font = UIFont(name: "NotoSans-ExtraLight", size: 15)
         textField.textColor = UIColor.white
         textField.backgroundColor = UIColor.white.withAlphaComponent(0.08)
         textField.layer.cornerRadius = 5
