@@ -36,11 +36,11 @@ class SpinningCirclesView: UIView {
     private func setupViews() {
         bigCircleView = UIView(frame: CGRect(x: 0, y: 0, width: bigCircleSize, height: bigCircleSize))
         bigCircleView.center = center
-        bigCircleView.backgroundColor = .black
+        bigCircleView.backgroundColor = UIColor.clear
         bigCircleView.layer.cornerRadius = bigCircleSize / 2
         
-        bigCircleView.layer.borderWidth = 1.5
-        bigCircleView.layer.borderColor = UIColor.white.withAlphaComponent(1).cgColor
+        bigCircleView.layer.borderWidth = 1
+        bigCircleView.layer.borderColor = UIColor.white.withAlphaComponent(0.75).cgColor
         
         addSubview(bigCircleView)
 
@@ -50,11 +50,11 @@ class SpinningCirclesView: UIView {
         for i in 0..<8 {
             let angle = CGFloat(i) * angleStep
             let smallCircleView = UIView(frame: CGRect(x: 0, y: 0, width: smallCircleSize, height: smallCircleSize))
-            smallCircleView.backgroundColor = .clear
+            smallCircleView.backgroundColor = UIColor.white
             smallCircleView.layer.cornerRadius = smallCircleSize / 2
             
-            smallCircleView.layer.borderWidth = 1.5
-            smallCircleView.layer.borderColor = UIColor.white.withAlphaComponent(1).cgColor
+            smallCircleView.layer.borderWidth = 1
+            smallCircleView.layer.borderColor = UIColor.white.withAlphaComponent(0.75).cgColor
             
             smallCircleView.center = CGPoint(x: bigCircleView.center.x + radius * cos(angle), y: bigCircleView.center.y + radius * sin(angle))
             addSubview(smallCircleView)
@@ -98,5 +98,16 @@ extension SpinningCirclesView {
     
     @objc func appWillEnterForeground() {
         startAnimation()
+    }
+}
+
+class AnimationView {
+    
+    func shakeView(_ view: UIView) {
+        let shake = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        shake.timingFunction = CAMediaTimingFunction(name: .easeOut)
+        shake.values = [-8, 8, -8, 8, -4, 4, -2, 2, 0]
+        shake.duration = 0.7
+        view.layer.add(shake, forKey: nil)
     }
 }
