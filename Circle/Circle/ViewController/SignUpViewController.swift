@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class BaseSignUpViewController: UIViewController {
+class BaseSignUpViewController: UIViewController, UITextFieldDelegate {
     
     fileprivate var viewList: [UIView] = []
     fileprivate var mainTitleLabelList: [String] = ["프로필 이름", "사용자 이름", "계정 비밀번호", "계정 이메일"]
@@ -25,10 +25,17 @@ class BaseSignUpViewController: UIViewController {
     override func viewDidLoad() {
         super .viewDidLoad()
         
+        textFieldSetting()
         addOnView()
         viewLayout()
         navigationBarLayout()
         titleLabelUpdate()
+        
+        mainTextField.delegate = self
+    }
+    
+    fileprivate func textFieldSetting() {
+        
     }
     
     fileprivate func addOnView() {
@@ -95,6 +102,7 @@ class ProfileNameViewController: BaseSignUpViewController {
             UIView.animate(withDuration: 0.5) {
                 self.mainTextField.layer.borderWidth = 1.0
                 self.mainTextField.layer.borderColor = UIColor.red.cgColor
+                AnimationView().shakeView(self.mainTextField)
             } completion: { _ in
                 UIView.animate(withDuration: 0.5) {
                     self.mainTextField.layer.borderWidth = 0.0
@@ -107,6 +115,26 @@ class ProfileNameViewController: BaseSignUpViewController {
                 navigationController.pushViewController(viewController, animated: true)
             }
         }
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let allowedCharacters = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.")
+        let characterSet = CharacterSet(charactersIn: string)
+        
+        if !allowedCharacters.isSuperset(of: characterSet) {
+            print("잘못된 문자입니다.")
+            UIView.animate(withDuration: 0.5) {
+                self.mainTextField.layer.borderWidth = 2
+                self.mainTextField.layer.borderColor = UIColor.red.withAlphaComponent(0.5).cgColor
+                AnimationView().shakeView(self.mainTextField)
+            } completion: { _ in
+                UIView.animate(withDuration: 0.5) {
+                self.mainTextField.layer.borderWidth = 0.5
+                self.mainTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor                        }
+            }
+        }
+        
+        return allowedCharacters.isSuperset(of: characterSet)
     }
 }
 
@@ -122,6 +150,7 @@ class UserNameViewController: BaseSignUpViewController {
             UIView.animate(withDuration: 0.5) {
                 self.mainTextField.layer.borderWidth = 1.0
                 self.mainTextField.layer.borderColor = UIColor.red.cgColor
+                AnimationView().shakeView(self.mainTextField)
             } completion: { _ in
                 UIView.animate(withDuration: 0.5) {
                     self.mainTextField.layer.borderWidth = 0.0
@@ -139,6 +168,10 @@ class UserNameViewController: BaseSignUpViewController {
 
 class AccountPasswordViewController: BaseSignUpViewController {
     
+    override func textFieldSetting() {
+        mainTextField.isSecureTextEntry = true
+    }
+    
     override func titleLabelUpdate() {
         mainTitleLabel.text = mainTitleLabelList[2]
         subTitleLabel.text = subTitleLabelList[2]
@@ -149,6 +182,7 @@ class AccountPasswordViewController: BaseSignUpViewController {
             UIView.animate(withDuration: 0.5) {
                 self.mainTextField.layer.borderWidth = 1.0
                 self.mainTextField.layer.borderColor = UIColor.red.cgColor
+                AnimationView().shakeView(self.mainTextField)
             } completion: { _ in
                 UIView.animate(withDuration: 0.5) {
                     self.mainTextField.layer.borderWidth = 0.0
@@ -176,6 +210,7 @@ class AccountEmailViewController: BaseSignUpViewController {
             UIView.animate(withDuration: 0.5) {
                 self.mainTextField.layer.borderWidth = 1.0
                 self.mainTextField.layer.borderColor = UIColor.red.cgColor
+                AnimationView().shakeView(self.mainTextField)
             } completion: { _ in
                 UIView.animate(withDuration: 0.5) {
                     self.mainTextField.layer.borderWidth = 0.0
