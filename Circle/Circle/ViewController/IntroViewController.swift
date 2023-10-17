@@ -62,26 +62,26 @@ class IntroViewController: UIViewController {
             make.size.equalTo(CGSize(width: 60, height: 60))
         }
         
-        spinningCirclesView.setCircleSizes(bigCircleSize: 85, smallCircleSize: 19, radius: 72)
-
-        spinningCirclesView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(250)
-        }
-        
         introMainTitleLabel.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(spinningCirclesView.snp.bottom).offset(120)
+            make.centerX.equalToSuperview().offset(-20)
+            make.top.equalToSuperview().offset(340)
         }
         
         introSubTitleLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(introMainTitleLabel.snp.bottom).offset(5)
+            make.top.equalTo(introMainTitleLabel.snp.bottom)
+        }
+        
+        spinningCirclesView.setCircleSizes(bigCircleSize: 20, smallCircleSize: 5, radius: 17)
+
+        spinningCirclesView.snp.makeConstraints { make in
+            make.leading.equalTo(introMainTitleLabel.snp.trailing).offset(30)
+            make.top.equalTo(introMainTitleLabel).offset(32)
         }
         
         idTextField.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(spinningCirclesView.snp.bottom).offset(120)
+            make.top.equalTo(introSubTitleLabel.snp.bottom).offset(40)
             make.size.equalTo(CGSize(width: 340, height: 40))
         }
         
@@ -104,17 +104,17 @@ class IntroViewController: UIViewController {
         }
         
         separatorTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(separator_right).offset(-8)
+            make.top.equalTo(separator_right).offset(-9)
             make.centerX.equalToSuperview()
         }
         
         registerButton.snp.makeConstraints { make in
-            make.top.equalTo(separator_right.snp.bottom).offset(8)
+            make.top.equalTo(separator_right.snp.bottom).offset(15)
             make.trailing.equalTo(separator_right)
         }
         
         recoverCredentialsButton.snp.makeConstraints { make in
-            make.top.equalTo(separator_left.snp.bottom).offset(8)
+            make.top.equalTo(registerButton)
             make.leading.equalTo(separator_left)
         }
         
@@ -141,24 +141,21 @@ class IntroViewController: UIViewController {
     }
     
     @objc private func startButtonTouchAction() {
-        if let image = self.startButton.imageView?.image, image == UIImage(systemName: "chevron.left.2")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .ultraLight)) {
-            UIView.animate(withDuration: 0.5, animations: {
-                self.introMainTitleLabel.alpha = 0
-                self.introSubTitleLabel.alpha = 0
-                
-                self.spinningCirclesView.snp.updateConstraints { make in
-                    make.top.equalToSuperview().offset(180)
+        if let image = self.startButton.imageView?.image,
+           image == UIImage(systemName: "chevron.left.2")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)) {
+            
+            UIView.animate(withDuration: 0.7, animations: {
+                self.introMainTitleLabel.snp.updateConstraints { make in
+                    make.top.equalToSuperview().offset(150)
                 }
-                
-                let image = UIImage(systemName: "checkmark")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .ultraLight))
-                self.startButton.setImage(image, for: .normal)
-                
                 self.view.layoutIfNeeded()
             }) { _ in
-                UIView.animate(withDuration: 0.3) {
+                
+                UIView.animate(withDuration: 0.5) {
                     self.idTextField.alpha = 1
                     self.passwordTextField.alpha = 1
-                    UIView.animate(withDuration: 0.3, delay: 0.3, options: [], animations: {
+                    
+                    UIView.animate(withDuration: 0.3, delay: 0.5, options: [], animations: {
                         self.separator_left.alpha = 1
                         self.separator_right.alpha = 1
                         self.separatorTitleLabel.alpha = 1
@@ -166,29 +163,36 @@ class IntroViewController: UIViewController {
                         self.recoverCredentialsButton.alpha = 1
                     }, completion: nil)
                 }
+                
+                UIView.transition(with: self.startButton, duration: 0.3, options: .transitionCrossDissolve, animations: {
+                    let newImage = UIImage(systemName: "checkmark")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .thin))
+                    self.startButton.setImage(newImage, for: .normal)
+                }, completion: nil)
             }
-            
-        } else if let image = self.startButton.imageView?.image, image == UIImage(systemName: "checkmark")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .ultraLight)) {
+        } else if let image = self.startButton.imageView?.image, image == UIImage(systemName: "checkmark")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)) {
             if let idText = self.idTextField.text, let passwordText = self.passwordTextField.text {
                 if idText.isEmpty {
                     UIView.animate(withDuration: 0.5) {
-                        self.idTextField.layer.borderWidth = 1.0
-                        self.idTextField.layer.borderColor = UIColor.red.cgColor
+                        self.idTextField.layer.borderWidth = 2
+                        self.idTextField.layer.borderColor = UIColor.red.withAlphaComponent(0.5).cgColor
+                        AnimationView().shakeView(self.idTextField)
                     } completion: { _ in
                         UIView.animate(withDuration: 0.5) {
-                            self.idTextField.layer.borderWidth = 0.0
+                            self.idTextField.layer.borderWidth = 0.5
+                            self.idTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
                         }
                     }
                 }
 
                 if passwordText.isEmpty {
                     UIView.animate(withDuration: 0.5) {
-                        self.passwordTextField.layer.borderWidth = 1.0
-                        self.passwordTextField.layer.borderColor = UIColor.red.cgColor
+                        self.passwordTextField.layer.borderWidth = 2
+                        self.passwordTextField.layer.borderColor = UIColor.red.withAlphaComponent(0.5).cgColor
+                        AnimationView().shakeView(self.passwordTextField)
                     } completion: { _ in
                         UIView.animate(withDuration: 0.5) {
-                            self.passwordTextField.layer.borderWidth = 0.0
-                        }
+                            self.passwordTextField.layer.borderWidth = 0.5
+                            self.passwordTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor                        }
                     }
                 }
 
