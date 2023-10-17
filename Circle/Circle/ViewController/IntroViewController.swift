@@ -13,14 +13,16 @@ class IntroViewController: UIViewController {
     private var viewList: [UIView] = []
     
     private var spinningCirclesView = SpinningCirclesView()
-    private var separator: UIView = IntroView().separator()
-    
+    private var separator_left: UIView = IntroView().separator()
+    private var separator_right: UIView = IntroView().separator()
+
     private var startButton: UIButton = IntroView().startButton()
     private var registerButton: UIButton = IntroView().registerButton()
     private var recoverCredentialsButton: UIButton = IntroView().recoverCredentialsButton()
     
     private var introMainTitleLabel: UILabel = IntroView().introMainTitleLabel()
     private var introSubTitleLabel: UILabel = IntroView().introSubTitleLabel()
+    private var separatorTitleLabel: UILabel = IntroView().separatorTitleLabel()
     
     private var idTextField: UITextField = IntroView().idTextField()
     private var passwordTextField: UITextField = IntroView().passwordTextField()
@@ -44,7 +46,7 @@ class IntroViewController: UIViewController {
    }
     
     private func addOnView() {
-        viewList = [spinningCirclesView, startButton, introMainTitleLabel, introSubTitleLabel, idTextField, passwordTextField, separator, registerButton, recoverCredentialsButton]
+        viewList = [spinningCirclesView, startButton, introMainTitleLabel, introSubTitleLabel, idTextField, passwordTextField, separator_left, separator_right, registerButton, recoverCredentialsButton, separatorTitleLabel]
         
         for uiView in viewList {
             view.addSubview(uiView)
@@ -56,20 +58,20 @@ class IntroViewController: UIViewController {
 
         startButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.centerY.equalToSuperview().offset(300)
-            make.size.equalTo(CGSize(width: 50, height: 50))
+            make.centerY.equalToSuperview().offset(330)
+            make.size.equalTo(CGSize(width: 60, height: 60))
         }
         
-        spinningCirclesView.setCircleSizes(bigCircleSize: 80, smallCircleSize: 18, radius: 70)
+        spinningCirclesView.setCircleSizes(bigCircleSize: 85, smallCircleSize: 19, radius: 72)
 
         spinningCirclesView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(285)
+            make.top.equalToSuperview().offset(250)
         }
         
         introMainTitleLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(spinningCirclesView.snp.bottom).offset(100)
+            make.top.equalTo(spinningCirclesView.snp.bottom).offset(120)
         }
         
         introSubTitleLabel.snp.makeConstraints { make in
@@ -79,35 +81,48 @@ class IntroViewController: UIViewController {
         
         idTextField.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(introSubTitleLabel.snp.bottom).offset(40)
-            make.size.equalTo(CGSize(width: 220, height: 30))
+            make.top.equalTo(spinningCirclesView.snp.bottom).offset(120)
+            make.size.equalTo(CGSize(width: 340, height: 40))
         }
         
         passwordTextField.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(idTextField.snp.bottom).offset(15)
-            make.size.equalTo(CGSize(width: 220, height: 30))
+            make.size.equalTo(CGSize(width: 340, height: 40))
         }
         
-        separator.snp.makeConstraints { make in
+        separator_left.snp.makeConstraints { make in
+            make.top.equalTo(passwordTextField.snp.bottom).offset(40)
+            make.leading.equalTo(idTextField)
+            make.size.equalTo(CGSize(width: 140, height: 1))
+        }
+        
+        separator_right.snp.makeConstraints { make in
+            make.top.equalTo(passwordTextField.snp.bottom).offset(40)
+            make.trailing.equalTo(idTextField)
+            make.size.equalTo(CGSize(width: 140, height: 1))
+        }
+        
+        separatorTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(separator_right).offset(-8)
             make.centerX.equalToSuperview()
-            make.top.equalTo(passwordTextField.snp.bottom).offset(30)
-            make.size.equalTo(CGSize(width: 220, height: 1))
         }
         
         registerButton.snp.makeConstraints { make in
-            make.trailing.equalTo(separator)
-            make.top.equalTo(separator.snp.bottom)
+            make.top.equalTo(separator_right.snp.bottom).offset(8)
+            make.trailing.equalTo(separator_right)
         }
         
         recoverCredentialsButton.snp.makeConstraints { make in
-            make.leading.equalTo(separator)
-            make.top.equalTo(separator.snp.bottom)
+            make.top.equalTo(separator_left.snp.bottom).offset(8)
+            make.leading.equalTo(separator_left)
         }
         
         idTextField.alpha = 0
         passwordTextField.alpha = 0
-        separator.alpha = 0
+        separator_left.alpha = 0
+        separator_right.alpha = 0
+        separatorTitleLabel.alpha = 0
         registerButton.alpha = 0
         recoverCredentialsButton.alpha = 0
     }
@@ -126,21 +141,16 @@ class IntroViewController: UIViewController {
     }
     
     @objc private func startButtonTouchAction() {
-        if let image = self.startButton.imageView?.image, image == UIImage(systemName: "chevron.left.2")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 25, weight: .ultraLight)) {
+        if let image = self.startButton.imageView?.image, image == UIImage(systemName: "chevron.left.2")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .ultraLight)) {
             UIView.animate(withDuration: 0.5, animations: {
+                self.introMainTitleLabel.alpha = 0
+                self.introSubTitleLabel.alpha = 0
+                
                 self.spinningCirclesView.snp.updateConstraints { make in
-                    make.top.equalToSuperview().offset(170)
+                    make.top.equalToSuperview().offset(180)
                 }
                 
-                self.introMainTitleLabel.snp.updateConstraints { make in
-                    make.top.equalTo(self.spinningCirclesView.snp.bottom).offset(100)
-                }
-                
-                self.introSubTitleLabel.snp.updateConstraints { make in
-                    make.top.equalTo(self.introMainTitleLabel.snp.bottom).offset(5)
-                }
-                
-                let image = UIImage(systemName: "checkmark")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 25, weight: .ultraLight))
+                let image = UIImage(systemName: "checkmark")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .ultraLight))
                 self.startButton.setImage(image, for: .normal)
                 
                 self.view.layoutIfNeeded()
@@ -149,14 +159,16 @@ class IntroViewController: UIViewController {
                     self.idTextField.alpha = 1
                     self.passwordTextField.alpha = 1
                     UIView.animate(withDuration: 0.3, delay: 0.3, options: [], animations: {
-                        self.separator.alpha = 1
+                        self.separator_left.alpha = 1
+                        self.separator_right.alpha = 1
+                        self.separatorTitleLabel.alpha = 1
                         self.registerButton.alpha = 1
                         self.recoverCredentialsButton.alpha = 1
                     }, completion: nil)
                 }
             }
             
-        } else if let image = self.startButton.imageView?.image, image == UIImage(systemName: "checkmark")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 25, weight: .ultraLight)) {
+        } else if let image = self.startButton.imageView?.image, image == UIImage(systemName: "checkmark")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .ultraLight)) {
             if let idText = self.idTextField.text, let passwordText = self.passwordTextField.text {
                 if idText.isEmpty {
                     UIView.animate(withDuration: 0.5) {
