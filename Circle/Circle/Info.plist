@@ -4,6 +4,7 @@
 <dict>
 	<key>UIAppFonts</key>
 	<array>
+		<string>PetitFormalScript-Regular.ttf</string>
 		<string>NotoSans-ExtraLight.ttf</string>
 		<string>NotoSans-Thin.ttf</string>
 	</array>
