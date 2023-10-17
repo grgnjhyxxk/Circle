@@ -12,14 +12,14 @@ class IntroView: UIView {
     func startButton() -> UIButton {
         let button = UIButton()
         
-        let image = UIImage(systemName: "chevron.left.2")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 25, weight: .ultraLight))
+        let image = UIImage(systemName: "chevron.left.2")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .ultraLight))
         
 //        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 1, bottom: 4, right: 0)
 
         button.setImage(image, for: .normal)
-        button.tintColor = UIColor.white.withAlphaComponent(0.75)
-        button.backgroundColor = UIColor.white.withAlphaComponent(0.15)
-        button.layer.cornerRadius = 25
+        button.tintColor = UIColor.white.withAlphaComponent(1)
+        button.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+        button.layer.cornerRadius = 30
         
         return button
     }
@@ -30,8 +30,7 @@ class IntroView: UIView {
         
         label.text = "Circle"
         label.textColor = UIColor.white
-//        label.font = UIFont(name: "NotoSans-ExtraLight", size: 24)
-        label.font = UIFont(name: "NotoSans-Thin", size: 24)
+        label.font = UIFont(name: "NotoSans-ExtraLight", size: 42)
 
         return label
     }
@@ -39,10 +38,9 @@ class IntroView: UIView {
     func introSubTitleLabel() -> UILabel {
         let label = UILabel()
         
-        label.text = "Tranquility in abundance."
-        label.textColor = UIColor.white
-        label.font = UIFont(name: "NotoSans-ExtraLight", size: 14)
-//        label.font = UIFont(name: "NotoSans-Thin", size: 14.5)
+        label.text = "너와 나, 연결의 시작. 여기 서클에서"
+        label.textColor = UIColor.white.withAlphaComponent(0.75)
+        label.font = UIFont(name: "NotoSans-ExtraLight", size: 15)
         
         return label
     }
@@ -50,10 +48,13 @@ class IntroView: UIView {
     func idTextField() -> UITextField {
         let textField = UITextField()
         
-        textField.font = UIFont(name: "NotoSans-ExtraLight", size: 13)
+        textField.placeholder = "사용자 이름 또는 이메일"
+        textField.font = UIFont(name: "NotoSans-ExtraLight", size: 15)
         textField.textColor = UIColor.white
-        textField.backgroundColor = UIColor.white.withAlphaComponent(0.2)
+        textField.backgroundColor = UIColor.white.withAlphaComponent(0.08)
         textField.layer.cornerRadius = 5
+        textField.layer.borderWidth = 0.5
+        textField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: textField.frame.height))
         textField.leftViewMode = .always
         
@@ -63,10 +64,13 @@ class IntroView: UIView {
     func passwordTextField() -> UITextField {
         let textField = UITextField()
         
-        textField.font = UIFont(name: "NotoSans-ExtraLight", size: 14)
+        textField.placeholder = "비밀번호"
+        textField.font = UIFont(name: "NotoSans-ExtraLight", size: 15)
         textField.textColor = UIColor.white
-        textField.backgroundColor = UIColor.white.withAlphaComponent(0.2)
+        textField.backgroundColor = UIColor.white.withAlphaComponent(0.08)
         textField.layer.cornerRadius = 5
+        textField.layer.borderWidth = 0.5
+        textField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: textField.frame.height))
         textField.leftViewMode = .always
         textField.isSecureTextEntry = true
@@ -77,17 +81,27 @@ class IntroView: UIView {
     func separator() -> UIView {
         let separatorView = UIView()
         
-        separatorView.backgroundColor = UIColor.white.withAlphaComponent(0.2)
+        separatorView.backgroundColor = UIColor.white.withAlphaComponent(0.1)
         
         return separatorView
+    }
+    
+    func separatorTitleLabel() -> UILabel {
+        let label = UILabel()
+        
+        label.text = "또는"
+        label.textColor = UIColor.white.withAlphaComponent(0.5)
+        label.font = UIFont(name: "NotoSans-ExtraLight", size: 13)
+        
+        return label
     }
     
     func registerButton() -> UIButton {
         let button = UIButton()
         
-        button.setTitle("Register", for: .normal)
-        button.setTitleColor(UIColor.white, for: .normal)
-        button.titleLabel?.font = UIFont(name: "NotoSans-ExtraLight", size: 12)
+        button.setTitle("회원가입", for: .normal)
+        button.setTitleColor(UIColor.white.withAlphaComponent(0.75), for: .normal)
+        button.titleLabel?.font = UIFont(name: "NotoSans-ExtraLight", size: 14)
         
         return button
     }
@@ -95,9 +109,9 @@ class IntroView: UIView {
     func recoverCredentialsButton() -> UIButton {
         let button = UIButton()
         
-        button.setTitle("Forgot your password?", for: .normal)
-        button.setTitleColor(UIColor.white, for: .normal)
-        button.titleLabel?.font = UIFont(name: "NotoSans-ExtraLight", size: 12)
+        button.setTitle("로그인 문제 해결", for: .normal)
+        button.setTitleColor(UIColor.white.withAlphaComponent(0.75), for: .normal)
+        button.titleLabel?.font = UIFont(name: "NotoSans-ExtraLight", size: 14)
         
         return button
     }
