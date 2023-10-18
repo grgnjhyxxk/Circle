@@ -17,20 +17,15 @@ class UserNameViewController: BaseSignUpViewController {
         errorTextLabel.text = errorTextLabelList[1]
     }
     
+    override func navigationItemSetting() {
+        nextButton.isEnabled = true
+    }
+    
     override func nextButtonAction() {
-        if let mainTextField = self.mainTextField.text, mainTextField.isEmpty {
-            self.mainTextField.layer.borderWidth = 1.0
-            self.mainTextField.layer.borderColor = UIColor.red.cgColor
-            AnimationView().shakeView(self.mainTextField)
-            
-        } else {
-            let viewController = AccountPasswordViewController()
-            
-            errorTextLabel.alpha = 0
-
-            if let navigationController = self.view.window?.rootViewController as? UINavigationController {
-                navigationController.pushViewController(viewController, animated: true)
-            }
+        let viewController = AccountPasswordViewController()
+        
+        if let navigationController = self.navigationController {
+            navigationController.pushViewController(viewController, animated: true)
         }
     }
 }
