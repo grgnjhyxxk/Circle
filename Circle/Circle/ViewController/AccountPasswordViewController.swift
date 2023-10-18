@@ -23,6 +23,8 @@ class AccountPasswordViewController: BaseSignUpViewController {
     override func uiViewSetting() {
         mainTextField.isSecureTextEntry = true
         checkTextField.alpha = 1
+        
+        nextButton.title = "완료"
     }
     
     override func uiViewUpdate() {
@@ -38,15 +40,8 @@ class AccountPasswordViewController: BaseSignUpViewController {
             self.mainTextField.layer.borderWidth = 1.0
             self.mainTextField.layer.borderColor = UIColor.red.cgColor
             AnimationView().shakeView(self.mainTextField)
-            
         } else {
-            let viewController = AccountEmailViewController()
-            
-            errorTextLabel.alpha = 0
-
-            if let navigationController = self.view.window?.rootViewController as? UINavigationController {
-                navigationController.pushViewController(viewController, animated: true)
-            }
+            self.navigationController?.popToRootViewController(animated: true)
         }
     }
     
@@ -80,11 +75,7 @@ class AccountPasswordViewController: BaseSignUpViewController {
             }
         }
         
-        return allowedCharacters.isSuperset(of: characterSet)
-    }
-    
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        if textField == checkTextField, let mainTextField = self.mainTextField.text, let checkTextField = self.checkTextField.text, mainTextField == checkTextField{
+        if textField == checkTextField, let mainTextField = self.mainTextField.text, let checkTextField = (checkTextField.text as NSString?)?.replacingCharacters(in: range, with: string), mainTextField == checkTextField {
             print("비밀번호가 일치합니다.")
             
             self.checkTextField.layer.borderWidth = 0.5
@@ -92,13 +83,17 @@ class AccountPasswordViewController: BaseSignUpViewController {
             
             self.errorTextLabel.alpha = 0
             
-        } else if textField == checkTextField, let mainTextField = self.mainTextField.text, let checkTextField = self.checkTextField.text, mainTextField != checkTextField  {
-            print("비밀번호가 일치하지 않습니다.")
+            nextButton.isEnabled = true
 
+        } else if textField == checkTextField, let mainTextField = self.mainTextField.text, let checkTextField = (checkTextField.text as NSString?)?.replacingCharacters(in: range, with: string), mainTextField != checkTextField  {
+            print("비밀번호가 일치하지 않습니다.")
+            
             self.checkTextField.layer.borderWidth = 1.0
             self.checkTextField.layer.borderColor = UIColor.red.cgColor
             
             self.errorTextLabel.alpha = 1
         }
+        
+        return allowedCharacters.isSuperset(of: characterSet)
     }
 }
