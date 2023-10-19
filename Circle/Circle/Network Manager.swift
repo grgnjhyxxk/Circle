@@ -11,13 +11,19 @@ import FirebaseFirestore
 func signUpDataUploadServer(userData: UserData, completion: @escaping (Bool, Error?) -> Void) {
     let dataBase = Firestore.firestore()
     
-    let userID = generateRandomString(length: 20) // 20자리의 무작위 문자열을 생성합니다.
-    let profileName = userData.profileName.lowercased()
+    let userID = userData.userID ?? generateRandomString(length: 20)
     
-    let data: [String: Any] = [
+    var data: [String: Any] = [
         "userID": userID,
         "userName": userData.userName,
         "password": userData.password,
+        "myCircleDigits": userData.myCircleDigits,
+        "inTheCircleDigits": userData.inTheCircleDigits,
+        "feedDigits": userData.feedDigits,
+        "followerDigits": userData.followerDigits,
+        "followingDigits": userData.followingDigits,
+        "socialValidation": userData.socialValidation,
+        "intrduction": userData.intrduction ?? "", // intrduction 추가
         "email": userData.email ?? "",
         "phoneNumber": userData.phoneNumber ?? "",
         "image": userData.image ?? "",
@@ -25,7 +31,7 @@ func signUpDataUploadServer(userData: UserData, completion: @escaping (Bool, Err
         "gender": userData.gender ?? ""
     ]
 
-    dataBase.collection("Users").document("\(profileName)").setData(data, merge: true) { error in
+    dataBase.collection("Users").document(userData.profileName.lowercased()).setData(data, merge: true) { error in
         if let error = error {
             completion(false, error)
         } else {
@@ -37,7 +43,7 @@ func signUpDataUploadServer(userData: UserData, completion: @escaping (Bool, Err
 func fetchUserData(profileName: String, completion: @escaping (UserData?, Error?) -> Void) {
     let dataBase = Firestore.firestore()
 
-    let docRef = dataBase.collection("Users").document(profileName)
+    let docRef = dataBase.collection("Users").document(profileName.lowercased())
 
     docRef.getDocument { (document, error) in
         if let document = document, document.exists {
@@ -46,6 +52,13 @@ func fetchUserData(profileName: String, completion: @escaping (UserData?, Error?
                     profileName: profileName,
                     userName: data["userName"] as? String ?? "",
                     password: data["password"] as? String ?? "",
+                    myCircleDigits: data["myCircleDigits"] as? Int ?? 0,
+                    inTheCircleDigits: data["inTheCircleDigits"] as? Int ?? 0,
+                    feedDigits: data["feedDigits"] as? Int ?? 0,
+                    followerDigits: data["followerDigits"] as? Int ?? 0,
+                    followingDigits: data["followingDigits"] as? Int ?? 0,
+                    socialValidation: data["socialValidation"] as? Bool ?? false,
+                    intrduction: data["intrduction"] as? String, // intrduction 추가
                     email: data["email"] as? String,
                     phoneNumber: data["phoneNumber"] as? String,
                     image: data["image"] as? String,
@@ -53,7 +66,8 @@ func fetchUserData(profileName: String, completion: @escaping (UserData?, Error?
                     gender: data["gender"] as? String,
                     userID: data["userID"] as? String
                 )
-                print(userData)
+                userDataList.append(userData)
+                
                 completion(userData, nil)
             } else {
                 completion(nil, nil)
@@ -64,6 +78,8 @@ func fetchUserData(profileName: String, completion: @escaping (UserData?, Error?
         }
     }
 }
+
+
 
 
 func comparePasswords(inputPassword: String, savedPassword: String) -> Bool {
