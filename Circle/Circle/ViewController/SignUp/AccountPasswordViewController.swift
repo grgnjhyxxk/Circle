@@ -43,7 +43,7 @@ class AccountPasswordViewController: BaseSignUpViewController {
             
         } else {
             if let profileData = profileNameInput, let userNameData = userNameInput, let passwordData = mainTextField.text {
-                let userData = UserData(profileName: profileData, userName: userNameData, password: passwordData)
+                let userData = UserData(profileName: profileData, userName: userNameData, password: passwordData, myCircleDigits: 0, inTheCircleDigits: 0, feedDigits: 0, followerDigits: 0, followingDigits: 0, socialValidation: false)
                 signUpDataUploadServer(userData: userData) { success, error in
                     if success {
                         print("데이터 추가 성공")
