@@ -7,10 +7,19 @@
 
 import UIKit
 
+var userDataList = [UserData]()
+
 struct UserData {
     var profileName: String
     var userName: String
     var password: String
+    var myCircleDigits: Int
+    var inTheCircleDigits: Int
+    var feedDigits: Int
+    var followerDigits: Int
+    var followingDigits: Int
+    var socialValidation: Bool
+    var intrduction: String?
     var email: String?
     var phoneNumber: String?
     var image: String?
@@ -18,4 +27,3 @@ struct UserData {
     var gender: String?
     var userID: String?
 }
-
