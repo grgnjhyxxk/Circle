@@ -25,9 +25,10 @@ class ProfileNameViewController: BaseSignUpViewController {
             
         } else {
             let viewController = UserNameViewController()
+            viewController.profileNameInput = mainTextField.text
             
             if let navigationController = self.view.window?.rootViewController as? UINavigationController {
-                errorTextLabel.alpha = 0
+                errorTextLabel.isHidden = true
                 mainTextField.layer.borderWidth = 0.5
                 mainTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
                 
@@ -42,23 +43,20 @@ class ProfileNameViewController: BaseSignUpViewController {
         let characterSet = CharacterSet(charactersIn: string)
         
         if allowedCharacters.isSuperset(of: characterSet) {
-            print("옳바른 문자입니다.")
-            
             self.mainTextField.layer.borderWidth = 0.5
             self.mainTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
             
-            self.errorTextLabel.alpha = 0
+            self.errorTextLabel.isHidden = false
             
-            nextButton.isEnabled = !updatedText.isEmpty
+            nextButton.isEnabled = updatedText.count >= 3 // 여기서 변경
+            
         } else {
-            print("잘못된 문자입니다.")
-            
             self.mainTextField.layer.borderWidth = 2
             self.mainTextField.layer.borderColor = UIColor.red.cgColor
             
             AnimationView().shakeView(self.mainTextField)
             
-            self.errorTextLabel.alpha = 1
+            self.errorTextLabel.isHidden = false
         }
         
         return allowedCharacters.isSuperset(of: characterSet)
