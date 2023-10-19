@@ -15,7 +15,8 @@ class SignUpView: UIView {
         label.text = ""
         label.textColor = UIColor.white
         label.font = UIFont.boldSystemFont(ofSize: 32)
-        
+        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+
         return label
     }
     
@@ -26,7 +27,7 @@ class SignUpView: UIView {
         label.textAlignment = .center
         label.text = ""
         label.textColor = UIColor.white.withAlphaComponent(0.75)
-        label.font = UIFont(name: "NotoSans-ExtraLight", size: 14)
+        label.font = UIFont.systemFont(ofSize: 14, weight: .ultraLight)
         
         return label
     }
@@ -34,7 +35,7 @@ class SignUpView: UIView {
     func mainTextField() -> UITextField {
         let textField = UITextField()
         
-        textField.font = UIFont(name: "NotoSans-ExtraLight", size: 15)
+        textField.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         textField.textColor = UIColor.white
         textField.backgroundColor = UIColor.white.withAlphaComponent(0.08)
         textField.layer.cornerRadius = 5
@@ -52,7 +53,7 @@ class SignUpView: UIView {
         
         button.setTitle("인증", for: .normal)
         button.setTitleColor(UIColor.white.withAlphaComponent(0.5), for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .bold)
         button.backgroundColor = UIColor.white.withAlphaComponent(0.08)
         button.layer.cornerRadius = 5
         button.layer.borderWidth = 0.5

@@ -14,8 +14,8 @@ class SystemView: UIView {
         
         label.numberOfLines = 0
         label.textColor = UIColor.red
-        label.font = UIFont.systemFont(ofSize: 12.5)
-        
+//        label.font = UIFont.systemFont(ofSize: 12.5)
+        label.font = UIFont.systemFont(ofSize: 13.5, weight: .light)
         return label
     }
 }

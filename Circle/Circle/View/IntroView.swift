@@ -14,8 +14,6 @@ class IntroView: UIView {
         
         let image = UIImage(systemName: "chevron.up")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .thin))
         
-//        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 1, bottom: 4, right: 0)
-
         button.setImage(image, for: .normal)
         button.tintColor = UIColor.white.withAlphaComponent(1)
         button.backgroundColor = UIColor.white.withAlphaComponent(0.1)
@@ -40,8 +38,8 @@ class IntroView: UIView {
         
         label.text = "너와 나, 연결의 시작. 여기 서클에서"
         label.textColor = UIColor.white.withAlphaComponent(0.75)
-        label.font = UIFont(name: "NotoSans-ExtraLight", size: 15)
-        
+        label.font = UIFont.systemFont(ofSize: 15, weight: .ultraLight)
+
         return label
     }
     
@@ -49,7 +47,7 @@ class IntroView: UIView {
         let textField = UITextField()
         
         textField.placeholder = "사용자 이름 또는 이메일"
-        textField.font = UIFont(name: "NotoSans-ExtraLight", size: 15)
+        textField.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         textField.textColor = UIColor.white
         textField.backgroundColor = UIColor.white.withAlphaComponent(0.08)
         textField.layer.cornerRadius = 5
@@ -66,7 +64,7 @@ class IntroView: UIView {
         let textField = UITextField()
         
         textField.placeholder = "비밀번호"
-        textField.font = UIFont(name: "NotoSans-ExtraLight", size: 15)
+        textField.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         textField.textColor = UIColor.white
         textField.backgroundColor = UIColor.white.withAlphaComponent(0.08)
         textField.layer.cornerRadius = 5
@@ -93,7 +91,7 @@ class IntroView: UIView {
         
         label.text = "또는"
         label.textColor = UIColor.white.withAlphaComponent(0.5)
-        label.font = UIFont(name: "NotoSans-ExtraLight", size: 13.5)
+        label.font = UIFont.systemFont(ofSize: 13.5, weight: .ultraLight)
         
         return label
     }
@@ -103,8 +101,8 @@ class IntroView: UIView {
         
         button.setTitle("회원가입", for: .normal)
         button.setTitleColor(UIColor.white.withAlphaComponent(0.85), for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
-        
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .heavy)
+
         if let image = UIImage(systemName: "chevron.right")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 14, weight: .light)) {
             button.setImage(image, for: .normal)
         }
@@ -123,7 +121,7 @@ class IntroView: UIView {
         
         button.setTitle("로그인 문제 해결", for: .normal)
         button.setTitleColor(UIColor.white.withAlphaComponent(0.85), for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .heavy)
 
         if let image = UIImage(systemName: "chevron.right")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 14, weight: .light)) {
             button.setImage(image, for: .normal)
