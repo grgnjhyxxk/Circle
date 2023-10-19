@@ -7,7 +7,7 @@ target 'Circle' do
   
   # Pods for Circle
   pod 'SnapKit', '~> 5.6.0'
-  pod "UPCarouselFlowLayout"
+  pod 'FirebaseAppCheck'
     
   target 'CircleTests' do
     inherit! :search_paths
