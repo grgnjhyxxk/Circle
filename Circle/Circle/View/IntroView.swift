@@ -12,7 +12,7 @@ class IntroView: UIView {
     func startButton() -> UIButton {
         let button = UIButton()
         
-        let image = UIImage(systemName: "chevron.left.2")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .thin))
+        let image = UIImage(systemName: "chevron.up")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .thin))
         
 //        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 1, bottom: 4, right: 0)
 
@@ -57,6 +57,7 @@ class IntroView: UIView {
         textField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: textField.frame.height))
         textField.leftViewMode = .always
+        textField.autocapitalizationType = .none
         
         return textField
     }
@@ -74,6 +75,7 @@ class IntroView: UIView {
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: textField.frame.height))
         textField.leftViewMode = .always
         textField.isSecureTextEntry = true
+        textField.autocapitalizationType = .none
         
         return textField
     }
