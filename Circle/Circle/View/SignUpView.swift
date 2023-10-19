@@ -42,18 +42,9 @@ class SignUpView: UIView {
         textField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: textField.frame.height))
         textField.leftViewMode = .always
-        
+        textField.autocapitalizationType = .none
+
         return textField
-    }
-    
-    func errorTextLabel() -> UILabel {
-        let label = UILabel()
-        
-        label.numberOfLines = 0
-        label.textColor = UIColor.red
-        label.font = UIFont.systemFont(ofSize: 12.5)
-        
-        return label
     }
     
     func checkButton() -> UIButton {
