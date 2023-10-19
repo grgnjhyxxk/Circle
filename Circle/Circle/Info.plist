@@ -9,9 +9,13 @@
 	</dict>
 	<key>UIAppFonts</key>
 	<array>
+		<string>NotoSans-Bold.ttf</string>
+		<string>NotoSans-Medium.ttf</string>
+		<string>NotoSans-Regular.ttf</string>
 		<string>PetitFormalScript-Regular.ttf</string>
 		<string>NotoSans-ExtraLight.ttf</string>
 		<string>NotoSans-Thin.ttf</string>
+		<string>NotoSans-Light.ttf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
