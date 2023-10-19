@@ -10,6 +10,8 @@ import SnapKit
 
 class IntroViewController: UIViewController {
     
+    internal var isLoggedInBool: Bool = Bool()
+    
     private var viewList: [UIView] = []
     
     private var spinningCirclesView = SpinningCirclesView()
@@ -23,6 +25,7 @@ class IntroViewController: UIViewController {
     private var introMainTitleLabel: UILabel = IntroView().introMainTitleLabel()
     private var introSubTitleLabel: UILabel = IntroView().introSubTitleLabel()
     private var separatorTitleLabel: UILabel = IntroView().separatorTitleLabel()
+    private var errorTextLabel: UILabel = SystemView().errorTextLabel()
     
     private var idTextField: UITextField = IntroView().idTextField()
     private var passwordTextField: UITextField = IntroView().passwordTextField()
@@ -41,12 +44,23 @@ class IntroViewController: UIViewController {
         spinningCirclesView.startAnimation()
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?){
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
          self.view.endEditing(true)
-   }
+    }
+    
+    internal func isLoggedIn() -> UIViewController? {
+        if isLoggedInBool {
+            return TabBarController()
+        } else {
+            let introViewController = IntroViewController()
+            let navigationController = UINavigationController(rootViewController: introViewController)
+            
+            return navigationController
+        }
+    }
     
     private func addOnView() {
-        viewList = [spinningCirclesView, startButton, introMainTitleLabel, introSubTitleLabel, idTextField, passwordTextField, separator_left, separator_right, registerButton, recoverCredentialsButton, separatorTitleLabel]
+        viewList = [spinningCirclesView, startButton, introMainTitleLabel, introSubTitleLabel, idTextField, passwordTextField, separator_left, separator_right, registerButton, recoverCredentialsButton, separatorTitleLabel, errorTextLabel]
         
         for uiView in viewList {
             view.addSubview(uiView)
@@ -91,14 +105,19 @@ class IntroViewController: UIViewController {
             make.size.equalTo(CGSize(width: 340, height: 40))
         }
         
+        errorTextLabel.snp.makeConstraints { make in
+            make.leading.trailing.equalTo(passwordTextField)
+            make.top.equalTo(passwordTextField.snp.bottom).offset(15)
+        }
+        
         separator_left.snp.makeConstraints { make in
-            make.top.equalTo(passwordTextField.snp.bottom).offset(40)
+            make.top.equalTo(errorTextLabel.snp.bottom).offset(25)
             make.leading.equalTo(idTextField)
             make.size.equalTo(CGSize(width: 140, height: 1))
         }
         
         separator_right.snp.makeConstraints { make in
-            make.top.equalTo(passwordTextField.snp.bottom).offset(40)
+            make.top.equalTo(errorTextLabel.snp.bottom).offset(25)
             make.trailing.equalTo(idTextField)
             make.size.equalTo(CGSize(width: 140, height: 1))
         }
@@ -125,6 +144,9 @@ class IntroViewController: UIViewController {
         separatorTitleLabel.alpha = 0
         registerButton.alpha = 0
         recoverCredentialsButton.alpha = 0
+        
+        errorTextLabel.text = "아디이 혹은 비밀번호가 잘못되었습니다."
+        errorTextLabel.isHidden = true
     }
     
     private func addTargets() {
@@ -142,7 +164,7 @@ class IntroViewController: UIViewController {
     
     @objc private func startButtonTouchAction() {
         if let image = self.startButton.imageView?.image,
-           image == UIImage(systemName: "chevron.left.2")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)) {
+           image == UIImage(systemName: "chevron.up")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)) {
             
             UIView.animate(withDuration: 0.7, animations: {
                 self.introMainTitleLabel.snp.updateConstraints { make in
@@ -170,39 +192,52 @@ class IntroViewController: UIViewController {
                 }, completion: nil)
             }
         } else if let image = self.startButton.imageView?.image, image == UIImage(systemName: "checkmark")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)) {
-            if let idText = self.idTextField.text, let passwordText = self.passwordTextField.text {
-                if idText.isEmpty {
+            if let idText = self.idTextField.text, idText.isEmpty {
+                UIView.animate(withDuration: 0.5) {
+                    self.idTextField.layer.borderWidth = 2
+                    self.idTextField.layer.borderColor = UIColor.red.withAlphaComponent(0.5).cgColor
+                    AnimationView().shakeView(self.idTextField)
+                } completion: { _ in
                     UIView.animate(withDuration: 0.5) {
-                        self.idTextField.layer.borderWidth = 2
-                        self.idTextField.layer.borderColor = UIColor.red.withAlphaComponent(0.5).cgColor
-                        AnimationView().shakeView(self.idTextField)
-                    } completion: { _ in
-                        UIView.animate(withDuration: 0.5) {
-                            self.idTextField.layer.borderWidth = 0.5
-                            self.idTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
+                        self.idTextField.layer.borderWidth = 0.5
+                        self.idTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
+                    }
+                }
+
+            } else if let passwordText = self.passwordTextField.text, passwordText.isEmpty {
+                UIView.animate(withDuration: 0.5) {
+                    self.passwordTextField.layer.borderWidth = 2
+                    self.passwordTextField.layer.borderColor = UIColor.red.withAlphaComponent(0.5).cgColor
+                    AnimationView().shakeView(self.passwordTextField)
+                } completion: { _ in
+                    UIView.animate(withDuration: 0.5) {
+                        self.passwordTextField.layer.borderWidth = 0.5
+                        self.passwordTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor                        }
+                }
+                
+            } else if let idText = self.idTextField.text, let passwordText = self.passwordTextField.text, !passwordText.isEmpty && !idText.isEmpty {
+                isLoggedInBool = true
+                    
+                fetchUserData(profileName: "\(idText)") { (userData, error) in
+                    if let userData = userData {
+                        let inputPassword = userData.password
+                        if comparePasswords(inputPassword: passwordText, savedPassword: inputPassword) {
+                            if let tabBarController = self.isLoggedIn() {
+                                self.errorTextLabel.isHidden = true
+                                tabBarController.modalPresentationStyle = .fullScreen
+                                self.present(tabBarController, animated: true)
+                            }
+                        } else {
+                            self.errorTextLabel.isHidden = false
                         }
+                        
+                    } else if let error = error {
+                        print("Error: \(error.localizedDescription)")
+                    } else {
+                        
                     }
-                }
-
-                if passwordText.isEmpty {
-                    UIView.animate(withDuration: 0.5) {
-                        self.passwordTextField.layer.borderWidth = 2
-                        self.passwordTextField.layer.borderColor = UIColor.red.withAlphaComponent(0.5).cgColor
-                        AnimationView().shakeView(self.passwordTextField)
-                    } completion: { _ in
-                        UIView.animate(withDuration: 0.5) {
-                            self.passwordTextField.layer.borderWidth = 0.5
-                            self.passwordTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor                        }
-                    }
-                }
-
-                if idText.isEmpty || passwordText.isEmpty {
-                    print("wrong!")
-                } else {
-                    print("perfect")
                 }
             }
         }
     }
 }
-
