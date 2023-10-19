@@ -17,12 +17,12 @@ class AccountPasswordViewController: BaseSignUpViewController {
             make.trailing.equalToSuperview()
         }
         
-        errorTextLabel.alpha = 0
+        errorTextLabel.isHidden = true
     }
     
     override func uiViewSetting() {
         mainTextField.isSecureTextEntry = true
-        checkTextField.alpha = 1
+        checkTextField.isHidden = false
         
         nextButton.title = "완료"
     }
@@ -40,8 +40,21 @@ class AccountPasswordViewController: BaseSignUpViewController {
             self.mainTextField.layer.borderWidth = 1.0
             self.mainTextField.layer.borderColor = UIColor.red.cgColor
             AnimationView().shakeView(self.mainTextField)
+            
         } else {
-            self.navigationController?.popToRootViewController(animated: true)
+            if let profileData = profileNameInput, let userNameData = userNameInput, let passwordData = mainTextField.text {
+                let userData = UserData(profileName: profileData, userName: userNameData, password: passwordData)
+                signUpDataUploadServer(userData: userData) { success, error in
+                    if success {
+                        print("데이터 추가 성공")
+                        self.navigationController?.popToRootViewController(animated: true)
+                    } else if let error = error {
+                        print("데이터 추가 실패: \(error.localizedDescription)")
+                    }
+                }
+            } else {
+                
+            }
         }
     }
     
@@ -50,8 +63,6 @@ class AccountPasswordViewController: BaseSignUpViewController {
         let characterSet = CharacterSet(charactersIn: string)
         
         if allowedCharacters.isSuperset(of: characterSet) {
-            print("올바른 문자입니다.")
-            
             if textField == mainTextField {
                 self.mainTextField.layer.borderWidth = 0.5
                 self.mainTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
@@ -61,8 +72,6 @@ class AccountPasswordViewController: BaseSignUpViewController {
                 self.checkTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
             }
         } else {
-            print("잘못된 문자입니다.")
-            
             if textField == mainTextField {
                 self.mainTextField.layer.borderWidth = 2
                 self.mainTextField.layer.borderColor = UIColor.red.cgColor
@@ -76,22 +85,21 @@ class AccountPasswordViewController: BaseSignUpViewController {
         }
         
         if textField == checkTextField, let mainTextField = self.mainTextField.text, let checkTextField = (checkTextField.text as NSString?)?.replacingCharacters(in: range, with: string), mainTextField == checkTextField {
-            print("비밀번호가 일치합니다.")
-            
+            let updatedText = (textField.text as NSString?)?.replacingCharacters(in: range, with: string) ?? ""
+
             self.checkTextField.layer.borderWidth = 0.5
             self.checkTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
             
-            self.errorTextLabel.alpha = 0
+            self.errorTextLabel.isHidden = true
             
-            nextButton.isEnabled = true
+            nextButton.isEnabled = updatedText.count >= 6
 
         } else if textField == checkTextField, let mainTextField = self.mainTextField.text, let checkTextField = (checkTextField.text as NSString?)?.replacingCharacters(in: range, with: string), mainTextField != checkTextField  {
-            print("비밀번호가 일치하지 않습니다.")
             
             self.checkTextField.layer.borderWidth = 1.0
             self.checkTextField.layer.borderColor = UIColor.red.cgColor
             
-            self.errorTextLabel.alpha = 1
+            self.errorTextLabel.isHidden = false
         }
         
         return allowedCharacters.isSuperset(of: characterSet)
