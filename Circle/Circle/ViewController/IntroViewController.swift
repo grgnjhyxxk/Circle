@@ -232,6 +232,7 @@ class IntroViewController: UIViewController {
                         }
                         
                     } else if let error = error {
+                        self.errorTextLabel.isHidden = false
                         print("Error: \(error.localizedDescription)")
                     } else {
                         
