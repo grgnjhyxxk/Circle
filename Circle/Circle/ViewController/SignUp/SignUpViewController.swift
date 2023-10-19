@@ -10,6 +10,9 @@ import SnapKit
 
 class BaseSignUpViewController: UIViewController, UITextFieldDelegate {
     
+    var profileNameInput: String?
+    var userNameInput: String?
+    
     internal var viewList: [UIView] = []
     internal var mainTitleLabelList: [String] = ["프로필 이름", "사용자 이름", "계정 비밀번호", "계정 이메일"]
     internal var subTitleLabelList: [String] = ["서클에서 대표로 보이게될 프로필 활동명입니다.\n추후에도 변경이 가능합니다.",
@@ -26,7 +29,7 @@ class BaseSignUpViewController: UIViewController, UITextFieldDelegate {
 
     internal var mainTitleLabel: UILabel = SignUpView().mainTitleLabel()
     internal var subTitleLabel: UILabel = SignUpView().subTitleLabel()
-    internal var errorTextLabel: UILabel = SignUpView().errorTextLabel()
+    internal var errorTextLabel: UILabel = SystemView().errorTextLabel()
     
     internal var mainTextField: UITextField = SignUpView().mainTextField()
     internal var checkTextField: UITextField = SignUpView().mainTextField()
@@ -95,7 +98,7 @@ class BaseSignUpViewController: UIViewController, UITextFieldDelegate {
             make.size.equalTo(CGSize(width: 330, height: 40))
         }
         
-        checkTextField.alpha = 0
+        checkTextField.isHidden = true
         checkTextField.isSecureTextEntry = true
     }
     
@@ -106,7 +109,7 @@ class BaseSignUpViewController: UIViewController, UITextFieldDelegate {
             make.trailing.equalToSuperview()
         }
         
-        errorTextLabel.alpha = 0
+        errorTextLabel.isHidden = true
     }
     
     internal func navigationBarLayout() {
