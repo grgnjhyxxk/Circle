@@ -46,7 +46,7 @@ class ProfileNameViewController: BaseSignUpViewController {
             self.mainTextField.layer.borderWidth = 0.5
             self.mainTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
             
-            self.errorTextLabel.isHidden = false
+            self.errorTextLabel.isHidden = true
             
             nextButton.isEnabled = updatedText.count >= 3 // 여기서 변경
             
