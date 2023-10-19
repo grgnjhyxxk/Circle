@@ -23,6 +23,8 @@ class UserNameViewController: BaseSignUpViewController {
     
     override func nextButtonAction() {
         let viewController = AccountPasswordViewController()
+        viewController.profileNameInput = self.profileNameInput
+        viewController.userNameInput = mainTextField.text
         
         if let navigationController = self.navigationController {
             navigationController.pushViewController(viewController, animated: true)
