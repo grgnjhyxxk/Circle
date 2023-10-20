@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class UserMainViewController: UIViewController {
+class BasicUserProfileViewController: UIViewController {
 
     private var viewList: [UIView] = []
     private var contentViewList: [UIView] = []
