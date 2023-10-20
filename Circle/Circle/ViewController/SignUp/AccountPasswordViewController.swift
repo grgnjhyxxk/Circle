@@ -20,10 +20,16 @@ class AccountPasswordViewController: BaseSignUpViewController {
         errorTextLabel.isHidden = true
     }
     
-    override func uiViewSetting() {
-        mainTextField.isSecureTextEntry = true
-        checkTextField.isHidden = false
+    override func mainViewSetting() {
+        checkTextField.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(mainTextField.snp.bottom).offset(15)
+            make.size.equalTo(CGSize(width: 330, height: 40))
+        }
         
+        mainTextField.isSecureTextEntry = true
+        checkTextField.isSecureTextEntry = true
+
         nextButton.title = "완료"
     }
     
@@ -43,7 +49,7 @@ class AccountPasswordViewController: BaseSignUpViewController {
             
         } else {
             if let profileData = profileNameInput, let userNameData = userNameInput, let passwordData = mainTextField.text {
-                let userData = UserData(profileName: profileData, userName: userNameData, password: passwordData, myCircleDigits: 0, MyinTheCircleDigits: 0, MyPostDigits: 0, followerDigits: 0, followingDigits: 0, socialValidation: false)
+                let userData = UserData(profileName: profileData, userName: userNameData, password: passwordData, myCircleDigits: 0, myInTheCircleDigits: 0, myPostDigits: 0, followerDigits: 0, followingDigits: 0, socialValidation: false)
                 signUpDataUploadServer(userData: userData) { success, error in
                     if success {
                         print("데이터 추가 성공")
