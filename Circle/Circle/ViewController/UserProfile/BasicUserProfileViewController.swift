@@ -10,44 +10,45 @@ import SnapKit
 
 class BasicUserProfileViewController: UIViewController {
 
-    private var viewList: [UIView] = []
-    private var contentViewList: [UIView] = []
+    var viewList: [UIView] = []
+    var contentViewList: [UIView] = []
     
-    private var scrollView: UIScrollView = UIScrollView()
-    private var contentView: UIView = UIView()
-    private let topView: UIView = UserMainView().topView()
-    private var topViewBottomSeparator: UIView = IntroView().separator()
+    var scrollView: UIScrollView = UIScrollView()
+    var contentView: UIView = UIView()
+    var topView: UIView = UserMainView().topView()
+    var topViewBottomSeparator: UIView = IntroView().separator()
     
-    private let profileNameTitleLabel: UILabel = UserMainView().profileNameTitleLabel()
+    var profileNameTitleLabel: UILabel = UserMainView().profileNameTitleLabel()
     
-    private let myCircleTitleLabel: UILabel = UserMainView().userMainStatusTitleLabel()
-    private let inTheCircleTitleLabel: UILabel = UserMainView().userMainStatusTitleLabel()
-    private let feedTitleLabel: UILabel = UserMainView().userMainStatusTitleLabel()
+    var myCircleTitleLabel: UILabel = UserMainView().userMainStatusTitleLabel()
+    var inTheCircleTitleLabel: UILabel = UserMainView().userMainStatusTitleLabel()
+    var feedTitleLabel: UILabel = UserMainView().userMainStatusTitleLabel()
 
-    private let myCircleDigitsLabel: UILabel = UserMainView().userMainStatusDigitsLabel()
-    private let myInTheCircleDigitsLabel: UILabel = UserMainView().userMainStatusDigitsLabel()
-    private let myPostDigitsLabel: UILabel = UserMainView().userMainStatusDigitsLabel()
+    var myCircleDigitsLabel: UILabel = UserMainView().userMainStatusDigitsLabel()
+    var myInTheCircleDigitsLabel: UILabel = UserMainView().userMainStatusDigitsLabel()
+    var myPostDigitsLabel: UILabel = UserMainView().userMainStatusDigitsLabel()
     
-    private let userNameTitleLabel: UILabel = UserMainView().userNameTitleLabel()
-    private let introductionLabel: UILabel = UserMainView().introductionLabel()
+    var userNameTitleLabel: UILabel = UserMainView().userNameTitleLabel()
+    var introductionLabel: UILabel = UserMainView().introductionLabel()
     
-    private let followerLabel: UILabel = UserMainView().userSubStatusTitleLabel()
-    private let followingLabel: UILabel = UserMainView().userSubStatusTitleLabel()
-    private let followerDigitsLabel: UILabel = UserMainView().userSubStatusDigitsLabel()
-    private let followingDigitsLabel: UILabel = UserMainView().userSubStatusDigitsLabel()
+    var followerLabel: UILabel = UserMainView().userSubStatusTitleLabel()
+    var followingLabel: UILabel = UserMainView().userSubStatusTitleLabel()
+    var followerDigitsLabel: UILabel = UserMainView().userSubStatusDigitsLabel()
+    var followingDigitsLabel: UILabel = UserMainView().userSubStatusDigitsLabel()
 
-    private let userProfileImageView: UIImageView = UserMainView().userProfileImageView()
+    var userProfileImageView: UIImageView = UserMainView().userProfileImageView()
     
-    private let socialValidationMarkButton: UIButton = UserMainView().socialValidationMarkButton()
-    private let settingListButton: UIButton = UserMainView().settingListButton()
-    private let myPersonalPostsFeedButton: UIButton = UserMainView().selectMyPostFeedButton()
-    private let myCirclePostsFeedButton: UIButton = UserMainView().selectMyPostFeedButton()
-    private let postingButton: UIButton = UserMainView().postingButton()
+    var socialValidationMarkButton: UIButton = UserMainView().socialValidationMarkButton()
+    var myPersonalPostsFeedButton: UIButton = UserMainView().selectMyPostFeedButton()
+    var myCirclePostsFeedButton: UIButton = UserMainView().selectMyPostFeedButton()
     
-    private let myPersonalPostsFeedButtonBottomBar = UserMainView().selectMyPostFeedButtonBottomBar()
-    private let myCirclePostsButtonBottomBar = UserMainView().selectMyPostFeedButtonBottomBar()
+    var myPersonalPostsFeedButtonBottomBar = UserMainView().selectMyPostFeedButtonBottomBar()
+    var myCirclePostsButtonBottomBar = UserMainView().selectMyPostFeedButtonBottomBar()
     
-    private lazy var refreshControl: UIRefreshControl = {
+    var settingListButton: UIButton = UserMainView.MyProfileView().settingListButton()
+    var postingButton: UIButton = UserMainView.MyProfileView().postingButton()
+
+    lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
         return refreshControl
@@ -56,15 +57,17 @@ class BasicUserProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        uiViewUpdate()
         addOnView()
-        updateUI(with: userDataList[0])
         viewLayout()
+        mainViewSetting()
         addOnContentView()
         contentViewLayout()
+        contentViewSetting()
         addTargets()
     }
 
-    private func addOnView() {
+    func addOnView() {
         viewList = [scrollView, topView,
                     profileNameTitleLabel,
                     settingListButton, postingButton]
@@ -76,7 +79,7 @@ class BasicUserProfileViewController: UIViewController {
         scrollView.addSubview(contentView)
     }
 
-    private func viewLayout() {
+    func viewLayout() {
         view.backgroundColor = UIColor.black
         scrollView.backgroundColor = UIColor.clear
         contentView.backgroundColor = UIColor.black
@@ -89,18 +92,6 @@ class BasicUserProfileViewController: UIViewController {
         profileNameTitleLabel.snp.makeConstraints { make in
             make.leading.trailing.equalTo(topView)
             make.top.equalTo(topView).offset(55)
-        }
-        
-        settingListButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-25)
-            make.centerY.equalTo(profileNameTitleLabel).offset(2)
-            make.size.equalTo(CGSize(width: 25, height: 24))
-        }
-        
-        postingButton.snp.makeConstraints { make in
-            make.trailing.equalTo(settingListButton.snp.leading).offset(-15)
-            make.centerY.equalTo(profileNameTitleLabel)
-            make.size.equalTo(CGSize(width: 28, height: 28))
         }
         
         scrollView.snp.makeConstraints { make in
@@ -118,7 +109,7 @@ class BasicUserProfileViewController: UIViewController {
         scrollView.refreshControl = refreshControl
     }
     
-    private func addOnContentView() {
+    func addOnContentView() {
         contentViewList = [userProfileImageView,
                            myCircleTitleLabel, inTheCircleTitleLabel, feedTitleLabel,
                            myCircleDigitsLabel, myInTheCircleDigitsLabel, myPostDigitsLabel,
@@ -133,7 +124,7 @@ class BasicUserProfileViewController: UIViewController {
         }
     }
     
-    private func contentViewLayout() {
+    func contentViewLayout() {
         userProfileImageView.snp.makeConstraints { make in
             make.top.equalTo(contentView).offset(60)
             make.leading.equalTo(contentView).offset(25)
@@ -263,41 +254,25 @@ class BasicUserProfileViewController: UIViewController {
         myCirclePostsButtonBottomBar.isHidden = true
     }
     
-    private func updateUI(with userData: UserData) {
-        profileNameTitleLabel.text = userData.profileName
-        userNameTitleLabel.text = userData.userName
-        introductionLabel.text = userData.intrduction
-        myCircleDigitsLabel.text = formatNumber(userData.myCircleDigits)
-        myInTheCircleDigitsLabel.text = formatNumber(userData.MyinTheCircleDigits)
-        myPostDigitsLabel.text = formatNumber(userData.MyPostDigits)
-        followerDigitsLabel.text = formatNumber(userData.followerDigits)
-        followingDigitsLabel.text = formatNumber(userData.followingDigits)
-        
-        if let imageString = userData.image {
-            if let image = UIImage(named: imageString) {
-                userProfileImageView.image = image
-            } else {
-                // 이미지를 로드할 수 없는 경우
-                userProfileImageView.image = UIImage(named: "BasicUserProfileImage")
-            }
-        } else {
-            // 이미지 정보가 없는 경우
-            userProfileImageView.image = UIImage(named: "BasicUserProfileImage")
-        }
-        
-        if userData.socialValidation {
-            socialValidationMarkButton.isHidden = false
-        } else {
-            socialValidationMarkButton.isHidden = true
-        }
-    }
-    
-    private func addTargets() {
+    func addTargets() {
         myPersonalPostsFeedButton.addTarget(self, action: #selector(selectMyPostFeedButtonAction), for: .touchUpInside)
         myCirclePostsFeedButton.addTarget(self, action: #selector(selectMyPostFeedButtonAction), for: .touchUpInside)
+        settingListButton.addTarget(self, action: #selector(settingListButtonAction), for: .touchUpInside)
     }
     
-    @objc private func selectMyPostFeedButtonAction(sender: UIButton) {
+    func uiViewUpdate() {
+        
+    }
+    
+    func mainViewSetting() {
+        
+    }
+    
+    func contentViewSetting() {
+        
+    }
+    
+    @objc func selectMyPostFeedButtonAction(sender: UIButton) {
         if sender == myPersonalPostsFeedButton {
             myPersonalPostsFeedButtonBottomBar.isHidden = false
             myCirclePostsButtonBottomBar.isHidden = true
@@ -307,20 +282,11 @@ class BasicUserProfileViewController: UIViewController {
         }
     }
     
-    @objc private func refreshData() {
-        let profileName = userDataList[0].profileName
-        fetchUserData(profileName: "\(profileName)") { (userData, error) in
-            if let userData = userData {
-                userDataList.removeAll()
-                userDataList.append(userData)
-                print(userDataList)
-            } else if let error = error {
-                print("Error: \(error.localizedDescription)")
-            } else {
-                
-            }
-            self.refreshControl.endRefreshing()
-            self.updateUI(with: userDataList[0])
-        }
+    @objc func refreshData() {
+
+    }
+    
+    @objc func settingListButtonAction() {
+        
     }
 }
