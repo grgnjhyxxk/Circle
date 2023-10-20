@@ -7,15 +7,15 @@
 
 import UIKit
 
-var userDataList = [UserData]()
+var myDataList = [UserData]()
 
 struct UserData {
     var profileName: String
     var userName: String
     var password: String
     var myCircleDigits: Int
-    var MyinTheCircleDigits: Int
-    var MyPostDigits: Int
+    var myInTheCircleDigits: Int
+    var myPostDigits: Int
     var followerDigits: Int
     var followingDigits: Int
     var socialValidation: Bool
