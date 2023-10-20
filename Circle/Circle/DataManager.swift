@@ -14,8 +14,8 @@ struct UserData {
     var userName: String
     var password: String
     var myCircleDigits: Int
-    var inTheCircleDigits: Int
-    var feedDigits: Int
+    var MyinTheCircleDigits: Int
+    var MyPostDigits: Int
     var followerDigits: Int
     var followingDigits: Int
     var socialValidation: Bool
@@ -26,4 +26,20 @@ struct UserData {
     var birth: String?
     var gender: String?
     var userID: String?
+}
+
+func formatNumber(_ number: Int) -> String {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .decimal
+    formatter.maximumFractionDigits = 1
+
+    if number >= 1_000_000 {
+        let roundedValue = round(Double(number) / 100_000) / 10
+        return "\(formatter.string(from: NSNumber(value: roundedValue)) ?? "")M"
+    } else if number >= 1_000 {
+        let roundedValue = round(Double(number) / 100) / 10
+        return "\(formatter.string(from: NSNumber(value: roundedValue)) ?? "")k"
+    } else {
+        return "\(number)"
+    }
 }
