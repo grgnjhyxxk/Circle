@@ -50,7 +50,7 @@ class BaseSignUpViewController: UIViewController, UITextFieldDelegate {
         errorTextLabelLayout()
         navigationBarLayout()
         uiViewUpdate()
-        uiViewSetting()
+        mainViewSetting()
         addTargets()
         
         mainTextField.delegate = self
@@ -91,25 +91,6 @@ class BaseSignUpViewController: UIViewController, UITextFieldDelegate {
             make.top.equalTo(subTitleLabel.snp.bottom).offset(20)
             make.size.equalTo(CGSize(width: 330, height: 40))
         }
-        
-        checkTextField.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(mainTextField.snp.bottom).offset(15)
-            make.size.equalTo(CGSize(width: 330, height: 40))
-        }
-        
-        checkTextField.isHidden = true
-        checkTextField.isSecureTextEntry = true
-    }
-    
-    internal func errorTextLabelLayout() {
-        errorTextLabel.snp.makeConstraints { make in
-            make.top.equalTo(mainTextField.snp.bottom).offset(15)
-            make.leading.equalTo(mainTextField)
-            make.trailing.equalToSuperview()
-        }
-        
-        errorTextLabel.isHidden = true
     }
     
     internal func navigationBarLayout() {
@@ -128,11 +109,15 @@ class BaseSignUpViewController: UIViewController, UITextFieldDelegate {
         return emailPredicate.evaluate(with: email)
     }
     
+    internal func errorTextLabelLayout() {
+
+    }
+    
     internal func uiViewUpdate() {
         
     }
     
-    internal func uiViewSetting() {
+    internal func mainViewSetting() {
         
     }
     
