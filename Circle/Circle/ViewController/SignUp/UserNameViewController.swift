@@ -30,4 +30,12 @@ class UserNameViewController: BaseSignUpViewController {
             navigationController.pushViewController(viewController, animated: true)
         }
     }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let updatedText = (textField.text as NSString?)?.replacingCharacters(in: range, with: string) ?? ""
+        
+        nextButton.isEnabled = (0...21).contains(updatedText.count)
+        
+        return true
+    }
 }
