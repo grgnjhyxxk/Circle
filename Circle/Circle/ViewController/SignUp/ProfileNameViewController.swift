@@ -17,6 +17,14 @@ class ProfileNameViewController: BaseSignUpViewController {
         errorTextLabel.text = errorTextLabelList[0]
     }
     
+    override func errorTextLabelLayout() {
+        errorTextLabel.snp.makeConstraints { make in
+            make.top.equalTo(mainTextField.snp.bottom).offset(15)
+            make.leading.equalTo(mainTextField)
+            make.trailing.equalToSuperview()
+        }
+    }
+    
     override func nextButtonAction() {
         if let mainTextField = self.mainTextField.text, mainTextField.isEmpty {
             self.mainTextField.layer.borderWidth = 1.0
@@ -24,15 +32,28 @@ class ProfileNameViewController: BaseSignUpViewController {
             AnimationView().shakeView(self.mainTextField)
             
         } else {
-            let viewController = UserNameViewController()
-            viewController.profileNameInput = mainTextField.text
-            
-            if let navigationController = self.view.window?.rootViewController as? UINavigationController {
-                errorTextLabel.isHidden = true
-                mainTextField.layer.borderWidth = 0.5
-                mainTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
-                
-                navigationController.pushViewController(viewController, animated: true)
+            checkIfProfileNameExists(mainTextField.text!) { (exists, error) in
+                if exists {
+                    self.mainTextField.layer.borderWidth = 2
+                    self.mainTextField.layer.borderColor = UIColor.red.cgColor
+                    
+                    AnimationView().shakeView(self.mainTextField)
+                    
+                    self.errorTextLabel.isHidden = false
+                    self.errorTextLabel.text = "이미 사용 중인 프로필 이름입니다."
+                    
+                } else {
+                    let viewController = UserNameViewController()
+                    viewController.profileNameInput = self.mainTextField.text
+                    
+                    if let navigationController = self.view.window?.rootViewController as? UINavigationController {
+                        self.errorTextLabel.isHidden = true
+                        self.mainTextField.layer.borderWidth = 0.5
+                        self.mainTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
+                        
+                        navigationController.pushViewController(viewController, animated: true)
+                    }
+                }
             }
         }
     }
