@@ -43,7 +43,7 @@ class AccountPasswordViewController: BaseSignUpViewController {
             
         } else {
             if let profileData = profileNameInput, let userNameData = userNameInput, let passwordData = mainTextField.text {
-                let userData = UserData(profileName: profileData, userName: userNameData, password: passwordData, myCircleDigits: 0, inTheCircleDigits: 0, feedDigits: 0, followerDigits: 0, followingDigits: 0, socialValidation: false)
+                let userData = UserData(profileName: profileData, userName: userNameData, password: passwordData, myCircleDigits: 0, MyinTheCircleDigits: 0, MyPostDigits: 0, followerDigits: 0, followingDigits: 0, socialValidation: false)
                 signUpDataUploadServer(userData: userData) { success, error in
                     if success {
                         print("데이터 추가 성공")
@@ -92,7 +92,7 @@ class AccountPasswordViewController: BaseSignUpViewController {
             
             self.errorTextLabel.isHidden = true
             
-            nextButton.isEnabled = updatedText.count >= 6
+            nextButton.isEnabled = (6...128).contains(updatedText.count)
 
         } else if textField == checkTextField, let mainTextField = self.mainTextField.text, let checkTextField = (checkTextField.text as NSString?)?.replacingCharacters(in: range, with: string), mainTextField != checkTextField  {
             
