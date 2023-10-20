@@ -53,7 +53,7 @@ class UserMainView: UIView {
         label.numberOfLines = 0
         label.textColor = UIColor.white
         label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        label.textAlignment = .natural
+//        label.textAlignment = .natural
         
         return label
     }
@@ -103,6 +103,53 @@ class UserMainView: UIView {
         
         button.setImage(UIImage(systemName: "checkmark.seal.fill"), for: .normal)
         button.tintColor = UIColor.systemBlue
+        
+        return button
+    }
+    
+    func settingListButton() -> UIButton {
+        let button = UIButton()
+        
+        button.setImage(UIImage(systemName: "line.3.horizontal"), for: .normal)
+        button.tintColor = UIColor.white
+        button.contentHorizontalAlignment = .fill
+        button.contentVerticalAlignment = .fill
+        
+        return button
+    }
+    
+    func selectMyPostFeedButton() -> UIButton {
+        let button = UIButton()
+        
+        button.backgroundColor = UIColor.black
+        button.setTitleColor(UIColor.white, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+        button.titleLabel?.textAlignment = .center
+        
+        // Add border to the bottom
+        let border = CALayer()
+        border.backgroundColor = UIColor.white.cgColor
+        border.frame = CGRect(x: 0, y: button.frame.size.height - 1, width: button.frame.size.width, height: 1)
+        button.layer.addSublayer(border)
+        
+        return button
+    }
+    
+    func selectMyPostFeedButtonBottomBar() -> UIView {
+        let view = UIView()
+        
+        view.backgroundColor = UIColor.white
+
+        return view
+    }
+    
+    func postingButton() -> UIButton {
+        let button = UIButton()
+        
+        button.setImage(UIImage(systemName: "square.and.pencil"), for: .normal)
+        button.tintColor = UIColor.white
+        button.contentHorizontalAlignment = .fill
+        button.contentVerticalAlignment = .fill
         
         return button
     }
