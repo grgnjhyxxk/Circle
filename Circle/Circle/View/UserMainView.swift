@@ -53,7 +53,6 @@ class UserMainView: UIView {
         label.numberOfLines = 0
         label.textColor = UIColor.white
         label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-//        label.textAlignment = .natural
         
         return label
     }
@@ -107,17 +106,6 @@ class UserMainView: UIView {
         return button
     }
     
-    func settingListButton() -> UIButton {
-        let button = UIButton()
-        
-        button.setImage(UIImage(systemName: "line.3.horizontal"), for: .normal)
-        button.tintColor = UIColor.white
-        button.contentHorizontalAlignment = .fill
-        button.contentVerticalAlignment = .fill
-        
-        return button
-    }
-    
     func selectMyPostFeedButton() -> UIButton {
         let button = UIButton()
         
@@ -143,15 +131,46 @@ class UserMainView: UIView {
         return view
     }
     
-    func postingButton() -> UIButton {
-        let button = UIButton()
+    class MyProfileView: UIView {
         
-        button.setImage(UIImage(systemName: "square.and.pencil"), for: .normal)
-        button.tintColor = UIColor.white
-        button.contentHorizontalAlignment = .fill
-        button.contentVerticalAlignment = .fill
+        func settingListButton() -> UIButton {
+            let button = UIButton()
+            
+            button.setImage(UIImage(systemName: "line.3.horizontal"), for: .normal)
+            button.tintColor = UIColor.white
+            button.contentHorizontalAlignment = .fill
+            button.contentVerticalAlignment = .fill
+            
+            return button
+        }
         
-        return button
+        func postingButton() -> UIButton {
+            let button = UIButton()
+            
+            button.setImage(UIImage(systemName: "square.and.pencil"), for: .normal)
+            button.tintColor = UIColor.white
+            button.contentHorizontalAlignment = .fill
+            button.contentVerticalAlignment = .fill
+            
+            return button
+        }
+        
+        func profileEditButton() -> UIButton {
+            let button = UIButton()
+            
+            button.setTitle("프로필 편집", for: .normal)
+            button.setTitleColor(UIColor.systemBlue, for: .normal)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .heavy)
+            button.titleLabel?.textAlignment = .center
+            
+            button.tintColor = UIColor.white.withAlphaComponent(0.85)
+            button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 4.5, bottom: 0, right: 0)
+            button.semanticContentAttribute = .forceRightToLeft
+            button.contentVerticalAlignment = .center
+            button.contentHorizontalAlignment = .leading
+            
+            return button
+        }
     }
 }
 
