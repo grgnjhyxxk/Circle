@@ -8,6 +8,7 @@
 import UIKit
 
 var myDataList = [UserData]()
+var searchUserList = [String]()
 
 struct UserData {
     var profileName: String
@@ -19,7 +20,7 @@ struct UserData {
     var followerDigits: Int
     var followingDigits: Int
     var socialValidation: Bool
-    var intrduction: String?
+    var introduction: String?
     var email: String?
     var phoneNumber: String?
     var image: String?
@@ -35,10 +36,13 @@ func formatNumber(_ number: Int) -> String {
 
     if number >= 1_000_000 {
         let roundedValue = round(Double(number) / 100_000) / 10
-        return "\(formatter.string(from: NSNumber(value: roundedValue)) ?? "")M"
+        return "\(formatter.string(from: NSNumber(value: roundedValue)) ?? "")만"
     } else if number >= 1_000 {
         let roundedValue = round(Double(number) / 100) / 10
-        return "\(formatter.string(from: NSNumber(value: roundedValue)) ?? "")k"
+        return "\(formatter.string(from: NSNumber(value: roundedValue)) ?? "")천"
+    } else if number >= 100_000_000 {
+        let roundedValue = round(Double(number) / 100_000_000) / 10
+        return "\(formatter.string(from: NSNumber(value: roundedValue)) ?? "")억"
     } else {
         return "\(number)"
     }
