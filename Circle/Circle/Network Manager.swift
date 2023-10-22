@@ -13,7 +13,8 @@ func signUpDataUploadServer(userData: UserData, completion: @escaping (Bool, Err
     
     let userID = userData.userID ?? generateRandomString(length: 20)
     
-    var data: [String: Any] = [
+    let data: [String: Any] = [
+        "profileName": userData.profileName.lowercased(),
         "userID": userID,
         "userName": userData.userName,
         "password": userData.password,
@@ -23,7 +24,7 @@ func signUpDataUploadServer(userData: UserData, completion: @escaping (Bool, Err
         "followerDigits": userData.followerDigits,
         "followingDigits": userData.followingDigits,
         "socialValidation": userData.socialValidation,
-        "intrduction": userData.intrduction ?? "",
+        "introduction": userData.introduction ?? "",
         "email": userData.email ?? "",
         "phoneNumber": userData.phoneNumber ?? "",
         "image": userData.image ?? "",
@@ -31,7 +32,7 @@ func signUpDataUploadServer(userData: UserData, completion: @escaping (Bool, Err
         "gender": userData.gender ?? ""
     ]
     
-    dataBase.collection("dataBase").document("users").collection(userData.profileName.lowercased()).document("info").setData(data, merge: true) { error in
+    dataBase.collection("users").document("\(userID)").setData(data, merge: true) { error in
         if let error = error {
             completion(false, error)
         } else {
@@ -43,39 +44,40 @@ func signUpDataUploadServer(userData: UserData, completion: @escaping (Bool, Err
 func fetchUserData(profileName: String, completion: @escaping (UserData?, Error?) -> Void) {
     let dataBase = Firestore.firestore()
 
-    let docRef = dataBase.collection("dataBase").document("users").collection(profileName.lowercased()).document("info")
+    let userCollectionRef = dataBase.collection("users")
 
-    docRef.getDocument { (document, error) in
-        if let document = document, document.exists {
-            if let data = document.data() {
-                let userData = UserData(
-                    profileName: profileName,
-                    userName: data["userName"] as? String ?? "",
-                    password: data["password"] as? String ?? "",
-                    myCircleDigits: data["myCircleDigits"] as? Int ?? 0,
-                    myInTheCircleDigits: data["myInTheCircleDigits"] as? Int ?? 0,
-                    myPostDigits: data["myPostDigits"] as? Int ?? 0,
-                    followerDigits: data["followerDigits"] as? Int ?? 0,
-                    followingDigits: data["followingDigits"] as? Int ?? 0,
-                    socialValidation: data["socialValidation"] as? Bool ?? false,
-                    intrduction: data["intrduction"] as? String,
-                    email: data["email"] as? String,
-                    phoneNumber: data["phoneNumber"] as? String,
-                    image: data["image"] as? String,
-                    birth: data["birth"] as? String,
-                    gender: data["gender"] as? String,
-                    userID: data["userID"] as? String
-                )
-                myDataList.append(userData)
-                
-                completion(userData, nil)
-            } else {
-                completion(nil, nil)
-            }
-        } else {
+    userCollectionRef.whereField("profileName", isEqualTo: profileName.lowercased()).getDocuments { (querySnapshot, error) in
+        if let error = error {
+            completion(nil, error)
+            return
+        }
+
+        guard let document = querySnapshot?.documents.first else {
             let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Document does not exist"])
             completion(nil, error)
+            return
         }
+
+        let userData = UserData(
+            profileName: profileName.lowercased(),
+            userName: document["userName"] as? String ?? "",
+            password: document["password"] as? String ?? "",
+            myCircleDigits: document["myCircleDigits"] as? Int ?? 0,
+            myInTheCircleDigits: document["myInTheCircleDigits"] as? Int ?? 0,
+            myPostDigits: document["myPostDigits"] as? Int ?? 0,
+            followerDigits: document["followerDigits"] as? Int ?? 0,
+            followingDigits: document["followingDigits"] as? Int ?? 0,
+            socialValidation: document["socialValidation"] as? Bool ?? false,
+            introduction: document["introduction"] as? String,
+            email: document["email"] as? String,
+            phoneNumber: document["phoneNumber"] as? String,
+            image: document["image"] as? String,
+            birth: document["birth"] as? String,
+            gender: document["gender"] as? String,
+            userID: document["userID"] as? String
+        )
+        myDataList.append(userData)
+        completion(userData, nil)
     }
 }
 
@@ -85,19 +87,43 @@ func comparePasswords(inputPassword: String, savedPassword: String) -> Bool {
 
 func checkIfProfileNameExists(_ profileName: String, completion: @escaping (Bool, Error?) -> Void) {
     let dataBase = Firestore.firestore()
+    let usersRef = dataBase.collection("users").whereField("profileName", isEqualTo: profileName)
     
-    let profileNameRef = dataBase.collection("dataBase").document("users").collection(profileName.lowercased())
-    
-    profileNameRef.getDocuments { (snapshot, error) in
+    usersRef.getDocuments { (querySnapshot, error) in
         if let error = error {
             completion(false, error)
             return
         }
         
-        if snapshot?.isEmpty == true {
-            completion(false, nil)
-        } else {
+        if let documents = querySnapshot?.documents, !documents.isEmpty {
             completion(true, nil)
+            
+            
+        } else {
+            completion(false, nil)
         }
     }
+}
+
+func searchUsers(withPrefix prefix: String, completion: @escaping ([String], Error?) -> Void) {
+    let dataBase = Firestore.firestore()
+    let userCollectionRef = dataBase.collection("users")
+    
+    userCollectionRef.whereField("profileName", isGreaterThanOrEqualTo: prefix.lowercased())
+        .whereField("profileName", isLessThan: prefix + "z")  // Ensure only names starting with prefix are retrieved
+    
+        .getDocuments { (querySnapshot, error) in
+            if let error = error {
+                completion([], error)
+                return
+            }
+            
+            guard let documents = querySnapshot?.documents else {
+                completion([], nil)
+                return
+            }
+            
+            let profileNames = documents.compactMap { $0["profileName"] as? String }
+            completion(profileNames, nil)
+        }
 }
