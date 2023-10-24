@@ -89,7 +89,7 @@ class IntroViewController: UIViewController {
         spinningCirclesView.setCircleSizes(bigCircleSize: 20, smallCircleSize: 5, radius: 17)
 
         spinningCirclesView.snp.makeConstraints { make in
-            make.leading.equalTo(introMainTitleLabel.snp.trailing).offset(30)
+            make.leading.equalTo(introMainTitleLabel.snp.trailing).offset(25)
             make.top.equalTo(introMainTitleLabel).offset(32)
         }
         
@@ -157,9 +157,7 @@ class IntroViewController: UIViewController {
     @objc private func signUpButtonTouchAction() {
         let viewController = ProfileNameViewController()
         
-        if let navigationController = self.view.window?.rootViewController as? UINavigationController {
-            navigationController.pushViewController(viewController, animated: true)
-        }
+        show(viewController, sender: nil)
     }
     
     @objc private func startButtonTouchAction() {
@@ -217,8 +215,8 @@ class IntroViewController: UIViewController {
                 
             } else if let idText = self.idTextField.text, let passwordText = self.passwordTextField.text, !passwordText.isEmpty && !idText.isEmpty {
                 isLoggedInBool = true
-                    
-                fetchUserData(profileName: "\(idText)") { (userData, error) in
+                let id = idText.lowercased().replacingOccurrences(of: " ", with: "")
+                fetchUserData(profileName: "\(id)") { (userData, error) in
                     if let userData = userData {
                         let inputPassword = userData.password
                         if comparePasswords(inputPassword: passwordText, savedPassword: inputPassword) {
