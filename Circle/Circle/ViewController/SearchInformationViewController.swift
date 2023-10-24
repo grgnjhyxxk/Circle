@@ -8,21 +8,35 @@
 import UIKit
 import SnapKit
 
-class SearchInformationViewController: UIViewController {
+class SearchInformationViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
 
     private var viewList: [UIView] = []
     
-    private let searchBar: UISearchBar = SearchView().searchBar()
+    private let searchController = UISearchController()
+    private let tableView: UITableView = UITableView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         addOnView()
         viewLayout()
+        tableView.delegate = self
+        tableView.dataSource = self
+        searchController.searchBar.delegate = self
+        tableView.separatorStyle = .none
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.isHidden = true
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+         self.view.endEditing(true)
     }
 
     private func addOnView() {
-        viewList = [searchBar]
+        viewList = [tableView]
         
         for uiView in viewList {
             view.addSubview(uiView)
@@ -32,12 +46,89 @@ class SearchInformationViewController: UIViewController {
     private func viewLayout() {
         view.backgroundColor = UIColor.black
         
-        searchBar.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
-            make.leading.equalTo(view.snp.leading).offset(15)
-            make.trailing.equalTo(view.snp.trailing).offset(-15)
-            make.height.equalTo(40)
+        navigationController?.navigationBar.isTranslucent = false
+        navigationController?.navigationBar.shadowImage = UIImage()
+        navigationItem.titleView = searchController.searchBar
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchBar.searchTextField.overrideUserInterfaceStyle = .dark
+        searchController.searchBar.searchTextField.layer.cornerRadius = 15
+        searchController.searchBar.searchTextField.layer.borderWidth = 0.5
+        searchController.searchBar.searchTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
+        searchController.searchBar.searchTextField.backgroundColor = UIColor.black
+        searchController.searchBar.setValue("닫기", forKey: "cancelButtonText")
+        
+        tableView.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.leading.trailing.bottom.equalToSuperview()
         }
+        
+        tableView.rowHeight = 60
+        tableView.register(SearchInformationTableViewCell.self, forCellReuseIdentifier: "SearchInformationTableViewCell")
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return searchUserList.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "SearchInformationTableViewCell", for: indexPath) as! SearchInformationTableViewCell
+        
+        cell.profileNameLabel.text = searchUserList[indexPath.row].profileName
+        cell.userNameLabel.text = searchUserList[indexPath.row].userName
+        
+        if let imageString = searchUserList[indexPath.row].profileImage {
+            if let image = UIImage(named: imageString) {
+                cell.profileImageView.image = image
+            } else {
+                cell.profileImageView.image = UIImage(named: "BasicUserProfileImage")
+            }
+        } else {
+            cell.profileImageView.image = UIImage(named: "BasicUserProfileImage")
+        }
+        
+        if searchUserList[indexPath.row].socialValidation {
+            if let image = UIImage(systemName: "checkmark.seal.fill")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 10, weight: .light)) {
+                cell.socialValidationImageView.image = image
+                cell.socialValidationImageView.isHidden = false
+            }
+        } else {
+            cell.socialValidationImageView.isHidden = true
+        }
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true) // 선택한 셀을 다시 선택해도 반응하도록 함
+    }
+    
+    @objc func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        let searchText = searchBar.text ?? ""
+        guard searchText.count > 0 else {
+            searchUserList = [] // 검색어가 없을 때 빈 리스트로 초기화
+            self.tableView.reloadData()
+            return
+        }
+        
+        searchUsers(withPrefix: searchText.lowercased()) { (searchResults, error) in
+            if let error = error {
+                print("Error searching users: \(error.localizedDescription)")
+                return
+            }
+            print("\(searchText)")
+            searchUserList = searchResults // 수정된 부분: profileNames 대신 searchResults를 사용
+            print("\(searchUserList)")
+            self.tableView.reloadData()
+        }
+    }
+    
+    @objc func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        tableView.isHidden = false
+        return true
+    }
+    
+    @objc func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        tableView.isHidden = true
+        searchUserList = []
     }
 }
