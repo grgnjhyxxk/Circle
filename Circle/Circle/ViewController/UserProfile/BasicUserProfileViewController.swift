@@ -20,8 +20,10 @@ class BasicUserProfileViewController: UIViewController {
     var profileNameButton: UIButton = UserMainView().profileNameButton()
     
     var userNameTitleLabel: UILabel = UserMainView().userNameTitleLabel()
+    var userCategoryTitleLabel: UILabel = UserMainView().userCategoryTitleLabel()
     var introductionLabel: UILabel = UserMainView().introductionLabel()
     
+    var userProfileBackgroundImageView: UIImageView = UserMainView().userProfileBackgroundImageView()
     var userProfileImageView: UIImageView = UserMainView().userProfileImageView()
     
     var myPersonalPostsFeedButton: UIButton = UserMainView().selectMyPostFeedButton()
@@ -54,8 +56,13 @@ class BasicUserProfileViewController: UIViewController {
         navigationBarLayout()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        contentViewLayout()
+    }
+    
     func addOnView() {
-        viewList = [scrollView]
+        viewList = [userProfileBackgroundImageView, scrollView]
         
         for uiView in viewList {
             view.addSubview(uiView)
@@ -66,30 +73,37 @@ class BasicUserProfileViewController: UIViewController {
     
     func viewLayout() {
         view.backgroundColor = UIColor.black
-        scrollView.backgroundColor = UIColor.black
+        scrollView.backgroundColor = UIColor.clear
         contentView.backgroundColor = UIColor.black
+        scrollView.refreshControl = refreshControl
+
+        
+        userProfileBackgroundImageView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(contentView.safeAreaLayoutGuide.snp.top)
+        }
         
         scrollView.snp.makeConstraints { make in
-            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top) // 수정된 부분
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             make.leading.trailing.bottom.equalToSuperview()
         }
         
         contentView.snp.makeConstraints { make in
-            make.top.equalTo(scrollView)
+            make.top.equalTo(scrollView).offset(90)
             make.leading.trailing.bottom.equalToSuperview()
             make.width.equalToSuperview()
             make.height.equalTo(1000)
         }
-        
-        scrollView.refreshControl = refreshControl
-        
+                
+        scrollView.showsVerticalScrollIndicator = false
         navigationController?.navigationBar.isTranslucent = false
         navigationController?.navigationBar.shadowImage = UIImage()
     }
     
     func addOnContentView() {
         contentViewList = [userProfileImageView,
-                           userNameTitleLabel, introductionLabel,
+                           userNameTitleLabel, userCategoryTitleLabel, introductionLabel,
                            topViewBottomSeparator,
                            myPersonalPostsFeedButton, myCirclePostsFeedButton,
                            profileEditButton,
@@ -102,18 +116,23 @@ class BasicUserProfileViewController: UIViewController {
     
     func contentViewLayout() {
         userProfileImageView.snp.makeConstraints { make in
-            make.top.equalTo(contentView).offset(20)
+            make.top.equalTo(contentView).offset(-45)
             make.centerX.equalTo(contentView)
             make.size.equalTo(CGSize(width: 90, height: 90))
         }
         
         userNameTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(userProfileImageView.snp.bottom).offset(10)
+            make.top.equalTo(userProfileImageView.snp.bottom).offset(5)
+            make.centerX.equalTo(contentView)
+        }
+        
+        userCategoryTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(userNameTitleLabel.snp.bottom)
             make.centerX.equalTo(contentView)
         }
         
         introductionLabel.snp.makeConstraints { make in
-            make.top.equalTo(userNameTitleLabel.snp.bottom).offset(5)
+            make.top.equalTo(userCategoryTitleLabel.snp.bottom)
             make.leading.equalTo(contentView).offset(20)
             make.trailing.equalTo(contentView).offset(-20)
         }
@@ -121,9 +140,10 @@ class BasicUserProfileViewController: UIViewController {
         subStatusButton.snp.makeConstraints { make in
             make.top.equalTo(introductionLabel.snp.bottom).offset(20)
             make.centerX.equalTo(contentView)
-            make.width.equalTo(subStatusButton.titleLabel!.intrinsicContentSize.width + 50)
+            make.width.equalTo(subStatusButton.titleLabel!.snp.width).offset(52)
             make.height.equalTo(30)
         }
+//        introductionLabel.snp.bottom || userNameTitleLabel.snp.bottom || userCategoryTitleLabel.snp.bottom
         
         myPersonalPostsFeedButton.setTitle("게시물", for: .normal)
         myCirclePostsFeedButton.setTitle("서클 게시물", for: .normal)
@@ -134,7 +154,7 @@ class BasicUserProfileViewController: UIViewController {
     func addTargets() {
         myPersonalPostsFeedButton.addTarget(self, action: #selector(selectMyPostFeedButtonAction), for: .touchUpInside)
         myCirclePostsFeedButton.addTarget(self, action: #selector(selectMyPostFeedButtonAction), for: .touchUpInside)
-        profileEditButton.addTarget(self, action: #selector(settingListButtonAction), for: .touchUpInside)
+        profileEditButton.addTarget(self, action: #selector(profileEdditButtonAction), for: .touchUpInside)
     }
     
     func uiViewUpdate() {
