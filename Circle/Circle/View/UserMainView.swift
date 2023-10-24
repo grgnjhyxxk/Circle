@@ -31,11 +31,21 @@ class UserMainView: UIView {
         return imageView
     }
     
+    func userProfileBackgroundImageView() -> UIImageView {
+        let imageView = UIImageView()
+        
+        imageView.backgroundColor = UIColor.white.withAlphaComponent(0.05)
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+
+        return imageView
+    }
+    
     func userNameTitleLabel() -> UILabel {
         let label = UILabel()
         
         label.textColor = UIColor.white
-        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
         label.textAlignment = .left
         
         return label
@@ -44,9 +54,10 @@ class UserMainView: UIView {
     func userCategoryTitleLabel() -> UILabel {
         let label = UILabel()
         
-        label.textColor = UIColor.white
-        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        label.textColor = UIColor.white.withAlphaComponent(0.5)
+        label.font = UIFont.systemFont(ofSize: 14, weight: .thin)
         label.textAlignment = .left
+        label.text = "개발자"
         
         return label
     }
@@ -56,7 +67,7 @@ class UserMainView: UIView {
         
         label.numberOfLines = 0
         label.textColor = UIColor.white
-        label.font = UIFont.systemFont(ofSize: 14, weight: .light)
+        label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         label.textAlignment = .center
         
         return label
