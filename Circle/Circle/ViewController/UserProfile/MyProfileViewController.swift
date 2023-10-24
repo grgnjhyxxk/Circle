@@ -16,8 +16,8 @@ class MyProfileViewController: BasicUserProfileViewController {
     
     override func contentViewSetting() {
         profileEditButton.snp.makeConstraints { make in
-            make.top.equalTo(userProfileImageView)
-            make.trailing.equalTo(-20)
+            make.top.equalToSuperview().offset(15)
+            make.trailing.equalToSuperview().offset(-15)
             make.size.equalTo(CGSize(width: 70, height: 30))
         }
         
@@ -59,6 +59,7 @@ class MyProfileViewController: BasicUserProfileViewController {
 //        profileNameTitleLabel.text = userData.profileName
         profileNameButton.setTitle("\(userData.profileName)", for: .normal)
         userNameTitleLabel.text = userData.userName
+        userCategoryTitleLabel.text = userData.userCategory
         introductionLabel.text = userData.introduction
         
         let subStatusButtonString = "팔로우 \(formatNumber(userData.followerDigits))   팔로잉 \(formatNumber(userData.followingDigits))"
@@ -73,7 +74,7 @@ class MyProfileViewController: BasicUserProfileViewController {
         
         subStatusButton.setAttributedTitle(attributedsubStatusButtonString, for: .normal)
         
-        if let imageString = userData.image {
+        if let imageString = userData.profileImage {
             if let image = UIImage(named: imageString) {
                 userProfileImageView.image = image
             } else {
@@ -81,6 +82,16 @@ class MyProfileViewController: BasicUserProfileViewController {
             }
         } else {
             userProfileImageView.image = UIImage(named: "BasicUserProfileImage")
+        }
+        
+        if let imageString = userData.backgroundImage {
+            if let image = UIImage(named: imageString) {
+                userProfileBackgroundImageView.image = image
+            } else {
+                userProfileBackgroundImageView.image = UIImage()
+            }
+        } else {
+            userProfileBackgroundImageView.image = UIImage()
         }
         
         if userData.socialValidation {
@@ -104,6 +115,8 @@ class MyProfileViewController: BasicUserProfileViewController {
         let settingListBarButton = UIButton()
         let postingBarButton = UIButton()
 
+        settingListBarButton.addTarget(self, action: #selector(settingListButtonAction), for: .touchUpInside)
+        
         if let image = UIImage(systemName: "list.bullet") {
             settingListBarButton.setImage(image, for: .normal)
         }
@@ -159,6 +172,7 @@ class MyProfileViewController: BasicUserProfileViewController {
             }
             self.refreshControl.endRefreshing()
             self.uiViewUpdate()
+            self.viewLayout()
             self.mainViewSetting()
             self.contentViewLayout()
             self.contentViewSetting()
@@ -173,7 +187,9 @@ class MyProfileViewController: BasicUserProfileViewController {
     }
     
     @objc override func profileEdditButtonAction() {
-         
+        let viewController = EditPorfileViewController()
+
+        show(viewController, sender: nil)
     }
 }
 
