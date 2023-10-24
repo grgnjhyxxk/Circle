@@ -34,7 +34,6 @@ class BaseSignUpViewController: UIViewController, UITextFieldDelegate {
     internal var mainTextField: UITextField = SignUpView().mainTextField()
     internal var checkTextField: UITextField = SignUpView().mainTextField()
     
-    internal let nextButton = UIBarButtonItem(title: "다음", style: .done, target: self, action: #selector(nextButtonAction))
     internal let sendEmailVerificationButton: UIButton = SignUpView().checkButton()
     internal let verifyCodeButton: UIButton = SignUpView().checkButton()
 
@@ -55,14 +54,6 @@ class BaseSignUpViewController: UIViewController, UITextFieldDelegate {
         
         mainTextField.delegate = self
         checkTextField.delegate = self
-        
-        mainTextField.becomeFirstResponder()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        mainTextField.becomeFirstResponder()
     }
     
     internal func addOnView() {
@@ -99,7 +90,6 @@ class BaseSignUpViewController: UIViewController, UITextFieldDelegate {
         backButton.tintColor = UIColor.white
         
         navigationItem.leftBarButtonItem = backButton
-        navigationItem.rightBarButtonItem = nextButton
         
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
@@ -122,7 +112,7 @@ class BaseSignUpViewController: UIViewController, UITextFieldDelegate {
     }
     
     internal func navigationItemSetting() {
-        nextButton.isEnabled = false
+
     }
     
     internal func addTargets() {

@@ -9,6 +9,11 @@ import UIKit
 import SnapKit
 
 class UserNameViewController: BaseSignUpViewController {
+    lazy var nextButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "다음", style: .done, target: self, action: #selector(nextButtonAction))
+        button.isEnabled = true
+        return button
+    }()
     
     override func uiViewUpdate() {
         mainTitleLabel.text = mainTitleLabelList[1]
@@ -18,7 +23,7 @@ class UserNameViewController: BaseSignUpViewController {
     }
     
     override func navigationItemSetting() {
-        nextButton.isEnabled = true
+        navigationItem.rightBarButtonItem = nextButton
     }
     
     override func nextButtonAction() {
@@ -26,9 +31,7 @@ class UserNameViewController: BaseSignUpViewController {
         viewController.profileNameInput = self.profileNameInput
         viewController.userNameInput = mainTextField.text
         
-        if let navigationController = self.navigationController {
-            navigationController.pushViewController(viewController, animated: true)
-        }
+        self.show(viewController, sender: nil)
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {

@@ -9,6 +9,11 @@ import UIKit
 import SnapKit
 
 class AccountEmailViewController: BaseSignUpViewController {
+    lazy var nextButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(nextButtonAction))
+        button.isEnabled = false
+        return button
+    }()
     
     override func uiViewUpdate() {
         mainTitleLabel.text = mainTitleLabelList[3]
@@ -29,8 +34,6 @@ class AccountEmailViewController: BaseSignUpViewController {
         
         sendEmailVerificationButtonActiveDisable()
         verifyCodeButtonActiveDisable()
-        
-        nextButton.title = "완료"
     }
     
     override func nextButtonAction() {
@@ -152,8 +155,6 @@ class AccountEmailViewController: BaseSignUpViewController {
         verifyCodeButton.isEnabled = false
         
         verifyCodeButtonActiveDisable()
-        
-        nextButton.isEnabled = true
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {

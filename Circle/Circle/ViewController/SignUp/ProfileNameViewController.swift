@@ -9,6 +9,11 @@ import UIKit
 import SnapKit
 
 class ProfileNameViewController: BaseSignUpViewController {
+    lazy var nextButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "다음", style: .done, target: self, action: #selector(nextButtonAction))
+        button.isEnabled = false
+        return button
+    }()
     
     override func uiViewUpdate() {
         mainTitleLabel.text = mainTitleLabelList[0]
@@ -17,12 +22,21 @@ class ProfileNameViewController: BaseSignUpViewController {
         errorTextLabel.text = errorTextLabelList[0]
     }
     
+    override func navigationItemSetting() {
+        navigationItem.rightBarButtonItem = nextButton
+    }
+    
     override func errorTextLabelLayout() {
         errorTextLabel.snp.makeConstraints { make in
             make.top.equalTo(mainTextField.snp.bottom).offset(15)
             make.leading.equalTo(mainTextField)
             make.trailing.equalToSuperview()
         }
+    }
+    
+    override func backButtonAction() {
+        mainTextField.resignFirstResponder()
+        navigationController?.popViewController(animated: true)
     }
     
     override func nextButtonAction() {
@@ -46,13 +60,11 @@ class ProfileNameViewController: BaseSignUpViewController {
                     let viewController = UserNameViewController()
                     viewController.profileNameInput = self.mainTextField.text
                     
-                    if let navigationController = self.view.window?.rootViewController as? UINavigationController {
-                        self.errorTextLabel.isHidden = true
-                        self.mainTextField.layer.borderWidth = 0.5
-                        self.mainTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
-                        
-                        navigationController.pushViewController(viewController, animated: true)
-                    }
+                    self.errorTextLabel.isHidden = true
+                    self.mainTextField.layer.borderWidth = 0.5
+                    self.mainTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
+                    
+                    self.show(viewController, sender: nil)
                 }
             }
         }

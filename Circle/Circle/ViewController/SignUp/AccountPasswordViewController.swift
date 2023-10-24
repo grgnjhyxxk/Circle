@@ -9,6 +9,11 @@ import UIKit
 import SnapKit
 
 class AccountPasswordViewController: BaseSignUpViewController {
+    lazy var nextButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(nextButtonAction))
+        button.isEnabled = false
+        return button
+    }()
     
     override func errorTextLabelLayout() {
         errorTextLabel.snp.makeConstraints { make in
@@ -29,8 +34,10 @@ class AccountPasswordViewController: BaseSignUpViewController {
         
         mainTextField.isSecureTextEntry = true
         checkTextField.isSecureTextEntry = true
-
-        nextButton.title = "완료"
+    }
+    
+    override func navigationItemSetting() {
+        navigationItem.rightBarButtonItem = nextButton
     }
     
     override func uiViewUpdate() {
