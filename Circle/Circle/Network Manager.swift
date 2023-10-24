@@ -24,10 +24,12 @@ func signUpDataUploadServer(userData: UserData, completion: @escaping (Bool, Err
         "followerDigits": userData.followerDigits,
         "followingDigits": userData.followingDigits,
         "socialValidation": userData.socialValidation,
+        "backgroundImage": userData.backgroundImage ?? "",
+        "profileImage": userData.profileImage ?? "",
+        "userCategory": userData.userCategory ?? "",
         "introduction": userData.introduction ?? "",
         "email": userData.email ?? "",
         "phoneNumber": userData.phoneNumber ?? "",
-        "image": userData.image ?? "",
         "birth": userData.birth ?? "",
         "gender": userData.gender ?? ""
     ]
@@ -68,10 +70,12 @@ func fetchUserData(profileName: String, completion: @escaping (UserData?, Error?
             followerDigits: document["followerDigits"] as? Int ?? 0,
             followingDigits: document["followingDigits"] as? Int ?? 0,
             socialValidation: document["socialValidation"] as? Bool ?? false,
+            backgroundImage: document["backgroundImage"] as? String,
+            profileImage: document["profileImage"] as? String,
+            userCategory: document["userCategory"] as? String,
             introduction: document["introduction"] as? String,
             email: document["email"] as? String,
             phoneNumber: document["phoneNumber"] as? String,
-            image: document["image"] as? String,
             birth: document["birth"] as? String,
             gender: document["gender"] as? String,
             userID: document["userID"] as? String
@@ -105,7 +109,7 @@ func checkIfProfileNameExists(_ profileName: String, completion: @escaping (Bool
     }
 }
 
-func searchUsers(withPrefix prefix: String, completion: @escaping ([String], Error?) -> Void) {
+func searchUsers(withPrefix prefix: String, completion: @escaping ([SearchResult], Error?) -> Void) {
     let dataBase = Firestore.firestore()
     let userCollectionRef = dataBase.collection("users")
     
@@ -123,7 +127,18 @@ func searchUsers(withPrefix prefix: String, completion: @escaping ([String], Err
                 return
             }
             
-            let profileNames = documents.compactMap { $0["profileName"] as? String }
-            completion(profileNames, nil)
+            let searchResults = documents.compactMap { document -> SearchResult? in
+                if let profileName = document["profileName"] as? String,
+                   let userName = document["userName"] as? String,
+                   let socialValidation = document["socialValidation"] as? Bool {
+                    
+                    let profileImage = document["profileImage"] as? String
+                    return SearchResult(profileName: profileName, profileImage: profileImage, userName: userName, socialValidation: socialValidation)
+                }
+                return nil
+            }
+            
+            completion(searchResults, nil)
         }
 }
+
