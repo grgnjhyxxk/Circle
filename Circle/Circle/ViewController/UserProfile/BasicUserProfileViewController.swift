@@ -58,6 +58,7 @@ class BasicUserProfileViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        uiViewUpdate()
         contentViewLayout()
     }
     
@@ -90,7 +91,7 @@ class BasicUserProfileViewController: UIViewController {
         }
         
         contentView.snp.makeConstraints { make in
-            make.top.equalTo(scrollView).offset(90)
+            make.top.equalTo(scrollView).offset(120)
             make.leading.trailing.bottom.equalToSuperview()
             make.width.equalToSuperview()
             make.height.equalTo(1000)
@@ -133,8 +134,8 @@ class BasicUserProfileViewController: UIViewController {
         
         introductionLabel.snp.makeConstraints { make in
             make.top.equalTo(userCategoryTitleLabel.snp.bottom)
-            make.leading.equalTo(contentView).offset(20)
-            make.trailing.equalTo(contentView).offset(-20)
+            make.leading.equalTo(contentView).offset(50)
+            make.trailing.equalTo(contentView).offset(-50)
         }
         
         subStatusButton.snp.makeConstraints { make in
@@ -143,7 +144,6 @@ class BasicUserProfileViewController: UIViewController {
             make.width.equalTo(subStatusButton.titleLabel!.snp.width).offset(52)
             make.height.equalTo(30)
         }
-//        introductionLabel.snp.bottom || userNameTitleLabel.snp.bottom || userCategoryTitleLabel.snp.bottom
         
         myPersonalPostsFeedButton.setTitle("게시물", for: .normal)
         myCirclePostsFeedButton.setTitle("서클 게시물", for: .normal)
@@ -193,9 +193,5 @@ class BasicUserProfileViewController: UIViewController {
     
     func navigationBarLayout() {
 
-    }
-    
-    @objc func backButtonAction() {
-        
     }
 }
