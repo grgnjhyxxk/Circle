@@ -54,47 +54,34 @@ class MyProfileViewController: BasicUserProfileViewController {
     }
     
     override func uiViewUpdate() {
-        let userData = myDataList[0]
+        let sharedProfile = SharedProfileModel.shared
         
-//        profileNameTitleLabel.text = userData.profileName
-        profileNameButton.setTitle("\(userData.profileName)", for: .normal)
-        userNameTitleLabel.text = userData.userName
-        userCategoryTitleLabel.text = userData.userCategory
-        introductionLabel.text = userData.introduction
-        
-        let subStatusButtonString = "팔로우 \(formatNumber(userData.followerDigits))   팔로잉 \(formatNumber(userData.followingDigits))"
-        
+        let subStatusButtonString = "팔로우 \(formatNumber(sharedProfile.followerDigits ?? 0))   팔로잉 \(formatNumber(sharedProfile.followingDigits ?? 0))"
         let attributedsubStatusButtonString = NSMutableAttributedString(string: subStatusButtonString)
-        
-        let subStatusButtonStringRangeOne = (subStatusButtonString as NSString).range(of: "\(formatNumber(userData.followerDigits))")
-        let subStatusButtonStringRangeTwo = (subStatusButtonString as NSString).range(of: "\(formatNumber(userData.followingDigits))")
+        let subStatusButtonStringRangeOne = (subStatusButtonString as NSString).range(of: "\(formatNumber(sharedProfile.followerDigits ?? 0))")
+        let subStatusButtonStringRangeTwo = (subStatusButtonString as NSString).range(of: "\(formatNumber(sharedProfile.followingDigits ?? 0))")
 
         attributedsubStatusButtonString.addAttribute(.font, value: UIFont.systemFont(ofSize: 14, weight: .semibold), range: subStatusButtonStringRangeOne)
         attributedsubStatusButtonString.addAttribute(.font, value: UIFont.systemFont(ofSize: 14, weight: .semibold), range: subStatusButtonStringRangeTwo)
         
         subStatusButton.setAttributedTitle(attributedsubStatusButtonString, for: .normal)
+        profileNameButton.setTitle("\(sharedProfile.profileName ?? "")", for: .normal)
+        userNameTitleLabel.text = sharedProfile.userName
+        userCategoryTitleLabel.text = sharedProfile.userCategory
+        introductionLabel.text = sharedProfile.introduction
+        userProfileImageView.image = sharedProfile.profileImage
         
-        if let imageString = userData.profileImage {
-            if let image = UIImage(named: imageString) {
-                userProfileImageView.image = image
-            } else {
-                userProfileImageView.image = UIImage(named: "BasicUserProfileImage")
-            }
-        } else {
-            userProfileImageView.image = UIImage(named: "BasicUserProfileImage")
-        }
-        
-        if let imageString = userData.backgroundImage {
+        if let imageString = sharedProfile.backgroundImage {
             if let image = UIImage(named: imageString) {
                 userProfileBackgroundImageView.image = image
             } else {
-                userProfileBackgroundImageView.image = UIImage()
+                userProfileBackgroundImageView.image = nil
             }
         } else {
-            userProfileBackgroundImageView.image = UIImage()
+            userProfileBackgroundImageView.image = nil
         }
         
-        if userData.socialValidation {
+        if sharedProfile.socialValidation ?? false {
             if let image = UIImage(systemName: "checkmark.seal.fill")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 14, weight: .light)) {
                 profileNameButton.setImage(image, for: .normal)
             }
@@ -110,8 +97,6 @@ class MyProfileViewController: BasicUserProfileViewController {
     }
 
     override func navigationBarLayout() {
-        let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .plain, target: self, action: #selector(backButtonAction))
-        
         let settingListBarButton = UIButton()
         let postingBarButton = UIButton()
 
@@ -125,7 +110,6 @@ class MyProfileViewController: BasicUserProfileViewController {
             postingBarButton.setImage(image, for: .normal)
         }
         
-        backButton.tintColor = UIColor.white
         settingListBarButton.tintColor = UIColor.white
         postingBarButton.tintColor = UIColor.white
         settingListBarButton.contentHorizontalAlignment = .fill
@@ -153,42 +137,37 @@ class MyProfileViewController: BasicUserProfileViewController {
 
         let rightStackBarButtonItem = UIBarButtonItem(customView: righthStackview)
         
-        navigationItem.leftBarButtonItem = backButton
         navigationItem.titleView = profileNameButton
         navigationItem.rightBarButtonItem = rightStackBarButtonItem
     }
     
     @objc override func refreshData() {
-        let profileName = myDataList[0].profileName
-        fetchUserData(profileName: "\(profileName)") { (userData, error) in
-            if let userData = userData {
-                myDataList.removeAll()
-                myDataList.append(userData)
-                print(myDataList)
-            } else if let error = error {
+        let profileName = SharedProfileModel.shared.profileName
+        fetchUserData(profileName: "\(profileName ?? "")") { (error) in
+            if let error = error {
                 print("Error: \(error.localizedDescription)")
-            } else {
-                
             }
+            
+            DispatchQueue.main.async {
+                self.uiViewUpdate()
+            }
+                self.viewLayout()
+                self.mainViewSetting()
+                self.contentViewLayout()
+                self.contentViewSetting()
+                self.navigationBarLayout()
+
             self.refreshControl.endRefreshing()
-            self.uiViewUpdate()
-            self.viewLayout()
-            self.mainViewSetting()
-            self.contentViewLayout()
-            self.contentViewSetting()
-            self.navigationBarLayout()
         }
     }
     
     @objc override func settingListButtonAction() {
         let viewController = SettingTableViewController()
-        
         present(viewController, animated: true)
     }
     
     @objc override func profileEdditButtonAction() {
         let viewController = EditPorfileViewController()
-
         show(viewController, sender: nil)
     }
 }
