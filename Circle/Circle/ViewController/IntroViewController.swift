@@ -201,7 +201,6 @@ class IntroViewController: UIViewController {
                         self.idTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
                     }
                 }
-
             } else if let passwordText = self.passwordTextField.text, passwordText.isEmpty {
                 UIView.animate(withDuration: 0.5) {
                     self.passwordTextField.layer.borderWidth = 2
@@ -210,30 +209,28 @@ class IntroViewController: UIViewController {
                 } completion: { _ in
                     UIView.animate(withDuration: 0.5) {
                         self.passwordTextField.layer.borderWidth = 0.5
-                        self.passwordTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor                        }
+                        self.passwordTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
+                    }
                 }
-                
             } else if let idText = self.idTextField.text, let passwordText = self.passwordTextField.text, !passwordText.isEmpty && !idText.isEmpty {
                 isLoggedInBool = true
                 let id = idText.lowercased().replacingOccurrences(of: " ", with: "")
-                fetchUserData(profileName: "\(id)") { (userData, error) in
-                    if let userData = userData {
-                        let inputPassword = userData.password
-                        if comparePasswords(inputPassword: passwordText, savedPassword: inputPassword) {
-                            if let tabBarController = self.isLoggedIn() {
-                                self.errorTextLabel.isHidden = true
-                                tabBarController.modalPresentationStyle = .fullScreen
-                                self.present(tabBarController, animated: true)
-                            }
-                        } else {
-                            self.errorTextLabel.isHidden = false
-                        }
-                        
-                    } else if let error = error {
+                fetchUserData(profileName: "\(id)") { error in
+                    if let error = error {
                         self.errorTextLabel.isHidden = false
                         print("Error: \(error.localizedDescription)")
                     } else {
-                        
+                        if let inputPassword = SharedProfileModel.shared.password {
+                            if comparePasswords(inputPassword: passwordText, savedPassword: inputPassword) {
+                                if let tabBarController = self.isLoggedIn() {
+                                    self.errorTextLabel.isHidden = true
+                                    tabBarController.modalPresentationStyle = .fullScreen
+                                    self.present(tabBarController, animated: true)
+                                }
+                            } else {
+                                self.errorTextLabel.isHidden = false
+                            }
+                        }
                     }
                 }
             }
