@@ -20,4 +20,31 @@ class SystemView: UIView {
         
         return label
     }
+    
+    class LoadingView {
+        static var overlayView = UIView()
+        static var activityIndicator = UIActivityIndicatorView()
+        
+        class func show() {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                if let window = windowScene.windows.first {
+                    overlayView.frame = CGRect(x: 0, y: 0, width: window.frame.width, height: window.frame.height)
+                    overlayView.backgroundColor = UIColor(white: 0, alpha: 0.5)
+                    
+                    activityIndicator.style = .large
+                    activityIndicator.center = overlayView.center
+                    
+                    overlayView.addSubview(activityIndicator)
+                    window.addSubview(overlayView)
+                    
+                    activityIndicator.startAnimating()
+                }
+            }
+        }
+        
+        class func hide() {
+            activityIndicator.stopAnimating()
+            overlayView.removeFromSuperview()
+        }
+    }
 }
