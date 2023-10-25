@@ -28,7 +28,6 @@ class SearchInformationViewController: UIViewController, UITableViewDelegate, UI
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tableView.isHidden = true
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -45,14 +44,19 @@ class SearchInformationViewController: UIViewController, UITableViewDelegate, UI
 
     private func viewLayout() {
         view.backgroundColor = UIColor.black
+        tableView.backgroundColor = UIColor.black
         
         navigationController?.navigationBar.isTranslucent = false
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationItem.titleView = searchController.searchBar
+        definesPresentationContext = true
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.searchTextField.overrideUserInterfaceStyle = .dark
+        searchController.searchBar.searchTextField.placeholder = "검색"
+        searchController.searchBar.tintColor = UIColor.white
         searchController.searchBar.searchTextField.layer.cornerRadius = 15
         searchController.searchBar.searchTextField.layer.borderWidth = 0.5
+        searchController.searchBar.searchTextField.autocapitalizationType = .none
         searchController.searchBar.searchTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
         searchController.searchBar.searchTextField.backgroundColor = UIColor.black
         searchController.searchBar.setValue("닫기", forKey: "cancelButtonText")
@@ -75,16 +79,7 @@ class SearchInformationViewController: UIViewController, UITableViewDelegate, UI
         
         cell.profileNameLabel.text = searchUserList[indexPath.row].profileName
         cell.userNameLabel.text = searchUserList[indexPath.row].userName
-        
-        if let imageString = searchUserList[indexPath.row].profileImage {
-            if let image = UIImage(named: imageString) {
-                cell.profileImageView.image = image
-            } else {
-                cell.profileImageView.image = UIImage(named: "BasicUserProfileImage")
-            }
-        } else {
-            cell.profileImageView.image = UIImage(named: "BasicUserProfileImage")
-        }
+        cell.profileImageView.image = searchUserList[indexPath.row].profileImage
         
         if searchUserList[indexPath.row].socialValidation {
             if let image = UIImage(systemName: "checkmark.seal.fill")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 10, weight: .light)) {
@@ -99,26 +94,27 @@ class SearchInformationViewController: UIViewController, UITableViewDelegate, UI
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true) // 선택한 셀을 다시 선택해도 반응하도록 함
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     @objc func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        let searchText = searchBar.text ?? ""
+        let searchText = searchBar.text?.lowercased().replacingOccurrences(of: " ", with: "") ?? ""
         guard searchText.count > 0 else {
-            searchUserList = [] // 검색어가 없을 때 빈 리스트로 초기화
+            searchUserList = []
             self.tableView.reloadData()
             return
         }
         
-        searchUsers(withPrefix: searchText.lowercased()) { (searchResults, error) in
+        searchUsers(withPrefix: searchText) { (searchResults, error) in
             if let error = error {
                 print("Error searching users: \(error.localizedDescription)")
                 return
             }
-            print("\(searchText)")
-            searchUserList = searchResults // 수정된 부분: profileNames 대신 searchResults를 사용
-            print("\(searchUserList)")
-            self.tableView.reloadData()
+            
+            DispatchQueue.main.async {
+                searchUserList = searchResults
+                self.tableView.reloadData()
+            }
         }
     }
     
@@ -130,5 +126,10 @@ class SearchInformationViewController: UIViewController, UITableViewDelegate, UI
     @objc func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         tableView.isHidden = true
         searchUserList = []
+    }
+    
+    @objc func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+        tableView.isHidden = true
+        return true
     }
 }
