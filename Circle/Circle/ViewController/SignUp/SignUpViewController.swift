@@ -85,7 +85,7 @@ class BaseSignUpViewController: UIViewController, UITextFieldDelegate {
     }
     
     internal func navigationBarLayout() {
-        let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .plain, target: self, action: #selector(backButtonAction))
+        let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .done, target: self, action: #selector(backButtonAction))
         
         backButton.tintColor = UIColor.white
         
