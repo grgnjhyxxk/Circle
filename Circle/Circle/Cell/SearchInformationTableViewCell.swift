@@ -31,7 +31,6 @@ class SearchInformationTableViewCell: UITableViewCell {
     let userNameLabel: UILabel = {
         let label = UILabel()
         
-        label.text = "Circles Official"
         label.textColor = UIColor.white
         label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
 
@@ -49,7 +48,7 @@ class SearchInformationTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
+        contentView.backgroundColor = UIColor.black
         contentView.addSubview(profileImageView)
         contentView.addSubview(profileNameLabel)
         contentView.addSubview(userNameLabel)
