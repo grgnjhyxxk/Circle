@@ -69,6 +69,8 @@ class UserMainView: UIView {
         label.textColor = UIColor.white
         label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         label.textAlignment = .center
+        label.adjustsFontSizeToFitWidth = true
+        label.baselineAdjustment = .alignCenters
         
         return label
     }
@@ -78,6 +80,7 @@ class UserMainView: UIView {
 
         button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         button.tintColor = UIColor.white
+        button.setTitleColor(UIColor.white, for: .normal)
         button.titleLabel?.textAlignment = .center
         button.layer.cornerRadius = 15
         button.layer.borderWidth = 0.5
@@ -121,6 +124,49 @@ class UserMainView: UIView {
             button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
             button.titleLabel?.textAlignment = .center
             button.layer.cornerRadius = 15
+            button.layer.borderWidth = 0.5
+            button.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
+            button.backgroundColor = UIColor.black
+            
+            return button
+        }
+    }
+    
+    class EditProfileView: UIView {
+        func editProfileImageButton() -> UIButton {
+            let button = UIButton()
+            
+            button.setTitle("이미지 변경", for: .normal)
+            button.setTitleColor(UIColor.white, for: .normal)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+            button.titleLabel?.textAlignment = .center
+            button.layer.cornerRadius = 15
+            button.layer.borderWidth = 0.5
+            button.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
+            button.backgroundColor = UIColor.black
+            
+            return button
+        }
+        
+        func editBackgroundImageButton() -> UIButton {
+            let button = UIButton()
+            
+            button.setImage(UIImage(systemName: "camera.on.rectangle")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 15, weight: .regular)), for: .normal)
+            button.tintColor = UIColor.white
+            button.layer.cornerRadius = 19
+            button.layer.borderWidth = 0.5
+            button.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
+            button.backgroundColor = UIColor.black
+            
+            return button
+        }
+        
+        func editBackgroundColorButton() -> UIButton {
+            let button = UIButton()
+            
+            button.setImage(UIImage(systemName: "paintbrush")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 15, weight: .regular)), for: .normal)
+            button.tintColor = UIColor.white
+            button.layer.cornerRadius = 19
             button.layer.borderWidth = 0.5
             button.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
             button.backgroundColor = UIColor.black
