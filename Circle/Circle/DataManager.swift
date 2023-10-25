@@ -7,7 +7,6 @@
 
 import UIKit
 
-var myDataList = [UserData]()
 var searchUserList = [SearchResult]()
 
 struct UserData {
@@ -33,9 +32,33 @@ struct UserData {
 
 struct SearchResult {
     var profileName: String
-    var profileImage: String?
+    var profileImage: UIImage?
     var userName: String
     var socialValidation: Bool
+}
+
+class SharedProfileModel {
+    static var shared = SharedProfileModel()
+    var profileName: String?
+    var userName: String?
+    var password: String?
+    var myCircleDigits: Int?
+    var myInTheCircleDigits: Int?
+    var myPostDigits: Int?
+    var followerDigits: Int?
+    var followingDigits: Int?
+    var socialValidation: Bool?
+    var backgroundImage: String?
+    var profileImage: UIImage?
+    var userCategory: String?
+    var introduction: String?
+    var email: String?
+    var phoneNumber: String?
+    var birth: String?
+    var gender: String?
+    var userID: String?
+    
+    private init() {}
 }
 
 func formatNumber(_ number: Int) -> String {
@@ -57,4 +80,14 @@ func formatNumber(_ number: Int) -> String {
     } else {
         return "숫자 범위를 벗어났습니다."
     }
+}
+
+func resizeImage(image: UIImage, newWidth: CGFloat) -> UIImage? {
+    let scale = newWidth / image.size.width
+    let newHeight = image.size.height * scale
+    UIGraphicsBeginImageContext(CGSize(width: newWidth, height: newHeight))
+    image.draw(in: CGRect(x: 0, y: 0, width: newWidth, height: newHeight))
+    let newImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    return newImage
 }
