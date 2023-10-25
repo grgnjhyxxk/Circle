@@ -44,6 +44,7 @@ class SignUpView: UIView {
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: textField.frame.height))
         textField.leftViewMode = .always
         textField.autocapitalizationType = .none
+        textField.clearButtonMode = .whileEditing
 
         return textField
     }
