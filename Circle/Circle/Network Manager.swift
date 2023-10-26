@@ -256,3 +256,24 @@ func uploadProfileImage(image: UIImage, userID: String, completion: @escaping (R
         uploadTask.resume()
     }
 }
+
+func updateProfileName(userID: String, newProfileName: String, completion: @escaping (Error?) -> Void) {
+    print("\(userID) : \(newProfileName)")
+    DispatchQueue.global().async {
+        let db = Firestore.firestore()
+        let usersCollection = db.collection("users")
+        
+        let userDocumentRef = usersCollection.document(userID)
+        let updateFields = ["profileName": newProfileName]
+        
+        userDocumentRef.updateData(updateFields) { error in
+            if let error = error {
+                print("프로필 이름 업데이트 실패: \(error.localizedDescription)")
+            } else {
+                print("프로필 이름 업데이트 성공")
+            }
+            
+            completion(error)
+        }
+    }
+}
