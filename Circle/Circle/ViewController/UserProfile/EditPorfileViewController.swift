@@ -35,6 +35,8 @@ class EditPorfileViewController: UIViewController, UITableViewDelegate, UITableV
         addTagets()
         tableView.delegate = self
         tableView.dataSource = self
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(updateProfileName(_:)), name: NSNotification.Name(rawValue: "ProfileNameUpdated"), object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -89,9 +91,7 @@ class EditPorfileViewController: UIViewController, UITableViewDelegate, UITableV
         }
         
         scrollView.showsVerticalScrollIndicator = false
-        navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.shadowImage = UIImage()
-                
+        
         if let imageString = SharedProfileModel.shared.backgroundImage {
             if let image = UIImage(named: imageString) {
                 userProfileBackgroundImageView.image = image
@@ -167,6 +167,10 @@ class EditPorfileViewController: UIViewController, UITableViewDelegate, UITableV
     @objc private func backButtonAction() {
         navigationController?.popViewController(animated: true)
     }
+    
+    @objc func updateProfileName(_ notification: Notification) {
+        tableView.reloadData()
+    }
         
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tableViewTitleLabelStringList.count
@@ -180,9 +184,11 @@ class EditPorfileViewController: UIViewController, UITableViewDelegate, UITableV
         switch indexPath.row {
         case 0:
             cell.subLabel.text = SharedProfileModel.shared.profileName
+            cell.subLabel.textColor = UIColor.white
         case 1:
             if let userName = SharedProfileModel.shared.userName, userName != "" {
                 cell.subLabel.text = SharedProfileModel.shared.userName
+                cell.subLabel.textColor = UIColor.white
             } else {
                 cell.subLabel.text = "이름"
                 cell.subLabel.textColor = UIColor.placeholderText
@@ -190,6 +196,7 @@ class EditPorfileViewController: UIViewController, UITableViewDelegate, UITableV
         case 2:
             if let introduction = SharedProfileModel.shared.introduction, introduction != "" {
                 cell.subLabel.text = SharedProfileModel.shared.introduction
+                cell.subLabel.textColor = UIColor.white
             } else {
                 cell.subLabel.text = "소개"
                 cell.subLabel.textColor = UIColor.placeholderText
@@ -197,6 +204,7 @@ class EditPorfileViewController: UIViewController, UITableViewDelegate, UITableV
         case 3:
             if let gender = SharedProfileModel.shared.gender, gender != "" {
                 cell.subLabel.text = SharedProfileModel.shared.gender
+                cell.subLabel.textColor = UIColor.white
             } else {
                 cell.subLabel.text = "성별"
                 cell.subLabel.textColor = UIColor.placeholderText
@@ -204,6 +212,7 @@ class EditPorfileViewController: UIViewController, UITableViewDelegate, UITableV
         case 4:
             if let email = SharedProfileModel.shared.birth, email != "" {
                 cell.subLabel.text = SharedProfileModel.shared.birth
+                cell.subLabel.textColor = UIColor.white
             } else {
                 cell.subLabel.text = "생년월일"
                 cell.subLabel.textColor = UIColor.placeholderText
@@ -211,6 +220,7 @@ class EditPorfileViewController: UIViewController, UITableViewDelegate, UITableV
         case 5:
             if let email = SharedProfileModel.shared.email, email != "" {
                 cell.subLabel.text = SharedProfileModel.shared.email
+                cell.subLabel.textColor = UIColor.white
             } else {
                 cell.subLabel.text = "이메일"
                 cell.subLabel.textColor = UIColor.placeholderText
@@ -218,6 +228,7 @@ class EditPorfileViewController: UIViewController, UITableViewDelegate, UITableV
         case 6:
             if let phoneNumber = SharedProfileModel.shared.phoneNumber, phoneNumber != "" {
                 cell.subLabel.text = SharedProfileModel.shared.phoneNumber
+                cell.subLabel.textColor = UIColor.white
             } else {
                 cell.subLabel.text = "전화번호"
                 cell.subLabel.textColor = UIColor.placeholderText
@@ -230,7 +241,15 @@ class EditPorfileViewController: UIViewController, UITableViewDelegate, UITableV
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true) // 선택한 셀을 다시 선택해도 반응하도록 함
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        switch indexPath.row {
+        case 0:
+            let viewController = EditProfileNameViewController()
+            show(viewController, sender: nil)
+        default:
+            break
+        }
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
