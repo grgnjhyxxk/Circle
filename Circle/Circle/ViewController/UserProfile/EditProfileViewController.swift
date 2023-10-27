@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class EditPorfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class EditProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     private var viewList: [UIView] = []
     private var contentViewList: [UIView] = []
     private let tableViewTitleLabelStringList: [String] = ["프로필 이름", "사용자 이름", "자기소개", "성별", "생년월일", "이메일", "전화번호"]
@@ -36,7 +36,7 @@ class EditPorfileViewController: UIViewController, UITableViewDelegate, UITableV
         tableView.delegate = self
         tableView.dataSource = self
         
-        NotificationCenter.default.addObserver(self, selector: #selector(updateProfileName(_:)), name: NSNotification.Name(rawValue: "ProfileNameUpdated"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateProfile(_:)), name: NSNotification.Name(rawValue: "ProfileUpdated"), object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -168,7 +168,7 @@ class EditPorfileViewController: UIViewController, UITableViewDelegate, UITableV
         navigationController?.popViewController(animated: true)
     }
     
-    @objc func updateProfileName(_ notification: Notification) {
+    @objc func updateProfile(_ notification: Notification) {
         tableView.reloadData()
     }
         
@@ -246,6 +246,9 @@ class EditPorfileViewController: UIViewController, UITableViewDelegate, UITableV
         switch indexPath.row {
         case 0:
             let viewController = EditProfileNameViewController()
+            show(viewController, sender: nil)
+        case 1:
+            let viewController = EditUserNameViewController()
             show(viewController, sender: nil)
         default:
             break
