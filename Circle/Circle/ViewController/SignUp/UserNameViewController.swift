@@ -31,13 +31,13 @@ class UserNameViewController: BaseSignUpViewController {
         viewController.profileNameInput = self.profileNameInput
         viewController.userNameInput = mainTextField.text
         
-        self.show(viewController, sender: nil)
+        show(viewController, sender: nil)
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let updatedText = (textField.text as NSString?)?.replacingCharacters(in: range, with: string) ?? ""
         
-        nextButton.isEnabled = (0...21).contains(updatedText.count)
+        nextButton.isEnabled = (0...21).contains(updatedText.count) && SharedProfileModel.shared.userName != updatedText
         
         return true
     }
