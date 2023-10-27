@@ -32,19 +32,37 @@ class EditProfileNameViewController: ProfileNameViewController {
     }
     
     override func nextButtonAction() {
-        if let userID = SharedProfileModel.shared.userID, let newProfileName = mainTextField.text {
-            updateProfileName(userID: userID, newProfileName: newProfileName) { error in
-                if let error = error {
-                    print("프로필 이름 업데이트 실패: \(error.localizedDescription)")
-                } else {
-                    print("프로필 이름 업데이트 성공")
-                    fetchUserData(profileName: "\(newProfileName)") { (error) in
-                        if let error = error {
-                            print("Error: \(error.localizedDescription)")
-                        }
-                        DispatchQueue.main.async {
-                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "ProfileNameUpdated"), object: newProfileName)
-                            self.navigationController?.popViewController(animated: true)
+        checkIfProfileNameExists(mainTextField.text!) { (exists, error) in
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.activityIndicator)
+            self.activityIndicator.startAnimating()
+            
+            if exists {
+                self.mainTextField.layer.borderWidth = 2
+                self.mainTextField.layer.borderColor = UIColor.red.cgColor
+                
+                AnimationView().shakeView(self.mainTextField)
+                
+                self.errorTextLabel.isHidden = false
+                self.errorTextLabel.text = "이미 사용 중인 프로필 이름입니다."
+            } else {
+                self.errorTextLabel.isHidden = true
+                self.mainTextField.layer.borderWidth = 0.5
+                self.mainTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
+                
+                if let userID = SharedProfileModel.shared.userID, let newProfileName = self.mainTextField.text {
+                    updateProfileName(field: "profileName", userID: userID, updateData: newProfileName) { error in
+                        if error != nil {
+                            print("error")
+                        } else {
+                            fetchUserData(profileName: "\(newProfileName)") { (error) in
+                                if let error = error {
+                                    print("Error: \(error.localizedDescription)")
+                                }
+                                DispatchQueue.main.async {
+                                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "ProfileUpdated"), object: nil)
+                                    self.navigationController?.popViewController(animated: true)
+                                }
+                            }
                         }
                     }
                 }
