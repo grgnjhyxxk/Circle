@@ -40,32 +40,25 @@ class ProfileNameViewController: BaseSignUpViewController {
     }
     
     override func nextButtonAction() {
-        if let mainTextField = self.mainTextField.text, mainTextField.isEmpty {
-            self.mainTextField.layer.borderWidth = 1.0
-            self.mainTextField.layer.borderColor = UIColor.red.cgColor
-            AnimationView().shakeView(self.mainTextField)
-            
-        } else {
-            checkIfProfileNameExists(mainTextField.text!) { (exists, error) in
-                if exists {
-                    self.mainTextField.layer.borderWidth = 2
-                    self.mainTextField.layer.borderColor = UIColor.red.cgColor
-                    
-                    AnimationView().shakeView(self.mainTextField)
-                    
-                    self.errorTextLabel.isHidden = false
-                    self.errorTextLabel.text = "이미 사용 중인 프로필 이름입니다."
-                    
-                } else {
-                    let viewController = UserNameViewController()
-                    viewController.profileNameInput = self.mainTextField.text
-                    
-                    self.errorTextLabel.isHidden = true
-                    self.mainTextField.layer.borderWidth = 0.5
-                    self.mainTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
-                    
-                    self.show(viewController, sender: nil)
-                }
+        checkIfProfileNameExists(mainTextField.text!) { (exists, error) in
+            if exists {
+                self.mainTextField.layer.borderWidth = 2
+                self.mainTextField.layer.borderColor = UIColor.red.cgColor
+                
+                AnimationView().shakeView(self.mainTextField)
+                
+                self.errorTextLabel.isHidden = false
+                self.errorTextLabel.text = "이미 사용 중인 프로필 이름입니다."
+                
+            } else {
+                let viewController = UserNameViewController()
+                viewController.profileNameInput = self.mainTextField.text
+                
+                self.errorTextLabel.isHidden = true
+                self.mainTextField.layer.borderWidth = 0.5
+                self.mainTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
+                
+                self.show(viewController, sender: nil)
             }
         }
     }
@@ -81,7 +74,7 @@ class ProfileNameViewController: BaseSignUpViewController {
             
             self.errorTextLabel.isHidden = true
             
-            nextButton.isEnabled = (3...21).contains(updatedText.count)
+            nextButton.isEnabled = (3...21).contains(updatedText.count) && SharedProfileModel.shared.profileName != updatedText
             
         } else {
             self.mainTextField.layer.borderWidth = 2

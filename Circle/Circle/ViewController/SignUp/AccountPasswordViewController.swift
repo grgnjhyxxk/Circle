@@ -49,24 +49,17 @@ class AccountPasswordViewController: BaseSignUpViewController {
     }
     
     override func nextButtonAction() {
-        if let mainTextField = self.mainTextField.text, mainTextField.isEmpty {
-            self.mainTextField.layer.borderWidth = 1.0
-            self.mainTextField.layer.borderColor = UIColor.red.cgColor
-            AnimationView().shakeView(self.mainTextField)
-            
-        } else {
-            if let profileData = profileNameInput, let userNameData = userNameInput, let passwordData = mainTextField.text {
-                let userData = UserData(profileName: profileData, userName: userNameData, password: passwordData, myCircleDigits: 0, myInTheCircleDigits: 0, myPostDigits: 0, followerDigits: 0, followingDigits: 0, socialValidation: false)
-                signUpDataUploadServer(userData: userData) { success, error in
-                    if success {
-                        print("데이터 추가 성공")
-                        self.navigationController?.popToRootViewController(animated: true)
-                    } else if let error = error {
-                        print("데이터 추가 실패: \(error.localizedDescription)")
-                    }
+        if let profileData = profileNameInput, let userNameData = userNameInput, let passwordData = mainTextField.text {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.activityIndicator)
+            self.activityIndicator.startAnimating()
+            let userData = UserData(profileName: profileData, userName: userNameData, password: passwordData, myCircleDigits: 0, myInTheCircleDigits: 0, myPostDigits: 0, followerDigits: 0, followingDigits: 0, socialValidation: false)
+            signUpDataUploadServer(userData: userData) { success, error in
+                if success {
+                    print("데이터 추가 성공")
+                    self.navigationController?.popToRootViewController(animated: true)
+                } else if let error = error {
+                    print("데이터 추가 실패: \(error.localizedDescription)")
                 }
-            } else {
-                
             }
         }
     }
