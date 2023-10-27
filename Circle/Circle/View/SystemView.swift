@@ -21,6 +21,14 @@ class SystemView: UIView {
         return label
     }
     
+    func activityIndicator() -> UIActivityIndicatorView {
+        let indicator = UIActivityIndicatorView(style: .medium)
+        
+        indicator.hidesWhenStopped = true
+        
+        return indicator
+    }
+    
     class LoadingView {
         static var overlayView = UIView()
         static var activityIndicator = UIActivityIndicatorView()
