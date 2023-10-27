@@ -257,20 +257,19 @@ func uploadProfileImage(image: UIImage, userID: String, completion: @escaping (R
     }
 }
 
-func updateProfileName(userID: String, newProfileName: String, completion: @escaping (Error?) -> Void) {
-    print("\(userID) : \(newProfileName)")
+func updateProfileName(field: String, userID: String, updateData: String, completion: @escaping (Error?) -> Void) {
     DispatchQueue.global().async {
         let db = Firestore.firestore()
         let usersCollection = db.collection("users")
         
         let userDocumentRef = usersCollection.document(userID)
-        let updateFields = ["profileName": newProfileName]
+        let updateFields = ["\(field)": updateData]
         
         userDocumentRef.updateData(updateFields) { error in
             if let error = error {
-                print("프로필 이름 업데이트 실패: \(error.localizedDescription)")
+                print("\(field) : \(updateData) 업데이트 실패: \(error.localizedDescription)")
             } else {
-                print("프로필 이름 업데이트 성공")
+                print("\(field) : \(updateData)  업데이트 성공")
             }
             
             completion(error)
