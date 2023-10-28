@@ -94,7 +94,7 @@ class BasicUserProfileViewController: UIViewController {
             make.top.equalTo(scrollView).offset(120)
             make.leading.trailing.bottom.equalToSuperview()
             make.width.equalToSuperview()
-            make.height.equalTo(1000)
+            make.height.equalTo(600)
         }
                 
         scrollView.showsVerticalScrollIndicator = false
