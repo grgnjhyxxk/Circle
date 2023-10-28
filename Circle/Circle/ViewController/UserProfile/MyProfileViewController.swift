@@ -54,45 +54,38 @@ class MyProfileViewController: BasicUserProfileViewController {
     }
     
     override func uiViewUpdate() {
-        let sharedProfile = SharedProfileModel.shared
-        
-        let subStatusButtonString = "팔로우 \(formatNumber(sharedProfile.followerDigits ?? 0))   팔로잉 \(formatNumber(sharedProfile.followingDigits ?? 0))"
-        let attributedsubStatusButtonString = NSMutableAttributedString(string: subStatusButtonString)
-        let subStatusButtonStringRangeOne = (subStatusButtonString as NSString).range(of: "\(formatNumber(sharedProfile.followerDigits ?? 0))")
-        let subStatusButtonStringRangeTwo = (subStatusButtonString as NSString).range(of: "\(formatNumber(sharedProfile.followingDigits ?? 0))")
-
-        attributedsubStatusButtonString.addAttribute(.font, value: UIFont.systemFont(ofSize: 14, weight: .semibold), range: subStatusButtonStringRangeOne)
-        attributedsubStatusButtonString.addAttribute(.font, value: UIFont.systemFont(ofSize: 14, weight: .semibold), range: subStatusButtonStringRangeTwo)
-        
-        subStatusButton.setAttributedTitle(attributedsubStatusButtonString, for: .normal)
-        profileNameButton.setTitle("\(sharedProfile.profileName ?? "")", for: .normal)
-        userNameTitleLabel.text = sharedProfile.userName
-        userCategoryTitleLabel.text = sharedProfile.userCategory
-        introductionLabel.text = sharedProfile.introduction
-        userProfileImageView.image = sharedProfile.profileImage
-        
-        if let imageString = sharedProfile.backgroundImage {
-            if let image = UIImage(named: imageString) {
-                userProfileBackgroundImageView.image = image
+        DispatchQueue.main.async {
+            let sharedProfile = SharedProfileModel.myProfile
+            
+            let subStatusButtonString = "팔로우 \(formatNumber(sharedProfile.followerDigits ?? 0))   팔로잉 \(formatNumber(sharedProfile.followingDigits ?? 0))"
+            let attributedsubStatusButtonString = NSMutableAttributedString(string: subStatusButtonString)
+            let subStatusButtonStringRangeOne = (subStatusButtonString as NSString).range(of: "\(formatNumber(sharedProfile.followerDigits ?? 0))")
+            let subStatusButtonStringRangeTwo = (subStatusButtonString as NSString).range(of: "\(formatNumber(sharedProfile.followingDigits ?? 0))")
+            
+            attributedsubStatusButtonString.addAttribute(.font, value: UIFont.systemFont(ofSize: 14, weight: .semibold), range: subStatusButtonStringRangeOne)
+            attributedsubStatusButtonString.addAttribute(.font, value: UIFont.systemFont(ofSize: 14, weight: .semibold), range: subStatusButtonStringRangeTwo)
+            
+            self.subStatusButton.setAttributedTitle(attributedsubStatusButtonString, for: .normal)
+            self.profileNameButton.setTitle("\(sharedProfile.profileName ?? "")", for: .normal)
+            self.userNameTitleLabel.text = sharedProfile.userName
+            self.userCategoryTitleLabel.text = sharedProfile.userCategory
+            self.introductionLabel.text = sharedProfile.introduction
+            self.userProfileImageView.image = sharedProfile.profileImage
+            self.userProfileBackgroundImageView.image = sharedProfile.backgroundImage
+            
+            if sharedProfile.socialValidation ?? false {
+                if let image = UIImage(systemName: "checkmark.seal.fill")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 14, weight: .light)) {
+                    self.profileNameButton.setImage(image, for: .normal)
+                }
+                
+                self.profileNameButton.tintColor = UIColor.systemBlue
+                self.profileNameButton.imageEdgeInsets = UIEdgeInsets(top: 1, left: 4.5, bottom: 0, right: 0)
+                self.profileNameButton.semanticContentAttribute = .forceRightToLeft
+                self.profileNameButton.contentVerticalAlignment = .center
+                self.profileNameButton.contentHorizontalAlignment = .center
             } else {
-                userProfileBackgroundImageView.image = nil
+                self.profileNameButton.setImage(nil, for: .normal)
             }
-        } else {
-            userProfileBackgroundImageView.image = nil
-        }
-        
-        if sharedProfile.socialValidation ?? false {
-            if let image = UIImage(systemName: "checkmark.seal.fill")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 14, weight: .light)) {
-                profileNameButton.setImage(image, for: .normal)
-            }
-        
-            profileNameButton.tintColor = UIColor.systemBlue
-            profileNameButton.imageEdgeInsets = UIEdgeInsets(top: 1, left: 4.5, bottom: 0, right: 0)
-            profileNameButton.semanticContentAttribute = .forceRightToLeft
-            profileNameButton.contentVerticalAlignment = .center
-            profileNameButton.contentHorizontalAlignment = .center
-        } else {
-            profileNameButton.setImage(nil, for: .normal)
         }
     }
 
@@ -142,22 +135,16 @@ class MyProfileViewController: BasicUserProfileViewController {
     }
     
     @objc override func refreshData() {
-        let profileName = SharedProfileModel.shared.profileName
+        let profileName = SharedProfileModel.myProfile.profileName
         fetchUserData(profileName: "\(profileName ?? "")") { (error) in
             if let error = error {
                 print("Error: \(error.localizedDescription)")
             }
-            
+
             DispatchQueue.main.async {
                 self.uiViewUpdate()
+                self.refreshControl.endRefreshing()
             }
-                self.viewLayout()
-                self.mainViewSetting()
-                self.contentViewLayout()
-                self.contentViewSetting()
-                self.navigationBarLayout()
-
-            self.refreshControl.endRefreshing()
         }
     }
     
@@ -167,7 +154,10 @@ class MyProfileViewController: BasicUserProfileViewController {
     }
     
     @objc override func profileEdditButtonAction() {
-        let viewController = EditPorfileViewController()
+        let viewController = EditProfileViewController()
+        
+        viewController.hidesBottomBarWhenPushed = true
+        
         show(viewController, sender: nil)
     }
 }
