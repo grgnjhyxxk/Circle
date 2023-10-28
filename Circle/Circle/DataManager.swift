@@ -6,8 +6,7 @@
 //
 
 import UIKit
-
-var searchUserList = [SearchResult]()
+import SDWebImage
 
 struct UserData {
     var profileName: String
@@ -30,15 +29,10 @@ struct UserData {
     var userID: String?
 }
 
-struct SearchResult {
-    var profileName: String
-    var profileImage: UIImage?
-    var userName: String
-    var socialValidation: Bool
-}
-
 class SharedProfileModel {
-    static var shared = SharedProfileModel()
+    static var myProfile = SharedProfileModel()
+    static var otherUsersProfiles = [SharedProfileModel]()
+
     var profileName: String?
     var userName: String?
     var password: String?
@@ -48,7 +42,7 @@ class SharedProfileModel {
     var followerDigits: Int?
     var followingDigits: Int?
     var socialValidation: Bool?
-    var backgroundImage: String?
+    var backgroundImage: UIImage?
     var profileImage: UIImage?
     var userCategory: String?
     var introduction: String?
@@ -57,8 +51,8 @@ class SharedProfileModel {
     var birth: String?
     var gender: String?
     var userID: String?
-    
-    private init() {}
+
+    init() {}
 }
 
 func formatNumber(_ number: Int) -> String {
@@ -91,3 +85,26 @@ func resizeImage(image: UIImage, newWidth: CGFloat) -> UIImage? {
     UIGraphicsEndImageContext()
     return newImage
 }
+
+func loadImage(from urlString: String?, fallbackImageName: String, completion: @escaping (UIImage) -> Void) {
+    if let urlString = urlString, !urlString.isEmpty, let url = URL(string: urlString) {
+        let cacheKey = SDWebImageManager.shared.cacheKey(for: url)
+        
+        if let cachedImage = SDImageCache.shared.imageFromCache(forKey: cacheKey) {
+            completion(cachedImage)
+            return
+        }
+        
+        SDWebImageDownloader.shared.downloadImage(with: url, options: [], progress: nil) { (image, data, error, finished) in
+            if let image = image {
+                SDImageCache.shared.store(image, forKey: cacheKey, completion: nil)
+                completion(image)
+            }
+        }
+    } else {
+        let fallbackImage = UIImage(named: fallbackImageName) ?? UIImage()
+        completion(fallbackImage)
+    }
+}
+
+
