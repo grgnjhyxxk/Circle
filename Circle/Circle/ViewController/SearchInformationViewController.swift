@@ -71,17 +71,17 @@ class SearchInformationViewController: UIViewController, UITableViewDelegate, UI
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return searchUserList.count
+        return SharedProfileModel.otherUsersProfiles.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SearchInformationTableViewCell", for: indexPath) as! SearchInformationTableViewCell
         
-        cell.profileNameLabel.text = searchUserList[indexPath.row].profileName
-        cell.userNameLabel.text = searchUserList[indexPath.row].userName
-        cell.profileImageView.image = searchUserList[indexPath.row].profileImage
+        cell.profileNameLabel.text = SharedProfileModel.otherUsersProfiles[indexPath.row].profileName
+        cell.userNameLabel.text = SharedProfileModel.otherUsersProfiles[indexPath.row].userName
+        cell.profileImageView.image = SharedProfileModel.otherUsersProfiles[indexPath.row].profileImage
         
-        if searchUserList[indexPath.row].socialValidation {
+        if SharedProfileModel.otherUsersProfiles[indexPath.row].socialValidation! {
             if let image = UIImage(systemName: "checkmark.seal.fill")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 10, weight: .light)) {
                 cell.socialValidationImageView.image = image
                 cell.socialValidationImageView.isHidden = false
@@ -95,28 +95,33 @@ class SearchInformationViewController: UIViewController, UITableViewDelegate, UI
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let userProfileVC = UserProfileViewController()
+        
+        userProfileVC.indexPath = indexPath.row
+        
+        show(userProfileVC, sender: nil)
     }
     
     @objc func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         let searchText = searchBar.text?.lowercased().replacingOccurrences(of: " ", with: "") ?? ""
         guard searchText.count > 0 else {
-            searchUserList = []
+            SharedProfileModel.otherUsersProfiles = []
             self.tableView.reloadData()
             return
         }
-        
-        searchUsers(withPrefix: searchText) { (searchResults, error) in
+                
+        searchUsers(withPrefix: searchText) { (error) in
             if let error = error {
                 print("Error searching users: \(error.localizedDescription)")
                 return
             }
             
             DispatchQueue.main.async {
-                searchUserList = searchResults
                 self.tableView.reloadData()
             }
         }
     }
+
     
     @objc func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         tableView.isHidden = false
@@ -125,7 +130,7 @@ class SearchInformationViewController: UIViewController, UITableViewDelegate, UI
     
     @objc func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         tableView.isHidden = true
-        searchUserList = []
+        SharedProfileModel.otherUsersProfiles = []
     }
     
     @objc func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
