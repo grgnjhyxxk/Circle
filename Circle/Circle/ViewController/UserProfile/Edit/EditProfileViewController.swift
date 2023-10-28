@@ -11,7 +11,13 @@ import SnapKit
 class EditProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     private var viewList: [UIView] = []
     private var contentViewList: [UIView] = []
-    private let tableViewTitleLabelStringList: [String] = ["프로필 이름", "사용자 이름", "자기소개", "성별", "생년월일", "이메일", "전화번호"]
+    private let tableViewTitleLabelStringList: [String] = ["프로필 이름", 
+                                                           "사용자 이름",
+                                                           "자기소개",
+                                                           "성별",
+                                                           "생년월일",
+                                                           "이메일",
+                                                           "전화번호"]
     
     private var scrollView: UIScrollView = UIScrollView()
     private var contentView: UIView = UIView()
@@ -23,6 +29,9 @@ class EditProfileViewController: UIViewController, UITableViewDelegate, UITableV
     private let editProfileImageButton = UserMainView.EditProfileView().editProfileImageButton()
     private let editBackgroundImageButton = UserMainView.EditProfileView().editBackgroundImageButton()
     private let editBackgroundColorButton = UserMainView.EditProfileView().editBackgroundColorButton()
+    
+    let profileImagePicker = UIImagePickerController()
+    let backgroundImagePicker = UIImagePickerController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,17 +51,19 @@ class EditProfileViewController: UIViewController, UITableViewDelegate, UITableV
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        userProfileImageView.image = SharedProfileModel.shared.profileImage
+        userProfileImageView.image = SharedProfileModel.myProfile.profileImage
+        userProfileBackgroundImageView.image = SharedProfileModel.myProfile.backgroundImage
     }
     private func addOnView() {
-        viewList = [userProfileBackgroundImageView, scrollView,
-                    editBackgroundImageButton, editBackgroundColorButton]
+        viewList = [userProfileBackgroundImageView, scrollView]
         
         for uiView in viewList {
             view.addSubview(uiView)
         }
         
         scrollView.addSubview(contentView)
+        scrollView.addSubview(editBackgroundImageButton)
+        scrollView.addSubview(editBackgroundColorButton)
     }
     
     private func viewLayout() {
@@ -71,15 +82,8 @@ class EditProfileViewController: UIViewController, UITableViewDelegate, UITableV
             make.leading.trailing.bottom.equalToSuperview()
         }
         
-        contentView.snp.makeConstraints { make in
-            make.top.equalTo(scrollView).offset(120)
-            make.leading.trailing.bottom.equalToSuperview()
-            make.width.equalToSuperview()
-            make.height.equalToSuperview().offset(-85)
-        }
-        
         editBackgroundImageButton.snp.makeConstraints { make in
-            make.bottom.equalTo(userProfileBackgroundImageView).offset(-10)
+            make.bottom.equalTo(contentView.snp.top).offset(-10)
             make.trailing.equalToSuperview().offset(-10)
             make.size.equalTo(CGSize(width: 38, height: 38))
         }
@@ -90,22 +94,19 @@ class EditProfileViewController: UIViewController, UITableViewDelegate, UITableV
             make.size.equalTo(CGSize(width: 38, height: 38))
         }
         
-        scrollView.showsVerticalScrollIndicator = false
-        
-        if let imageString = SharedProfileModel.shared.backgroundImage {
-            if let image = UIImage(named: imageString) {
-                userProfileBackgroundImageView.image = image
-            } else {
-                userProfileBackgroundImageView.image = nil
-            }
-        } else {
-            userProfileBackgroundImageView.image = nil
+        contentView.snp.makeConstraints { make in
+            make.top.equalTo(scrollView).offset(120)
+            make.leading.trailing.bottom.equalToSuperview()
+            make.width.equalToSuperview()
+            make.height.equalToSuperview().offset(-85)
         }
         
+        scrollView.showsVerticalScrollIndicator = false
     }
     
     func addOnContentView() {
-        contentViewList = [userProfileImageView, editProfileImageButton, tableView]
+        contentViewList = [userProfileImageView, tableView,
+                           editProfileImageButton]
         
         for uiView in contentViewList {
             contentView.addSubview(uiView)
@@ -150,17 +151,26 @@ class EditProfileViewController: UIViewController, UITableViewDelegate, UITableV
     
     private func addTagets() {
         editProfileImageButton.addTarget(self, action: #selector(editProfileImageButtonAction), for: .touchUpInside)
+        editBackgroundImageButton.addTarget(self, action: #selector(editBackgroundImageButtonAction), for: .touchUpInside)
     }
     
     @objc private func editProfileImageButtonAction() {
         DispatchQueue.main.async {
-            let imagePicker = UIImagePickerController()
-            
-            imagePicker.delegate = self
-            imagePicker.sourceType = .photoLibrary
-            imagePicker.modalPresentationStyle = .overFullScreen
-            
-            self.present(imagePicker, animated: true, completion: nil)
+            self.profileImagePicker.delegate = self
+            self.profileImagePicker.sourceType = .photoLibrary
+            self.profileImagePicker.modalPresentationStyle = .overFullScreen
+            self.profileImagePicker.allowsEditing = true
+            self.present(self.profileImagePicker, animated: true, completion: nil)
+        }
+    }
+        
+    @objc private func editBackgroundImageButtonAction() {
+        DispatchQueue.main.async {
+            self.backgroundImagePicker.delegate = self
+            self.backgroundImagePicker.sourceType = .photoLibrary
+            self.backgroundImagePicker.modalPresentationStyle = .overFullScreen
+            self.backgroundImagePicker.allowsEditing = true
+            self.present(self.backgroundImagePicker, animated: true, completion: nil)
         }
     }
     
@@ -183,51 +193,51 @@ class EditProfileViewController: UIViewController, UITableViewDelegate, UITableV
         
         switch indexPath.row {
         case 0:
-            cell.subLabel.text = SharedProfileModel.shared.profileName
+            cell.subLabel.text = SharedProfileModel.myProfile.profileName
             cell.subLabel.textColor = UIColor.white
         case 1:
-            if let userName = SharedProfileModel.shared.userName, userName != "" {
-                cell.subLabel.text = SharedProfileModel.shared.userName
+            if let userName = SharedProfileModel.myProfile.userName, userName != "" {
+                cell.subLabel.text = SharedProfileModel.myProfile.userName
                 cell.subLabel.textColor = UIColor.white
             } else {
                 cell.subLabel.text = "이름"
                 cell.subLabel.textColor = UIColor.placeholderText
             }
         case 2:
-            if let introduction = SharedProfileModel.shared.introduction, introduction != "" {
-                cell.subLabel.text = SharedProfileModel.shared.introduction
+            if let introduction = SharedProfileModel.myProfile.introduction, introduction != "" {
+                cell.subLabel.text = SharedProfileModel.myProfile.introduction
                 cell.subLabel.textColor = UIColor.white
             } else {
                 cell.subLabel.text = "소개"
                 cell.subLabel.textColor = UIColor.placeholderText
             }
         case 3:
-            if let gender = SharedProfileModel.shared.gender, gender != "" {
-                cell.subLabel.text = SharedProfileModel.shared.gender
+            if let gender = SharedProfileModel.myProfile.gender, gender != "" {
+                cell.subLabel.text = SharedProfileModel.myProfile.gender
                 cell.subLabel.textColor = UIColor.white
             } else {
                 cell.subLabel.text = "성별"
                 cell.subLabel.textColor = UIColor.placeholderText
             }
         case 4:
-            if let email = SharedProfileModel.shared.birth, email != "" {
-                cell.subLabel.text = SharedProfileModel.shared.birth
+            if let email = SharedProfileModel.myProfile.birth, email != "" {
+                cell.subLabel.text = SharedProfileModel.myProfile.birth
                 cell.subLabel.textColor = UIColor.white
             } else {
                 cell.subLabel.text = "생년월일"
                 cell.subLabel.textColor = UIColor.placeholderText
             }
         case 5:
-            if let email = SharedProfileModel.shared.email, email != "" {
-                cell.subLabel.text = SharedProfileModel.shared.email
+            if let email = SharedProfileModel.myProfile.email, email != "" {
+                cell.subLabel.text = SharedProfileModel.myProfile.email
                 cell.subLabel.textColor = UIColor.white
             } else {
                 cell.subLabel.text = "이메일"
                 cell.subLabel.textColor = UIColor.placeholderText
             }
         case 6:
-            if let phoneNumber = SharedProfileModel.shared.phoneNumber, phoneNumber != "" {
-                cell.subLabel.text = SharedProfileModel.shared.phoneNumber
+            if let phoneNumber = SharedProfileModel.myProfile.phoneNumber, phoneNumber != "" {
+                cell.subLabel.text = SharedProfileModel.myProfile.phoneNumber
                 cell.subLabel.textColor = UIColor.white
             } else {
                 cell.subLabel.text = "전화번호"
@@ -250,25 +260,29 @@ class EditProfileViewController: UIViewController, UITableViewDelegate, UITableV
         case 1:
             let viewController = EditUserNameViewController()
             show(viewController, sender: nil)
+        case 2:
+            let viewController = EditIntroductionViewController()
+            show(viewController, sender: nil)
         default:
             break
         }
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage, let userID = SharedProfileModel.shared.userID {
-            if let resizingSelectedImage = resizeImage(image: selectedImage, newWidth: 200) {
-                uploadProfileImage(image: resizingSelectedImage, userID: userID) { result in
+        let selectedImagePicker = (picker == profileImagePicker) ? "profileImage" : "backgroundImage"
+        if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage, let userID = SharedProfileModel.myProfile.userID {
+//            if let resizingSelectedImage = resizeImage(image: selectedImage, newWidth: 200) {
+                uploadImage(field: "\(selectedImagePicker)", image: selectedImage, userID: userID) { result in
                     switch result {
                     case .success:
-                        let profileName = SharedProfileModel.shared.profileName
+                        let profileName = SharedProfileModel.myProfile.profileName
                         fetchUserData(profileName: "\(profileName ?? "")") { (error) in
                             if let error = error {
                                 print("Error: \(error.localizedDescription)")
                             }
                             DispatchQueue.main.async {
-                                if SharedProfileModel.shared.profileImage != nil {
-                                    self.userProfileImageView.image = resizingSelectedImage
+                                if SharedProfileModel.myProfile.profileImage != nil {
+                                    (selectedImagePicker == "profileImage") ? (self.userProfileImageView.image = selectedImage) : (self.userProfileBackgroundImageView.image = selectedImage)
                                 } else {
                                 }
                                 self.dismiss(animated: true, completion: nil)
@@ -278,7 +292,7 @@ class EditProfileViewController: UIViewController, UITableViewDelegate, UITableV
                         print("프로필 이미지 업로드 실패: \(error.localizedDescription)")
                     }
                 }
-            }
+//            }
         }
     }
 }
