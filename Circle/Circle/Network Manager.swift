@@ -46,9 +46,7 @@ func signUpDataUploadServer(userData: UserData, completion: @escaping (Bool, Err
     }
 }
 
-func fetchUserData(profileName: String, completion: @escaping (Error?) -> Void) {    
-    SystemView.LoadingView.show()
-    
+func fetchUserData(profileName: String, completion: @escaping (Error?) -> Void) {
     DispatchQueue.global().async {
         let dataBase = Firestore.firestore()
         
@@ -57,14 +55,12 @@ func fetchUserData(profileName: String, completion: @escaping (Error?) -> Void) 
         userCollectionRef.whereField("profileName", isEqualTo: profileName.lowercased()).getDocuments { (querySnapshot, error) in
             if let error = error {
                 completion(error)
-                SystemView.LoadingView.hide()
                 return
             }
             
             guard let document = querySnapshot?.documents.first else {
                 let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Document does not exist"])
                 completion(error)
-                SystemView.LoadingView.hide()
                 return
             }
             
@@ -89,43 +85,32 @@ func fetchUserData(profileName: String, completion: @escaping (Error?) -> Void) 
                 userID: document["userID"] as? String
             )
             
-            if let imageString = userData.profileImage {
-                if let url = URL(string: imageString) {
-                    let task = URLSession.shared.dataTask(with: url) { data, response, error in
-                        if let data = data, let image = UIImage(data: data) {
-                            SharedProfileModel.shared.profileImage = image
-                        } else {
-                            SharedProfileModel.shared.profileImage = UIImage(named: "BasicUserProfileImage")
-                        }
-                    }
-                    task.resume()
-                } else {
-                    SharedProfileModel.shared.profileImage = UIImage(named: "BasicUserProfileImage")
-                }
-            } else {
-                SharedProfileModel.shared.profileImage = UIImage(named: "BasicUserProfileImage")
+            loadImage(from: userData.profileImage, fallbackImageName: "BasicUserProfileImage") { (profileImage) in
+                SharedProfileModel.myProfile.profileImage = profileImage
+            }
+
+            loadImage(from: userData.backgroundImage, fallbackImageName: "") { (backgroundImage) in
+                SharedProfileModel.myProfile.backgroundImage = backgroundImage
             }
             
-            SharedProfileModel.shared.profileName = userData.profileName
-            SharedProfileModel.shared.userName = userData.userName
-            SharedProfileModel.shared.password = userData.password
-            SharedProfileModel.shared.myCircleDigits = userData.myCircleDigits
-            SharedProfileModel.shared.myInTheCircleDigits = userData.myInTheCircleDigits
-            SharedProfileModel.shared.myPostDigits = userData.myPostDigits
-            SharedProfileModel.shared.followerDigits = userData.followerDigits
-            SharedProfileModel.shared.followingDigits = userData.followingDigits
-            SharedProfileModel.shared.socialValidation = userData.socialValidation
-            SharedProfileModel.shared.backgroundImage = userData.backgroundImage
-            SharedProfileModel.shared.userCategory = userData.userCategory
-            SharedProfileModel.shared.introduction = userData.introduction
-            SharedProfileModel.shared.email = userData.email
-            SharedProfileModel.shared.phoneNumber = userData.phoneNumber
-            SharedProfileModel.shared.birth = userData.birth
-            SharedProfileModel.shared.gender = userData.gender
-            SharedProfileModel.shared.userID = userData.userID
+            SharedProfileModel.myProfile.profileName = userData.profileName
+            SharedProfileModel.myProfile.userName = userData.userName
+            SharedProfileModel.myProfile.password = userData.password
+            SharedProfileModel.myProfile.myCircleDigits = userData.myCircleDigits
+            SharedProfileModel.myProfile.myInTheCircleDigits = userData.myInTheCircleDigits
+            SharedProfileModel.myProfile.myPostDigits = userData.myPostDigits
+            SharedProfileModel.myProfile.followerDigits = userData.followerDigits
+            SharedProfileModel.myProfile.followingDigits = userData.followingDigits
+            SharedProfileModel.myProfile.socialValidation = userData.socialValidation
+            SharedProfileModel.myProfile.userCategory = userData.userCategory
+            SharedProfileModel.myProfile.introduction = userData.introduction
+            SharedProfileModel.myProfile.email = userData.email
+            SharedProfileModel.myProfile.phoneNumber = userData.phoneNumber
+            SharedProfileModel.myProfile.birth = userData.birth
+            SharedProfileModel.myProfile.gender = userData.gender
+            SharedProfileModel.myProfile.userID = userData.userID
             
             completion(nil)
-            SystemView.LoadingView.hide()
         }
     }
 }
@@ -156,7 +141,9 @@ func checkIfProfileNameExists(_ profileName: String, completion: @escaping (Bool
     }
 }
 
-func searchUsers(withPrefix prefix: String, completion: @escaping ([SearchResult], Error?) -> Void) {
+func searchUsers(withPrefix prefix: String, completion: @escaping (Error?) -> Void) {
+    SharedProfileModel.otherUsersProfiles = []
+    
     DispatchQueue.global().async {
         let dataBase = Firestore.firestore()
         let userCollectionRef = dataBase.collection("users")
@@ -165,59 +152,83 @@ func searchUsers(withPrefix prefix: String, completion: @escaping ([SearchResult
             .whereField("profileName", isLessThan: prefix + "z")
             .getDocuments { (querySnapshot, error) in
                 if let error = error {
-                    completion([], error)
+                    completion(error)
                     return
                 }
                 
                 guard let documents = querySnapshot?.documents else {
-                    completion([], nil)
+                    completion(nil)
                     return
                 }
                 
-                let searchResults = documents.compactMap { document -> SearchResult? in
+                for document in documents {
                     if let profileName = document["profileName"] as? String,
-                       let userName = document["userName"] as? String,
-                       let socialValidation = document["socialValidation"] as? Bool {
+                        let userName = document["userName"] as? String,
+                        let password = document["password"] as? String,
+                        let myCircleDigits = document["myCircleDigits"] as? Int,
+                        let myInTheCircleDigits = document["myInTheCircleDigits"] as? Int,
+                        let myPostDigits = document["myPostDigits"] as? Int,
+                        let followerDigits = document["followerDigits"] as? Int,
+                        let followingDigits = document["followingDigits"] as? Int,
+                        let socialValidation = document["socialValidation"] as? Bool,
+                        let backgroundImage = document["backgroundImage"] as? String,
+                        let profileImage = document["profileImage"] as? String,
+                        let userCategory = document["userCategory"] as? String,
+                        let introduction = document["introduction"] as? String,
+                        let email = document["email"] as? String,
+                        let phoneNumber = document["phoneNumber"] as? String,
+                        let birth = document["birth"] as? String,
+                        let gender = document["gender"] as? String,
+                        let userID = document["userID"] as? String {
                         
-                        var profileImage: UIImage?
-                        
-                        if let profileImageURL = document["profileImage"] as? String, !profileImageURL.isEmpty {
-                            if let url = URL(string: profileImageURL) {
-                                let data = try? Data(contentsOf: url)
-                                if let data = data {
-                                    profileImage = UIImage(data: data)
-                                }
-                            }
+                        let userData = SharedProfileModel()
+
+                        loadImage(from: profileImage, fallbackImageName: "BasicUserProfileImage") { (profileImage) in
+                            userData.profileImage = profileImage
                         }
-                        
-                        if profileImage == nil {
-                            profileImage = UIImage(named: "BasicUserProfileImage")
+
+                        loadImage(from: backgroundImage, fallbackImageName: "") { (backgroundImage) in
+                            userData.backgroundImage = backgroundImage
                         }
-                        
-                        return SearchResult(profileName: profileName, profileImage: profileImage, userName: userName, socialValidation: socialValidation)
+
+                        userData.profileName = profileName
+                        userData.userName = userName
+                        userData.password = password
+                        userData.myCircleDigits = myCircleDigits
+                        userData.myInTheCircleDigits = myInTheCircleDigits
+                        userData.myPostDigits = myPostDigits
+                        userData.followerDigits = followerDigits
+                        userData.followingDigits = followingDigits
+                        userData.socialValidation = socialValidation
+                        userData.userCategory = userCategory
+                        userData.introduction = introduction
+                        userData.email = email
+                        userData.phoneNumber = phoneNumber
+                        userData.birth = birth
+                        userData.gender = gender
+                        userData.userID = userID
+
+                        SharedProfileModel.otherUsersProfiles.append(userData)
                     }
-                    return nil
                 }
                 
-                completion(searchResults, nil)
+                completion(nil)
             }
     }
 }
 
-
-
-func uploadProfileImage(image: UIImage, userID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+func uploadImage(field: String, image: UIImage, userID: String, completion: @escaping (Result<Void, Error>) -> Void) {
     SystemView.LoadingView.show()
 
     DispatchQueue.global().async {
-        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+        guard let imageData = image.jpegData(compressionQuality: 0.1) else {
             completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "이미지 데이터를 만들 수 없습니다."])))
             return
         }
         
         let storageRef = Storage.storage().reference()
         let imageName = UUID().uuidString
-        let imageRef = storageRef.child("profile_images/\(imageName).jpg")
+        let imageRef = storageRef.child("\(field)/\(imageName).jpg")
         
         let metadata = StorageMetadata()
         metadata.contentType = "image/jpeg"
@@ -229,15 +240,13 @@ func uploadProfileImage(image: UIImage, userID: String, completion: @escaping (R
                 return
             }
             
-            // 업로드한 이미지의 URL
             imageRef.downloadURL { (url, error) in
                 if let imageURL = url {
                     let urlString = imageURL.absoluteString
-                    // Firestore에 imageURL 저장
                     let dataBase = Firestore.firestore()
                     let userRef = dataBase.collection("users").document(userID)
                     
-                    userRef.setData(["profileImage": urlString], merge: true) { error in
+                    userRef.setData(["\(field)": urlString], merge: true) { error in
                         if let error = error {
                             completion(.failure(error))
                             SystemView.LoadingView.hide()
