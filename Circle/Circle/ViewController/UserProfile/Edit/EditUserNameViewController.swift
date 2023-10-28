@@ -8,31 +8,24 @@
 import UIKit
 import SnapKit
 
-class EditUserNameViewController: UserNameViewController {
-    override func viewLayout() {
-        view.backgroundColor = UIColor.black
-        
-        mainTextField.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(subTitleLabel.snp.bottom).offset(20)
-            make.size.equalTo(CGSize(width: 330, height: 40))
-        }
-        
-        mainTextField.text = SharedProfileModel.shared.userName
+class EditUserNameViewController: BasicEditViewController {
+    lazy var nextButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(nextButtonAction))
+        button.isEnabled = false
+        return button
+    }()
+    
+    override func uiViewUpdate() {
+        mainTextField.text = SharedProfileModel.myProfile.userName
     }
-
-    override func navigationBarLayout() {
-        let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.backward")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)), style: .done, target: self, action: #selector(backButtonAction))
-        
-        nextButton.title = "완료"
-
-        backButton.tintColor = UIColor.white
-        navigationItem.leftBarButtonItem = backButton
+    
+    override func navigationItemSetting() {
+        navigationItem.rightBarButtonItem = nextButton
         navigationItem.title = "사용자 이름"
     }
     
     override func nextButtonAction() {
-        if let userID = SharedProfileModel.shared.userID, let newUserName = mainTextField.text, let profileName = SharedProfileModel.shared.profileName {
+        if let userID = SharedProfileModel.myProfile.userID, let newUserName = mainTextField.text, let profileName = SharedProfileModel.myProfile.profileName {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.activityIndicator)
             self.activityIndicator.startAnimating()
             updateProfileName(field: "userName", userID: userID, updateData: newUserName) { error in
@@ -51,5 +44,13 @@ class EditUserNameViewController: UserNameViewController {
                 }
             }
         }
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let updatedText = (textField.text as NSString?)?.replacingCharacters(in: range, with: string) ?? ""
+        
+        nextButton.isEnabled = (0...21).contains(updatedText.count) && SharedProfileModel.myProfile.userName != updatedText
+        
+        return true
     }
 }
