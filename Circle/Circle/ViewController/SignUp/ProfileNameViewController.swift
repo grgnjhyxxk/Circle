@@ -74,7 +74,7 @@ class ProfileNameViewController: BaseSignUpViewController {
             
             self.errorTextLabel.isHidden = true
             
-            nextButton.isEnabled = (3...21).contains(updatedText.count) && SharedProfileModel.shared.profileName != updatedText
+            nextButton.isEnabled = (3...21).contains(updatedText.count) && SharedProfileModel.myProfile.profileName != updatedText
             
         } else {
             self.mainTextField.layer.borderWidth = 2

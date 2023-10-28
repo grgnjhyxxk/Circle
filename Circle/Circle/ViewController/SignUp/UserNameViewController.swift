@@ -37,7 +37,7 @@ class UserNameViewController: BaseSignUpViewController {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let updatedText = (textField.text as NSString?)?.replacingCharacters(in: range, with: string) ?? ""
         
-        nextButton.isEnabled = (0...21).contains(updatedText.count) && SharedProfileModel.shared.userName != updatedText
+        nextButton.isEnabled = (0...21).contains(updatedText.count) && SharedProfileModel.myProfile.userName != updatedText
         
         return true
     }
