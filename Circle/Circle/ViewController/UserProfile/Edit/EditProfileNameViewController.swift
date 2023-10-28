@@ -8,26 +8,28 @@
 import UIKit
 import SnapKit
 
-class EditProfileNameViewController: ProfileNameViewController {
-    override func viewLayout() {
-        view.backgroundColor = UIColor.black
-        
-        mainTextField.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(subTitleLabel.snp.bottom).offset(20)
-            make.size.equalTo(CGSize(width: 330, height: 40))
+class EditProfileNameViewController: BasicEditViewController {
+    lazy var nextButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(nextButtonAction))
+        button.isEnabled = false
+        return button
+    }()
+    
+    override func uiViewUpdate() {
+        mainTextField.text = SharedProfileModel.myProfile.profileName
+        errorTextLabel.text = errorTextLabelList[0]
+    }
+    
+    override func errorTextLabelLayout() {
+        errorTextLabel.snp.makeConstraints { make in
+            make.top.equalTo(mainTextField.snp.bottom).offset(15)
+            make.leading.equalTo(mainTextField)
+            make.trailing.equalToSuperview()
         }
-        
-        mainTextField.text = SharedProfileModel.shared.profileName
     }
 
-    override func navigationBarLayout() {
-        let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.backward")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)), style: .done, target: self, action: #selector(backButtonAction))
-        
-        nextButton.title = "완료"
-
-        backButton.tintColor = UIColor.white
-        navigationItem.leftBarButtonItem = backButton
+    override func navigationItemSetting() {
+        navigationItem.rightBarButtonItem = nextButton
         navigationItem.title = "프로필 이름"
     }
     
@@ -49,7 +51,7 @@ class EditProfileNameViewController: ProfileNameViewController {
                 self.mainTextField.layer.borderWidth = 0.5
                 self.mainTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
                 
-                if let userID = SharedProfileModel.shared.userID, let newProfileName = self.mainTextField.text {
+                if let userID = SharedProfileModel.myProfile.userID, let newProfileName = self.mainTextField.text {
                     updateProfileName(field: "profileName", userID: userID, updateData: newProfileName) { error in
                         if error != nil {
                             print("error")
@@ -68,5 +70,30 @@ class EditProfileNameViewController: ProfileNameViewController {
                 }
             }
         }
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let updatedText = (textField.text as NSString?)?.replacingCharacters(in: range, with: string) ?? ""
+        let allowedCharacters = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.")
+        let characterSet = CharacterSet(charactersIn: string)
+        
+        if allowedCharacters.isSuperset(of: characterSet) {
+            self.mainTextField.layer.borderWidth = 0.5
+            self.mainTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
+            
+            self.errorTextLabel.isHidden = true
+            
+            nextButton.isEnabled = (3...21).contains(updatedText.count) && SharedProfileModel.myProfile.profileName != updatedText
+            
+        } else {
+            self.mainTextField.layer.borderWidth = 2
+            self.mainTextField.layer.borderColor = UIColor.red.cgColor
+            
+            AnimationView().shakeView(self.mainTextField)
+            
+            self.errorTextLabel.isHidden = false
+        }
+        
+        return allowedCharacters.isSuperset(of: characterSet)
     }
 }
