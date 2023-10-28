@@ -49,6 +49,20 @@ class SignUpView: UIView {
         return textField
     }
     
+    func mainTextView() -> UITextView {
+        let textView = UITextView()
+        
+        textView.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        textView.textColor = UIColor.white
+        textView.backgroundColor = UIColor.white.withAlphaComponent(0.08)
+        textView.layer.cornerRadius = 5
+        textView.layer.borderWidth = 0.5
+        textView.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
+        textView.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+
+        return textView
+    }
+    
     func checkButton() -> UIButton {
         let button = UIButton()
         
