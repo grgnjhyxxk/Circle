@@ -30,6 +30,8 @@ class IntroViewController: UIViewController {
     private var idTextField: UITextField = IntroView().idTextField()
     private var passwordTextField: UITextField = IntroView().passwordTextField()
     
+    let activityIndicator: UIActivityIndicatorView = SystemView().activityIndicator()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -60,7 +62,7 @@ class IntroViewController: UIViewController {
     }
     
     private func addOnView() {
-        viewList = [spinningCirclesView, startButton, introMainTitleLabel, introSubTitleLabel, idTextField, passwordTextField, separator_left, separator_right, registerButton, recoverCredentialsButton, separatorTitleLabel, errorTextLabel]
+        viewList = [spinningCirclesView, startButton, introMainTitleLabel, introSubTitleLabel, idTextField, passwordTextField, separator_left, separator_right, registerButton, recoverCredentialsButton, separatorTitleLabel, errorTextLabel, activityIndicator]
         
         for uiView in viewList {
             view.addSubview(uiView)
@@ -74,6 +76,11 @@ class IntroViewController: UIViewController {
             make.centerX.equalToSuperview()
             make.centerY.equalToSuperview().offset(330)
             make.size.equalTo(CGSize(width: 60, height: 60))
+        }
+        
+        activityIndicator.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview().offset(330)
         }
         
         introMainTitleLabel.snp.makeConstraints { make in
@@ -147,6 +154,9 @@ class IntroViewController: UIViewController {
         
         errorTextLabel.text = "아디이 혹은 비밀번호가 잘못되었습니다."
         errorTextLabel.isHidden = true
+        
+        activityIndicator.style = .large
+        activityIndicator.isHidden = true
     }
     
     private func addTargets() {
@@ -213,25 +223,37 @@ class IntroViewController: UIViewController {
                     }
                 }
             } else if let idText = self.idTextField.text, let passwordText = self.passwordTextField.text, !passwordText.isEmpty && !idText.isEmpty {
+                
                 isLoggedInBool = true
+                startButton.isHidden = true
+                activityIndicator.isHidden = false
+                activityIndicator.startAnimating()
+                
                 let id = idText.lowercased().replacingOccurrences(of: " ", with: "")
+
                 fetchUserData(profileName: "\(id)") { error in
-                    if let error = error {
-                        self.errorTextLabel.isHidden = false
-                        print("Error: \(error.localizedDescription)")
-                    } else {
-                        if let inputPassword = SharedProfileModel.shared.password {
-                            if comparePasswords(inputPassword: passwordText, savedPassword: inputPassword) {
-                                if let tabBarController = self.isLoggedIn() {
-                                    self.errorTextLabel.isHidden = true
-                                    tabBarController.modalPresentationStyle = .fullScreen
-                                    self.present(tabBarController, animated: true)
+                    DispatchQueue.main.async {
+                        if let error = error {
+                            self.errorTextLabel.isHidden = false
+                            print("Error: \(error.localizedDescription)")
+                        } else {
+                            if let inputPassword = SharedProfileModel.myProfile.password {
+                                if comparePasswords(inputPassword: passwordText, savedPassword: inputPassword) {
+                                    if let tabBarController = self.isLoggedIn() {
+                                        self.errorTextLabel.isHidden = true
+                                        tabBarController.modalPresentationStyle = .fullScreen
+                                        self.present(tabBarController, animated: true)
+                                    }
+                                } else {
+                                    self.errorTextLabel.isHidden = false
                                 }
-                            } else {
-                                self.errorTextLabel.isHidden = false
                             }
                         }
                     }
+                    
+                    self.activityIndicator.stopAnimating()
+                    self.startButton.isHidden = false
+                    self.activityIndicator.isHidden = true
                 }
             }
         }
