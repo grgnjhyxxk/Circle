@@ -26,7 +26,7 @@ class IntroView: UIView {
     func introMainTitleLabel() -> UILabel {
         let label = UILabel()
         
-        label.text = "Circles"
+        label.text = "circles"
         label.textColor = UIColor.white
         label.font = UIFont(name: "PetitFormalScript-Regular", size: 52)
 
