@@ -99,7 +99,8 @@ class SearchInformationViewController: UIViewController, UITableViewDelegate, UI
         
         userProfileVC.indexPath = indexPath.row
         
-        show(userProfileVC, sender: nil)
+//        show(userProfileVC, sender: nil)
+        navigationController?.pushViewController(userProfileVC, animated: true)
     }
     
     @objc func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {

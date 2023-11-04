@@ -48,7 +48,7 @@ class SearchInformationTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = UIColor.black
+//        contentView.backgroundColor = UIColor.black
         contentView.addSubview(profileImageView)
         contentView.addSubview(profileNameLabel)
         contentView.addSubview(userNameLabel)
