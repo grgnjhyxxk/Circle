@@ -98,8 +98,6 @@ class BasicUserProfileViewController: UIViewController {
         }
                 
         scrollView.showsVerticalScrollIndicator = false
-        navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.shadowImage = UIImage()
     }
     
     func addOnContentView() {
@@ -187,6 +185,10 @@ class BasicUserProfileViewController: UIViewController {
         
     }
         
+    @objc func postingButtonAction() {
+        
+    }
+    
     @objc func profileEdditButtonAction() {
         
     }

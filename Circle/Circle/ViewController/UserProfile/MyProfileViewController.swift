@@ -153,12 +153,16 @@ class MyProfileViewController: BasicUserProfileViewController {
         present(viewController, animated: true)
     }
     
+    @objc override func postingButtonAction() {
+
+    }
+    
     @objc override func profileEdditButtonAction() {
-        let viewController = EditProfileViewController()
+        let viewController = UINavigationController(rootViewController: EditProfileViewController())
         
         viewController.hidesBottomBarWhenPushed = true
-        
-        show(viewController, sender: nil)
+        viewController.modalPresentationStyle = .fullScreen
+        present(viewController, animated: true)
     }
 }
 
