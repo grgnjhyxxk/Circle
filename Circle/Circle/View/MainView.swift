@@ -8,21 +8,19 @@
 import UIKit
 
 class MainView: UIView {
-    func MainViewTitleLabel() -> UILabel {
-        let label = UILabel()
+    func segmentedControlView() -> UIView {
+        let view = UIView()
         
-        label.text = "Circle"
-        label.textColor = UIColor.white
-        label.font = UIFont(name: "NotoSans-Thin", size: 30)
+        view.backgroundColor = UIColor.black
         
-        return label
+        return view
     }
     
     func createSegmentedControl() -> UISegmentedControl {
         let segmentedControl = UISegmentedControl(items: ["팔로우 중", "가입 서클"])
         
         segmentedControl.selectedSegmentIndex = 0
-        
+
         let image = UIImage()
         segmentedControl.setBackgroundImage(image, for: .normal, barMetrics: .default)
         segmentedControl.setBackgroundImage(image, for: .selected, barMetrics: .default)
