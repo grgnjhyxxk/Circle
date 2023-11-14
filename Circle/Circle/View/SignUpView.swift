@@ -59,7 +59,7 @@ class SignUpView: UIView {
         textView.layer.borderWidth = 0.5
         textView.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
         textView.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-
+        
         return textView
     }
     

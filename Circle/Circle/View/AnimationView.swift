@@ -102,7 +102,6 @@ extension SpinningCirclesView {
 }
 
 class AnimationView {
-    
     func shakeView(_ view: UIView) {
         let shake = CAKeyframeAnimation(keyPath: "transform.translation.x")
         shake.timingFunction = CAMediaTimingFunction(name: .easeOut)
