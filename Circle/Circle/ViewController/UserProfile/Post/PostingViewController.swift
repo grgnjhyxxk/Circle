@@ -5,4 +5,8 @@
 //  Created by Jaehyeok Lim on 11/14/23.
 //
 
-import Foundation
+import UIKit
+
+class PostingViewController: BasicPostViewController {
+
+}
