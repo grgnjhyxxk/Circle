@@ -82,7 +82,7 @@ class BaseSignUpViewController: UIViewController, UITextFieldDelegate {
         mainTextField.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(subTitleLabel.snp.bottom).offset(20)
-            make.size.equalTo(CGSize(width: 330, height: 40))
+            make.size.equalTo(CGSize(width: 340, height: 40))
         }
     }
     
