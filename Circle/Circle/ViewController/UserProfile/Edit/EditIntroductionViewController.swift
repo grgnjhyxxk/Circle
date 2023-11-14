@@ -19,6 +19,7 @@ class EditIntroductionViewController: BasicEditViewController {
         mainTextView.text = SharedProfileModel.myProfile.introduction
         mainTextField.isHidden = true
         mainTextView.isHidden = false
+        updateMainTextViewHeight()
     }
     
     override func navigationItemSetting() {
@@ -48,6 +49,10 @@ class EditIntroductionViewController: BasicEditViewController {
         }
     }
     
+    override func updateMainTextViewHeight() {
+        super.updateMainTextViewHeight()
+    }
+
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         let updatedText = (textView.text as NSString?)?.replacingCharacters(in: range, with: text) ?? ""
         
