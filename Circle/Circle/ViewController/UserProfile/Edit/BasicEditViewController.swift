@@ -36,13 +36,13 @@ class BasicEditViewController: UIViewController, UITextFieldDelegate, UITextView
     
     override func viewDidLoad() {
         super .viewDidLoad()
-        
         navigationItemSetting()
         addOnView()
         viewLayout()
         errorTextLabelLayout()
         navigationBarLayout()
         uiViewUpdate()
+        updateMainTextViewHeight()
         
         mainTextField.delegate = self
         mainTextView.delegate = self
@@ -64,17 +64,20 @@ class BasicEditViewController: UIViewController, UITextFieldDelegate, UITextView
         view.backgroundColor = UIColor.black
         
         mainTextField.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(120)
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(20)
-            make.size.equalTo(CGSize(width: 330, height: 40))
+            make.size.equalTo(CGSize(width: 340, height: 40))
         }
         
         mainTextView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(120)
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(20)
-            make.size.equalTo(CGSize(width: 330, height: 100))
+//            make.size.equalTo(CGSize(width: 330, height: 500))
+            make.width.equalTo(340)
+            make.height.equalTo(40)
         }
         
+        mainTextView.isScrollEnabled = false
         mainTextView.isHidden = true
     }
     
@@ -103,12 +106,33 @@ class BasicEditViewController: UIViewController, UITextFieldDelegate, UITextView
 
     }
     
+    func updateMainTextViewHeight() {
+        // mainTextView의 크기를 현재 텍스트에 맞게 조정
+        let fixedWidth = mainTextView.frame.size.width
+        let newSize = mainTextView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+        mainTextView.snp.updateConstraints { make in
+            make.height.equalTo(newSize.height)
+        }
+        view.layoutIfNeeded()
+    }
+    
     @objc func backButtonAction() {
         navigationController?.popViewController(animated: true)
     }
     
     @objc func nextButtonAction() {
         
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        print(textView.text)
+        let size = CGSize(width: mainTextView.frame.width, height: 400)
+        let estimatedSize = textView.sizeThatFits(size)
+        textView.constraints.forEach { (constraint) in
+            if constraint.firstAttribute == .height {
+                constraint.constant = estimatedSize.height
+            }
+        }
     }
 }
 
