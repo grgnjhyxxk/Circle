@@ -115,11 +115,11 @@ class MyProfileViewController: BasicUserProfileViewController {
         }
         
         settingListBarButton.snp.makeConstraints { make in
-            make.size.equalTo(CGSize(width: 26, height: 24))
+            make.size.equalTo(CGSize(width: 23, height: 21))
         }
         
         postingBarButton.snp.makeConstraints { make in
-            make.size.equalTo(CGSize(width: 30, height: 27))
+            make.size.equalTo(CGSize(width: 27, height: 24))
         }
 
         let righthStackview = UIStackView.init(arrangedSubviews: [postingBarButton, settingListBarButton])
