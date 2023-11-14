@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class MainViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+class MainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     private var viewList: [UIView] = []
     private var contentViewList: [UIView] = []
     
@@ -16,11 +16,13 @@ class MainViewController: UIViewController, UICollectionViewDataSource, UICollec
     private var contentView: UIView = UIView()
     private var separator: UIView = IntroView().separator()
     private var spinningCirclesView = SpinningCirclesView()
-    private var followingPostsCollectionView: UICollectionView = UICollectionView()
+    //    private var followingPostsCollectionView: UICollectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout())
     
     private let navigationTitleViewLabel: UILabel = IntroView().introMainTitleLabel()
     
     private var segmentedControl: UISegmentedControl = MainView().createSegmentedControl()
+    
+    let followingPostsTableView: UITableView = UITableView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,95 +34,120 @@ class MainViewController: UIViewController, UICollectionViewDataSource, UICollec
         navigationBarLayout()
         addTargets()
         setupSwipeGesture()
-
-        followingPostsCollectionView.dataSource = self
-        followingPostsCollectionView.delegate = self
+        
+        followingPostsTableView.dataSource = self
+        followingPostsTableView.delegate = self
+        
+        navigationController?.hidesBarsOnSwipe = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         spinningCirclesView.startAnimation()
     }
-
+    
     private func addOnView() {
-        viewList = [scrollView, segmentedControl, separator]
+        viewList = [segmentedControl, separator, followingPostsTableView]
         
         for uiView in viewList {
             view.addSubview(uiView)
         }
-        
-        scrollView.addSubview(contentView)
     }
-
+    
     private func viewLayout() {
         view.backgroundColor = UIColor.black
-        scrollView.backgroundColor = UIColor.black
-        contentView.backgroundColor = UIColor.black
+        followingPostsTableView.backgroundColor = UIColor.black
+//        scrollView.backgroundColor = UIColor.black
+//        contentView.backgroundColor = UIColor.black
         
-        scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
+//        scrollView.snp.makeConstraints { make in
+//            make.top.equalToSuperview()
+//            make.leading.trailing.bottom.equalToSuperview()
+//        }
         
-        segmentedControl.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
-            make.centerX.equalToSuperview()
-            make.width.equalToSuperview()
-            make.height.equalTo(30)
-        }
+//        segmentedControl.snp.makeConstraints { make in
+//            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
+//            make.centerX.equalToSuperview()
+//            make.width.equalToSuperview()
+//            make.height.equalTo(30)
+//        }
         
-        separator.snp.makeConstraints { make in
-            make.top.equalTo(segmentedControl.snp.bottom).offset(15)
-            make.width.equalToSuperview()
-            make.height.equalTo(1)
-        }
+//        separator.snp.makeConstraints { make in
+//            make.top.equalTo(segmentedControl.snp.bottom).offset(15)
+//            make.width.equalToSuperview()
+//            make.height.equalTo(1)
+//        }
         
-        contentView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-            make.width.equalToSuperview()
-            make.height.equalTo(1000)
-        }
-            
-        createBottomLine(for: segmentedControl)
+//        contentView.snp.makeConstraints { make in
+//            make.edges.equalToSuperview()
+//            make.width.equalToSuperview()
+//            make.height.equalTo(1000)
+//        }
+        
         scrollView.showsVerticalScrollIndicator = false
         navigationController?.navigationBar.isTranslucent = false
         navigationController?.navigationBar.shadowImage = UIImage()
     }
     
-    func createBottomLine(for segmentedControl: UISegmentedControl) {
-        let bottomLine = CALayer()
-        bottomLine.backgroundColor = UIColor.red.cgColor // 원하는 색상으로 설정
-        bottomLine.frame = CGRect(x: 0, y: segmentedControl.frame.height - 1, width: segmentedControl.frame.width, height: 1)
-        segmentedControl.layer.addSublayer(bottomLine)
-    }
-    
     private func addOnContentView() {
-        contentViewList = [followingPostsCollectionView]
+//        contentViewList = [followingPostsCollectionView]
+//        
+//        for uiView in contentViewList {
+//            contentView.addSubview(uiView)
+//        }
         
-        for uiView in contentViewList {
-            contentView.addSubview(uiView)
-        }
-        
-        followingPostsCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(separator.snp.bottom)
+        followingPostsTableView.snp.makeConstraints { make in
+            make.top.equalToSuperview()
             make.leading.trailing.bottom.equalToSuperview()
         }
     }
     
     private func contentViewLayout() {
-        followingPostsCollectionView.register(FollowingPostsCollectionViewCell.self, forCellWithReuseIdentifier: "FollowingPostsCollectionViewCell")
-
+        followingPostsTableView.register(FollowingPostsCollectionViewCell.self, forCellReuseIdentifier: "FollowingPostsCollectionViewCell")
     }
     
     private func navigationBarLayout() {
-        let rightButton = UIBarButtonItem(image: UIImage(systemName: "bell")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 18, weight: .regular)), style: .done, target: self, action: nil)
-        spinningCirclesView.setCircleSizes(bigCircleSize: 20, smallCircleSize: 5, radius: 17)
+        let alarmBarButton = UIButton()
+        let boltBarButton = UIButton()
+        
+        if let image = UIImage(systemName: "bell") {
+            alarmBarButton.setImage(image, for: .normal)
+        }
+        
+        if let image = UIImage(systemName: "bolt") {
+            boltBarButton.setImage(image, for: .normal)
+        }
+        
+        alarmBarButton.tintColor = UIColor.white
+        boltBarButton.tintColor = UIColor.white
+        alarmBarButton.contentHorizontalAlignment = .fill
+        alarmBarButton.contentVerticalAlignment = .fill
+        boltBarButton.contentHorizontalAlignment = .fill
+        boltBarButton.contentVerticalAlignment = .fill
+                
+        alarmBarButton.snp.makeConstraints { make in
+            make.size.equalTo(CGSize(width: 27, height: 27))
+        }
+        
+        boltBarButton.snp.makeConstraints { make in
+            make.size.equalTo(CGSize(width: 27, height: 27))
+        }
+        
+        let righthStackview = UIStackView.init(arrangedSubviews: [boltBarButton, alarmBarButton])
+        righthStackview.distribution = .equalSpacing
+        righthStackview.axis = .horizontal
+        righthStackview.alignment = .center
+        righthStackview.spacing = 15
 
-        rightButton.tintColor = UIColor.white
-
+        let rightStackBarButtonItem = UIBarButtonItem(customView: righthStackview)
+        
+//        navigationController?.navigationBar.backgroundColor = UIColor.black
+        
+        spinningCirclesView.setCircleSizes(bigCircleSize: 18.5, smallCircleSize: 4.5, radius: 15.5)
         navigationTitleViewLabel.text = "C"
         navigationTitleViewLabel.font = UIFont(name: "PetitFormalScript-Regular", size: 28)
         
-        navigationItem.rightBarButtonItem = rightButton
+        navigationItem.rightBarButtonItem = rightStackBarButtonItem
         navigationItem.titleView = spinningCirclesView
     }
     
@@ -133,18 +160,18 @@ class MainViewController: UIViewController, UICollectionViewDataSource, UICollec
         swipeLeftGesture.direction = .right
         self.view.addGestureRecognizer(swipeLeftGesture)
     }
-
+    
     private func addTargets() {
         segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged(_:)), for: .valueChanged)
     }
-
+    
     @objc private func swipeRight(_ gesture: UISwipeGestureRecognizer) {
         if segmentedControl.selectedSegmentIndex == 0 {
             segmentedControl.selectedSegmentIndex = 1
             segmentedControlValueChanged(segmentedControl)
         }
     }
-
+    
     @objc private func swipeLeft(_ gesture: UISwipeGestureRecognizer) {
         if segmentedControl.selectedSegmentIndex == 1 {
             segmentedControl.selectedSegmentIndex = 0
@@ -165,15 +192,20 @@ class MainViewController: UIViewController, UICollectionViewDataSource, UICollec
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 0
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 10
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FollowingPostsCollectionViewCell", for: indexPath) as! FollowingPostsCollectionViewCell
-
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "FollowingPostsCollectionViewCell", for: indexPath) as!
+        FollowingPostsCollectionViewCell
+        
         
         return cell
+    }
+        
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
