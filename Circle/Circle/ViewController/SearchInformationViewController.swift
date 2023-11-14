@@ -46,8 +46,6 @@ class SearchInformationViewController: UIViewController, UITableViewDelegate, UI
         view.backgroundColor = UIColor.black
         tableView.backgroundColor = UIColor.black
         
-        navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.shadowImage = UIImage()
         navigationItem.titleView = searchController.searchBar
         definesPresentationContext = true
         searchController.hidesNavigationBarDuringPresentation = false
