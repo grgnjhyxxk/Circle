@@ -110,3 +110,44 @@ class AnimationView {
         view.layer.add(shake, forKey: nil)
     }
 }
+
+class CircularProgressBar: UIView {
+    private let progressLayer = CAShapeLayer()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupProgressBar()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupProgressBar() {
+        let circularPath = UIBezierPath(
+            arcCenter: CGPoint(x: 12.5, y: 12.5),
+            radius: 12.5,
+            startAngle: -CGFloat.pi / 2,
+            endAngle: 3 * CGFloat.pi / 2,
+            clockwise: true
+        )
+
+        let trackLayer = CAShapeLayer()
+        trackLayer.path = circularPath.cgPath
+        trackLayer.strokeColor = UIColor.gray.cgColor
+        trackLayer.lineWidth = 3
+        trackLayer.fillColor = UIColor.clear.cgColor
+        layer.addSublayer(trackLayer)
+
+        progressLayer.path = circularPath.cgPath
+        progressLayer.strokeColor = UIColor.white.cgColor
+        progressLayer.lineWidth = 3
+        progressLayer.fillColor = UIColor.clear.cgColor
+        progressLayer.strokeEnd = 0
+        layer.addSublayer(progressLayer)
+    }
+
+    func updateProgress(to value: CGFloat) {
+        progressLayer.strokeEnd = value
+    }
+}
