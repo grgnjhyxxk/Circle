@@ -15,10 +15,10 @@ class UserMainView: UIView {
         button.setTitleColor(UIColor.white, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .medium)
         button.titleLabel?.textAlignment = .center
-
+        
         return button
     }
-
+    
     func userProfileImageView() -> UIImageView {
         let imageView = UIImageView()
         
@@ -27,7 +27,7 @@ class UserMainView: UIView {
         imageView.layer.cornerRadius = 45
         imageView.layer.borderColor = UIColor.black.cgColor
         imageView.clipsToBounds = true
-
+        
         return imageView
     }
     
@@ -37,7 +37,7 @@ class UserMainView: UIView {
         imageView.backgroundColor = UIColor.white.withAlphaComponent(0.05)
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-
+        
         return imageView
     }
     
@@ -74,10 +74,10 @@ class UserMainView: UIView {
         
         return label
     }
-
+    
     func subStatusButton() -> UIButton {
         let button = UIButton()
-
+        
         button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         button.tintColor = UIColor.white
         button.setTitleColor(UIColor.white, for: .normal)
@@ -86,8 +86,8 @@ class UserMainView: UIView {
         button.layer.borderWidth = 0.5
         button.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
         button.backgroundColor = UIColor.black
-//        button.sizeToFit()
-
+        //        button.sizeToFit()
+        
         return button
     }
     
@@ -111,7 +111,7 @@ class UserMainView: UIView {
         let view = UIView()
         
         view.backgroundColor = UIColor.white
-
+        
         return view
     }
     
@@ -173,6 +173,103 @@ class UserMainView: UIView {
             
             return button
         }
+    }
+    
+    class postView: UIView {
+        func postingBarButton() -> UIButton {
+            let button = UIButton()
+            
+            button.setTitle("게시하기", for: .normal)
+            button.setTitleColor(UIColor.white, for: .normal)
+            button.setTitleColor(UIColor.gray, for: .disabled)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+            button.layer.cornerRadius = 15
+            button.layer.borderWidth = 0.5
+            button.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
+            button.backgroundColor = UIColor.black
+            
+            return button
+        }
+        
+        func userProfileBarButton() -> UIButton {
+            let button = UIButton()
+            var image = UIImage()
+            
+            if let profileImage = SharedProfileModel.myProfile.profileImage {
+                image = profileImage
+            }
+            
+            button.setImage(image, for: .normal)
+            button.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+            button.layer.cornerRadius = 12.5
+            button.layer.borderColor = UIColor.black.cgColor
+            button.clipsToBounds = true
+            
+            return button
+        }
+        
+        func postTextView() -> UITextView {
+            let textView = UITextView()
+            
+            textView.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+            textView.textColor = UIColor.white
+            textView.backgroundColor = UIColor.black
+            textView.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+            
+            return textView
+        }
+        
+        func bottomView() -> UIView {
+            let view = UIView()
+            
+            view.backgroundColor = UIColor.black
+            
+            return view
+        }
+        
+        func voiceRecordingButton() -> UIButton {
+            let button = UIButton()
+            
+            button.setImage(UIImage(systemName: "recordingtape"), for: .normal)
+            button.tintColor = UIColor.white
+            
+            return button
+        }
+        
+        func photoLibraryButton() -> UIButton {
+            let button = UIButton()
+            
+            button.setImage(UIImage(systemName: "camera.on.rectangle"), for: .normal)
+            button.tintColor = UIColor.white
+            
+            return button
+        }
+        
+        func locationButton() -> UIButton {
+            let button = UIButton()
+            
+            button.setImage(UIImage(systemName: "location"), for: .normal)
+            button.tintColor = UIColor.white
+
+            return button
+        }
+        
+        func scopeOfDisclosureButton() -> UIButton {
+            let button = UIButton()
+            
+            button.setImage(UIImage(systemName: "globe.asia.australia.fill"), for: .normal)
+            button.setTitle("모두에게 공개", for: .normal)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .light)
+            button.tintColor = UIColor.white
+            
+            button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 10)
+            button.semanticContentAttribute = .forceLeftToRight
+            button.contentVerticalAlignment = .center
+            button.contentHorizontalAlignment = .trailing
+            
+            return button
+        }
+
     }
 }
 
