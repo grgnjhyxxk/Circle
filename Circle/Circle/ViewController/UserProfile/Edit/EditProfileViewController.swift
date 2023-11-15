@@ -175,7 +175,7 @@ class EditProfileViewController: UIViewController, UITableViewDelegate, UITableV
     }
     
     @objc private func backButtonAction() {
-        navigationController?.popViewController(animated: true)
+        dismiss(animated: true)
     }
     
     @objc func updateProfile(_ notification: Notification) {
