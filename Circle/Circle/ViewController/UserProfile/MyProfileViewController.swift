@@ -94,6 +94,7 @@ class MyProfileViewController: BasicUserProfileViewController {
         let postingBarButton = UIButton()
 
         settingListBarButton.addTarget(self, action: #selector(settingListButtonAction), for: .touchUpInside)
+        postingBarButton.addTarget(self, action: #selector(postingButtonAction), for: .touchUpInside)
         
         if let image = UIImage(systemName: "list.bullet") {
             settingListBarButton.setImage(image, for: .normal)
@@ -154,14 +155,19 @@ class MyProfileViewController: BasicUserProfileViewController {
     }
     
     @objc override func postingButtonAction() {
+        let viewController = UINavigationController(rootViewController: PostingViewController())
+        
+        viewController.hidesBottomBarWhenPushed = true
+        viewController.modalPresentationStyle = .fullScreen
 
+        present(viewController, animated: true)
     }
     
     @objc override func profileEdditButtonAction() {
         let viewController = UINavigationController(rootViewController: EditProfileViewController())
         
-        viewController.hidesBottomBarWhenPushed = true
         viewController.modalPresentationStyle = .fullScreen
+        
         present(viewController, animated: true)
     }
 }
