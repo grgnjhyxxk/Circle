@@ -8,13 +8,20 @@
 import UIKit
 import SnapKit
 
-class MyProfileViewController: BasicUserProfileViewController {
+class MyProfileViewController: BasicUserProfileViewController, UITableViewDelegate, UITableViewDataSource {
     
     override func mainViewSetting() {
-
+        
     }
     
     override func contentViewSetting() {
+        postsTableView.register(FollowingPostsTableViewCell3.self, forCellReuseIdentifier: "FollowingPostsTableViewCell3")
+        postsTableView.register(FollowingPostsTableViewCell2.self, forCellReuseIdentifier: "FollowingPostsTableViewCell2")
+        postsTableView.separatorInset.left = 0
+        
+        postsTableView.dataSource = self
+        postsTableView.delegate = self
+        
         profileEditButton.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(15)
             make.trailing.equalToSuperview().offset(-15)
@@ -25,31 +32,6 @@ class MyProfileViewController: BasicUserProfileViewController {
             make.leading.trailing.equalTo(contentView)
             make.top.equalTo(subStatusButton.snp.bottom).offset(20)
             make.height.equalTo(1)
-        }
-        
-        myPersonalPostsFeedButton.snp.makeConstraints { make in
-            make.top.equalTo(topViewBottomSeparator.snp.bottom)
-            make.leading.equalTo(contentView)
-            make.size.equalTo(CGSize(width: view.frame.width / 2, height: 40))
-        }
-        
-        myCirclePostsFeedButton.snp.makeConstraints { make in
-            make.top.equalTo(topViewBottomSeparator.snp.bottom)
-            make.trailing.equalTo(contentView)
-            make.size.equalTo(CGSize(width: view.frame.width / 2, height: 40))
-        }
-        
-        myPersonalPostsFeedButton.addSubview(myPersonalPostsFeedButtonBottomBar)
-        myCirclePostsFeedButton.addSubview(myCirclePostsButtonBottomBar)
-
-        myPersonalPostsFeedButtonBottomBar.snp.makeConstraints { make in
-            make.centerX.bottom.equalToSuperview()
-            make.size.equalTo(CGSize(width: 100, height: 2))
-        }
-        
-        myCirclePostsButtonBottomBar.snp.makeConstraints { make in
-            make.centerX.bottom.equalToSuperview()
-            make.size.equalTo(CGSize(width: 100, height: 2))
         }
     }
     
@@ -136,15 +118,23 @@ class MyProfileViewController: BasicUserProfileViewController {
     }
     
     @objc override func refreshData() {
-        let profileName = SharedProfileModel.myProfile.profileName
-        fetchUserData(profileName: "\(profileName ?? "")") { (error) in
+        let myProfile = SharedProfileModel.myProfile
+        fetchUserData(profileName: "\(myProfile.profileName ?? "")") { (error) in
             if let error = error {
                 print("Error: \(error.localizedDescription)")
-            }
-
-            DispatchQueue.main.async {
-                self.uiViewUpdate()
-                self.refreshControl.endRefreshing()
+            } else {
+                SharedPostModel.myPosts.removeAll()
+                retrieveMyPosts(userID: myProfile.userID!) { (error) in
+                    if let error = error {
+                        print("Error: \(error.localizedDescription)")
+                    } else {
+                        DispatchQueue.main.async {
+                            self.uiViewUpdate()
+                            self.postsTableView.reloadData()
+                            self.refreshControl.endRefreshing()
+                        }
+                    }
+                }
             }
         }
     }
@@ -169,6 +159,109 @@ class MyProfileViewController: BasicUserProfileViewController {
         viewController.modalPresentationStyle = .fullScreen
         
         present(viewController, animated: true)
+    }
+    
+    @objc override func postSettingButtonAction(_ sender: UIButton) {
+        let point = sender.convert(CGPoint.zero, to: postsTableView)
+        guard let indexPath = postsTableView.indexPathForRow(at: point) else { return }
+        
+        // UIAlertController 생성
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+        // 수정 액션 추가
+        let editAction = UIAlertAction(title: "수정", style: .default) { _ in
+            // 수정 버튼이 눌렸을 때의 동작
+            self.editPostButtonAction()
+        }
+        alertController.addAction(editAction)
+
+        // 삭제 액션 추가
+        let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
+            // 삭제 버튼이 눌렸을 때의 동작
+            self.deletePostButtonAction(indexPath: indexPath)
+        }
+        alertController.addAction(deleteAction)
+
+        // 취소 액션 추가
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        alertController.addAction(cancelAction)
+
+        // 액션 시트 표시
+        present(alertController, animated: true, completion: nil)
+    }
+
+    func editPostButtonAction() {
+        // "수정" 버튼이 선택되었을 때의 동작 구현
+    }
+
+    func deletePostButtonAction(indexPath: IndexPath) {
+        let myProfile = SharedProfileModel.myProfile
+        let myPosts = SharedPostModel.myPosts
+        
+        if let userID = myProfile.userID {
+            if let postIDForDelete = myPosts[indexPath.row].postID {
+                
+                deletePost(userID: userID, postID: postIDForDelete) { (error) in
+                    if let error = error {
+                        
+                    } else {
+                        SharedPostModel.myPosts.removeAll()
+                        
+                        retrieveMyPosts(userID: userID) { (error) in
+                            if let error = error {
+                                print("Error: \(error.localizedDescription)")
+                            } else {
+                                DispatchQueue.main.async {
+                                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "PostUpdated"), object: nil)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return SharedPostModel.myPosts.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let post = SharedPostModel.myPosts[indexPath.row]
+        let userProfile = SharedProfileModel.myProfile
+        
+        if post.images?.isEmpty == true {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "FollowingPostsTableViewCell2", for: indexPath) as! FollowingPostsTableViewCell2
+
+            cell.feedTextLabel.text = post.content
+
+            cell.profileImageView.image = userProfile.profileImage
+            cell.profileNameLabel.text = userProfile.profileName
+            cell.userNameLabel.text = userProfile.userName
+            cell.socialValidationImageView.isHidden = !(userProfile.socialValidation ?? false)
+
+            return cell
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "FollowingPostsTableViewCell3", for: indexPath) as! FollowingPostsTableViewCell3
+
+            cell.images = post.images
+            cell.feedTextLabel.text = post.content
+
+            cell.profileImageView.image = userProfile.profileImage
+            cell.profileNameLabel.text = userProfile.profileName
+            cell.userNameLabel.text = userProfile.userName
+            cell.socialValidationImageView.isHidden = !(userProfile.socialValidation ?? false)
+
+            cell.collectionView.reloadData()
+            contentView.layoutIfNeeded()
+            postsTableView.layoutIfNeeded()
+
+            return cell
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 

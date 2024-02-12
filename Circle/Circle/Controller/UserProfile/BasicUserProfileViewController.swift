@@ -13,9 +13,9 @@ class BasicUserProfileViewController: UIViewController {
     var viewList: [UIView] = []
     var contentViewList: [UIView] = []
     
-    var scrollView: UIScrollView = UIScrollView()
     var contentView: UIView = UIView()
     var topViewBottomSeparator: UIView = IntroView().separator()
+    var userProfileView: UIView = UserMainView().userProfileView()
     
     var profileNameButton: UIButton = UserMainView().profileNameButton()
     
@@ -36,6 +36,8 @@ class BasicUserProfileViewController: UIViewController {
     
     var subStatusButton: UIButton = UserMainView().subStatusButton()
     
+    let postsTableView: UITableView = UITableView()
+
     lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
@@ -54,54 +56,52 @@ class BasicUserProfileViewController: UIViewController {
         contentViewSetting()
         addTargets()
         navigationBarLayout()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(updateProfile(_:)), name: NSNotification.Name(rawValue: "PostUpdated"), object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         uiViewUpdate()
         contentViewLayout()
+        
+        DispatchQueue.main.async {
+            self.postsTableView.reloadData()
+        }
     }
     
     func addOnView() {
-        viewList = [userProfileBackgroundImageView, scrollView]
+        viewList = [postsTableView]
         
         for uiView in viewList {
             view.addSubview(uiView)
         }
-        
-        scrollView.addSubview(contentView)
     }
     
     func viewLayout() {
-        view.backgroundColor = UIColor.black
-        scrollView.backgroundColor = UIColor.clear
+        view.backgroundColor = UIColor.clear
+        postsTableView.backgroundColor = UIColor.black
         contentView.backgroundColor = UIColor.black
-        scrollView.refreshControl = refreshControl
-
         
-        userProfileBackgroundImageView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(contentView.safeAreaLayoutGuide.snp.top)
-        }
-        
-        scrollView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            make.leading.trailing.bottom.equalToSuperview()
-        }
+        postsTableView.tableHeaderView = contentView
+        postsTableView.refreshControl = refreshControl
         
         contentView.snp.makeConstraints { make in
-            make.top.equalTo(scrollView).offset(120)
-            make.leading.trailing.bottom.equalToSuperview()
+            make.top.leading.trailing.bottom.equalToSuperview()
             make.width.equalToSuperview()
-            make.height.equalTo(600)
+            make.height.equalTo(290)
         }
-                
-        scrollView.showsVerticalScrollIndicator = false
+                    
+        postsTableView.snp.makeConstraints { make in
+            make.top.leading.trailing.bottom.equalToSuperview()
+        }
+        
+        navigationController?.navigationBar.isTranslucent = false
+        navigationController?.navigationBar.shadowImage = UIImage()
     }
     
     func addOnContentView() {
-        contentViewList = [userProfileImageView,
+        contentViewList = [userProfileBackgroundImageView, userProfileView, userProfileImageView,
                            userNameTitleLabel, userCategoryTitleLabel, introductionLabel,
                            topViewBottomSeparator,
                            myPersonalPostsFeedButton, myCirclePostsFeedButton,
@@ -114,9 +114,20 @@ class BasicUserProfileViewController: UIViewController {
     }
     
     func contentViewLayout() {
-        userProfileImageView.snp.makeConstraints { make in
-            make.top.equalTo(contentView).offset(-45)
+        userProfileBackgroundImageView.snp.makeConstraints { make in
+            make.top.equalTo(postsTableView.safeAreaLayoutGuide.snp.top)
+            make.top.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(userProfileView.safeAreaLayoutGuide.snp.centerY)
+        }
+        
+        userProfileView.snp.makeConstraints { make in
+            make.top.equalTo(75)
             make.centerX.equalTo(contentView)
+            make.size.equalTo(CGSize(width: 96, height: 96))
+        }
+        
+        userProfileImageView.snp.makeConstraints { make in
+            make.center.equalTo(userProfileView)
             make.size.equalTo(CGSize(width: 90, height: 90))
         }
         
@@ -137,7 +148,7 @@ class BasicUserProfileViewController: UIViewController {
         }
         
         subStatusButton.snp.makeConstraints { make in
-            make.top.equalTo(introductionLabel.snp.bottom).offset(20)
+            make.top.equalTo(introductionLabel.snp.bottom).offset(5)
             make.centerX.equalTo(contentView)
             make.width.equalTo(subStatusButton.titleLabel!.snp.width).offset(52)
             make.height.equalTo(30)
@@ -177,6 +188,10 @@ class BasicUserProfileViewController: UIViewController {
         }
     }
     
+    @objc func updateProfile(_ notification: Notification) {
+        postsTableView.reloadData()
+    }
+    
     @objc func refreshData() {
         
     }
@@ -190,6 +205,10 @@ class BasicUserProfileViewController: UIViewController {
     }
     
     @objc func profileEdditButtonAction() {
+        
+    }
+    
+    @objc func postSettingButtonAction(_ sender: UIButton) {
         
     }
     
