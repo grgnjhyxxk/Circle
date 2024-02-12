@@ -9,8 +9,9 @@ import UIKit
 
 class PostingViewController: BasicPostViewController {
     override func navigationBarLayout() {
-        let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.backward")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)), style: .done, target: self, action: #selector(backButtonAction))
-        backButton.tintColor = UIColor.white
+        let cancelBarButton = UIBarButtonItem(title: "닫기", style: .plain, target: self, action: #selector(cancelButtonAction))
+        
+        cancelBarButton.tintColor = UIColor.white
                 
         postingBarButton.snp.makeConstraints { make in
             make.width.equalTo(postingBarButton.titleLabel!.snp.width).offset(52)
@@ -34,7 +35,63 @@ class PostingViewController: BasicPostViewController {
         let rightStackBarButtonItem = UIBarButtonItem(customView: righthStackview)
                 
         navigationItem.rightBarButtonItem = rightStackBarButtonItem
-        navigationItem.leftBarButtonItem = backButton
+        navigationItem.leftBarButtonItem = cancelBarButton
+    }
+    
+    override func addTagetsChild() {
+        postingBarButton.addTarget(self, action: #selector(postingBarButtonAction), for: .touchUpInside)
+    }
+    
+    @objc func postingBarButtonAction() {
+        let righthStackview = UIStackView.init(arrangedSubviews: [userProfileBarButton, circularProgressBar, activityIndicator])
+        righthStackview.distribution = .equalSpacing
+        righthStackview.axis = .horizontal
+        righthStackview.alignment = .center
+        righthStackview.spacing = 15
+
+        let rightStackBarButtonItem = UIBarButtonItem(customView: righthStackview)
+        navigationItem.rightBarButtonItem = rightStackBarButtonItem
+
+        // 작업 시작
+        activityIndicator.startAnimating()
+
+        // 포스팅 데이터 업로드 코드
+        if let userID = SharedProfileModel.myProfile.userID, let content = postTextView.text {
+            let time = currentDateTimeString()
+            let location = selectedLocation ?? ""
+            let postData = PostData(userID: userID, content: content, date: time, location: location)
+            
+            uploadPostData(postData: postData, images: selectedImages, userID: userID) { result in
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating() // 작업 완료 후 인디게이터를 중지시킴
+
+                    switch result {
+                    case .success:
+                        print("작업이 성공적으로 완료되었습니다.")
+                        
+                        SharedPostModel.myPosts.removeAll()
+                        
+                        retrieveMyPosts(userID: userID) { (error) in
+                            if let error = error {
+                                print("Error: \(error.localizedDescription)")
+                            } else {
+                                DispatchQueue.main.async {
+                                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "PostUpdated"), object: nil)
+                                }
+                                
+                                self.dismiss(animated: true)
+                            }
+                        }
+                    // 성공한 경우의 동작 처리
+                    case .failure(let error):
+                        print("작업이 실패했습니다. 에러: \(error.localizedDescription)")
+                        // 실패한 경우의 동작 처리
+                    }
+                }
+            }
+        } else {
+            // handle else case if needed
+        }
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
@@ -42,7 +99,7 @@ class PostingViewController: BasicPostViewController {
         
         print(updatedText.count)
         
-        let progress = min(1.0, CGFloat(updatedText.count) / CGFloat(maxCharacterLimit))
+        let progress = min(1.0, CGFloat(updatedText.count) / CGFloat(MAX_CHARACTER_LIMIT))
         circularProgressBar.updateProgress(to: progress)
         
         postingBarButton.isEnabled = (0...300).contains(updatedText.count)
