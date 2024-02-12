@@ -28,7 +28,7 @@ class EditUserNameViewController: BasicEditViewController {
         if let userID = SharedProfileModel.myProfile.userID, let newUserName = mainTextField.text, let profileName = SharedProfileModel.myProfile.profileName {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.activityIndicator)
             self.activityIndicator.startAnimating()
-            updateProfileName(field: "userName", userID: userID, updateData: newUserName) { error in
+            updateProfile(field: "userName", userID: userID, updateData: newUserName) { error in
                 if error != nil {
                     print("error")
                 } else {

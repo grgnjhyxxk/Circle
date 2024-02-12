@@ -52,7 +52,7 @@ class EditProfileNameViewController: BasicEditViewController {
                 self.mainTextField.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
                 
                 if let userID = SharedProfileModel.myProfile.userID, let newProfileName = self.mainTextField.text {
-                    updateProfileName(field: "profileName", userID: userID, updateData: newProfileName) { error in
+                    updateProfile(field: "profileName", userID: userID, updateData: newProfileName) { error in
                         if error != nil {
                             print("error")
                         } else {

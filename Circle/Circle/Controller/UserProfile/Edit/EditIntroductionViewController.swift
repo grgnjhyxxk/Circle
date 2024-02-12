@@ -31,7 +31,7 @@ class EditIntroductionViewController: BasicEditViewController {
         if let userID = SharedProfileModel.myProfile.userID, let newIntroduction = mainTextView.text, let profileName = SharedProfileModel.myProfile.profileName {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.activityIndicator)
             self.activityIndicator.startAnimating()
-            updateProfileName(field: "introduction", userID: userID, updateData: newIntroduction) { error in
+            updateProfile(field: "introduction", userID: userID, updateData: newIntroduction) { error in
                 if error != nil {
                     print("error")
                 } else {
