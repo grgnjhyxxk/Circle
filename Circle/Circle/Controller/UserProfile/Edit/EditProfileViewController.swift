@@ -141,11 +141,11 @@ class EditProfileViewController: UIViewController, UITableViewDelegate, UITableV
     }
     
     private func navigationBarLayout() {
-        let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.backward")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)), style: .done, target: self, action: #selector(backButtonAction))
+        let cancelBarButton = UIBarButtonItem(title: "닫기", style: .plain, target: self, action: #selector(cancelButtonAction))
+
+        cancelBarButton.tintColor = UIColor.white
         
-        backButton.tintColor = UIColor.white
-        
-        navigationItem.leftBarButtonItem = backButton
+        navigationItem.leftBarButtonItem = cancelBarButton
         navigationItem.title = "프로필 편집"
     }
     
@@ -174,7 +174,7 @@ class EditProfileViewController: UIViewController, UITableViewDelegate, UITableV
         }
     }
     
-    @objc private func backButtonAction() {
+    @objc private func cancelButtonAction() {
         dismiss(animated: true)
     }
     
