@@ -197,6 +197,7 @@ class IntroViewController: UIViewController {
                 UIView.transition(with: self.startButton, duration: 0.3, options: .transitionCrossDissolve, animations: {
                     let newImage = UIImage(systemName: "checkmark")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .thin))
                     self.startButton.setImage(newImage, for: .normal)
+                    self.idTextField.becomeFirstResponder()
                 }, completion: nil)
             }
         } else if let image = self.startButton.imageView?.image, image == UIImage(systemName: "checkmark")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)) {
@@ -230,7 +231,6 @@ class IntroViewController: UIViewController {
                 activityIndicator.startAnimating()
                 
                 let id = idText.lowercased().replacingOccurrences(of: " ", with: "")
-
                 fetchUserData(profileName: "\(id)") { error in
                     DispatchQueue.main.async {
                         if let error = error {
@@ -239,10 +239,24 @@ class IntroViewController: UIViewController {
                         } else {
                             if let inputPassword = SharedProfileModel.myProfile.password {
                                 if comparePasswords(inputPassword: passwordText, savedPassword: inputPassword) {
-                                    if let tabBarController = self.isLoggedIn() {
-                                        self.errorTextLabel.isHidden = true
-                                        tabBarController.modalPresentationStyle = .fullScreen
-                                        self.present(tabBarController, animated: true)
+                                    retrieveFirstFourPosts { error in
+                                        if let error = error {
+                                            print("Failed to retrieve all posts:", error.localizedDescription)
+                                        } else {
+                                            print("All posts retrieved successfully")
+                                            let myProfile = SharedProfileModel.myProfile
+                                            retrieveMyPosts(userID: myProfile.userID!) { (error) in
+                                                if let error = error {
+                                                    print("Error: \(error.localizedDescription)")
+                                                } else {
+                                                    if let tabBarController = self.isLoggedIn() {
+                                                        self.errorTextLabel.isHidden = true
+                                                        tabBarController.modalPresentationStyle = .fullScreen
+                                                        self.present(tabBarController, animated: true)
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 } else {
                                     self.errorTextLabel.isHidden = false
