@@ -52,7 +52,8 @@ class AccountPasswordViewController: BaseSignUpViewController {
         if let profileData = profileNameInput, let userNameData = userNameInput, let passwordData = mainTextField.text {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.activityIndicator)
             self.activityIndicator.startAnimating()
-            let userData = UserData(profileName: profileData, userName: userNameData, password: passwordData, myCircleDigits: 0, myInTheCircleDigits: 0, myPostDigits: 0, followerDigits: 0, followingDigits: 0, socialValidation: false)
+            let time = currentDateTimeString()
+            let userData = UserData(signDate: time, profileName: profileData, userName: userNameData, password: passwordData, myCircleDigits: 0, myInTheCircleDigits: 0, myPostDigits: 0, followerDigits: 0, followingDigits: 0, socialValidation: false)
             signUpDataUploadServer(userData: userData) { success, error in
                 if success {
                     print("데이터 추가 성공")
