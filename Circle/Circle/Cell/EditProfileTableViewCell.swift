@@ -9,7 +9,6 @@ import UIKit
 import SnapKit
 
 class EditProfileTableViewCell: UITableViewCell {
-    
     let titleLabel: UILabel = {
         let label = UILabel()
         
@@ -52,7 +51,7 @@ class EditProfileTableViewCell: UITableViewCell {
         }
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
