@@ -18,15 +18,15 @@ class TabBarController: UITabBarController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print("ddd")
         configureLayout()
     }
     
     func configureLayout() {
         self.tabBar.tintColor = UIColor.white
         self.tabBar.unselectedItemTintColor = UIColor.white.withAlphaComponent(0.75)
-        self.tabBar.backgroundColor = UIColor.black.withAlphaComponent(0.75)
-
+//        self.tabBar.backgroundColor = UIColor.black.withAlphaComponent(0.75)
+        self.tabBar.isTranslucent = false
+        
         let myProfileViewController = MyProfileViewController()
         let myProfileNavigationController = UINavigationController(rootViewController: myProfileViewController)
 
@@ -39,8 +39,8 @@ class TabBarController: UITabBarController {
         let circlesViewController = MainViewController()
         let circleNavigationController = UINavigationController(rootViewController: circlesViewController)
         
-        circleNavigationController.tabBarItem.selectedImage = UIImage(systemName: "person.2.fill")
-        circleNavigationController.tabBarItem.image = UIImage(systemName: "person.2")
+        circleNavigationController.tabBarItem.selectedImage = UIImage(systemName: "envelope.fill")
+        circleNavigationController.tabBarItem.image = UIImage(systemName: "envelope")
 
         searchInformationNavigationController.tabBarItem.selectedImage = UIImage(systemName: "magnifyingglass")
         searchInformationNavigationController.tabBarItem.image = UIImage(systemName: "magnifyingglass")?.withConfiguration(UIImage.SymbolConfiguration(weight: .light))
