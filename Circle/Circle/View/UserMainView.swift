@@ -304,25 +304,6 @@ class UserMainView: UIView {
         }
         
         class SearchLocationView {
-//            func topView() -> UIView {
-//                let view = UIView()
-//                
-//                view.backgroundColor = UIColor.white.withAlphaComponent(0.1)
-//                
-//                return view
-//            }
-//
-//            func titleLabel() -> UILabel {
-//                let label = UILabel()
-//                
-//                label.text = "위치 검색"
-//                label.font = .systemFont(ofSize: 16, weight: .semibold)
-//                label.textColor = .white
-//                label.textAlignment = .center
-//                
-//                return label
-//            }
-
             func searchController() -> UISearchController {
                 let searchController = UISearchController()
                 
