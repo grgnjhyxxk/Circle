@@ -19,14 +19,23 @@ class UserMainView: UIView {
         return button
     }
     
+    func userProfileView() -> UIView {
+        let view = UIView()
+        
+        view.backgroundColor = UIColor.black
+        view.layer.cornerRadius = 48
+        
+        return view
+    }
+    
     func userProfileImageView() -> UIImageView {
         let imageView = UIImageView()
         
         imageView.image = UIImage()
         imageView.backgroundColor = UIColor.white.withAlphaComponent(0.1)
         imageView.layer.cornerRadius = 45
-        imageView.layer.borderColor = UIColor.black.cgColor
         imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFill
         
         return imageView
     }
@@ -37,7 +46,8 @@ class UserMainView: UIView {
         imageView.backgroundColor = UIColor.white.withAlphaComponent(0.05)
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        
+        imageView.contentMode = .scaleAspectFill
+
         return imageView
     }
     
@@ -204,6 +214,7 @@ class UserMainView: UIView {
             button.layer.cornerRadius = 12.5
             button.layer.borderColor = UIColor.black.cgColor
             button.clipsToBounds = true
+            button.contentMode = .scaleAspectFill
             
             return button
         }
@@ -214,7 +225,7 @@ class UserMainView: UIView {
             textView.font = UIFont.systemFont(ofSize: 16, weight: .regular)
             textView.textColor = UIColor.white
             textView.backgroundColor = UIColor.black
-            textView.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+            textView.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 0, right: 10)
             
             return textView
         }
@@ -232,7 +243,8 @@ class UserMainView: UIView {
             
             button.setImage(UIImage(systemName: "recordingtape"), for: .normal)
             button.tintColor = UIColor.white
-            
+            button.layer.cornerRadius = 15
+
             return button
         }
         
@@ -241,16 +253,18 @@ class UserMainView: UIView {
             
             button.setImage(UIImage(systemName: "camera.on.rectangle"), for: .normal)
             button.tintColor = UIColor.white
-            
+            button.layer.cornerRadius = 15
+
             return button
         }
         
         func locationButton() -> UIButton {
             let button = UIButton()
             
-            button.setImage(UIImage(systemName: "location"), for: .normal)
+            button.setImage(UIImage(systemName: "map"), for: .normal)
             button.tintColor = UIColor.white
-
+            button.layer.cornerRadius = 15
+            
             return button
         }
         
@@ -259,6 +273,7 @@ class UserMainView: UIView {
             
             button.setImage(UIImage(systemName: "globe.asia.australia.fill"), for: .normal)
             button.setTitle("모두에게 공개", for: .normal)
+            button.setTitleColor(UIColor.white, for: .normal)
             button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .light)
             button.tintColor = UIColor.white
             
@@ -269,7 +284,57 @@ class UserMainView: UIView {
             
             return button
         }
+        
+        func locationNotiButton() -> UIButton {
+            let button = UIButton()
+            
+            button.setImage(UIImage(systemName: "map"), for: .normal)
+            button.setTitle("위치 추가", for: .normal)
+            button.setTitleColor(UIColor.systemGray, for: .normal)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+            button.tintColor = UIColor.systemGray
+            
+            button.semanticContentAttribute = .forceLeftToRight
+            button.contentVerticalAlignment = .center
+            button.contentHorizontalAlignment = .leading
+            
+            button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 10) // 오른쪽으로의 간격
+            
+            return button
+        }
+        
+        class SearchLocationView {
+//            func topView() -> UIView {
+//                let view = UIView()
+//                
+//                view.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+//                
+//                return view
+//            }
+//
+//            func titleLabel() -> UILabel {
+//                let label = UILabel()
+//                
+//                label.text = "위치 검색"
+//                label.font = .systemFont(ofSize: 16, weight: .semibold)
+//                label.textColor = .white
+//                label.textAlignment = .center
+//                
+//                return label
+//            }
 
+            func searchController() -> UISearchController {
+                let searchController = UISearchController()
+                
+                searchController.searchBar.searchBarStyle = .minimal
+                searchController.searchBar.searchTextField.textColor = .white
+                searchController.searchBar.searchTextField.tintColor = .white
+                searchController.searchBar.searchTextField.font = .systemFont(ofSize: 16, weight: .regular)
+                searchController.searchBar.searchTextField.placeholder = "검색"
+                
+                return searchController
+            }
+        }
     }
 }
 
