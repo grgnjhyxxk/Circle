@@ -9,6 +9,7 @@ import UIKit
 import SDWebImage
 
 struct UserData {
+    var signDate: String
     var profileName: String
     var userName: String
     var password: String
@@ -29,10 +30,26 @@ struct UserData {
     var userID: String?
 }
 
+struct PostData {
+    var postID: String?
+    var userID: String
+    var content: String
+    var date: String
+    var location: String
+    var images: [UIImage]?
+    var like: [String]?
+    var saved: [String]?
+    var shared: [Int: String]?
+    var comments: [[[String: String]]]?
+    var views: [String]?
+}
+
 class SharedProfileModel {
     static var myProfile = SharedProfileModel()
     static var otherUsersProfiles = [SharedProfileModel]()
-
+    static var postsProfile = [SharedProfileModel]()
+    
+    var signDate: String?
     var profileName: String?
     var userName: String?
     var password: String?
@@ -52,6 +69,25 @@ class SharedProfileModel {
     var gender: String?
     var userID: String?
 
+    init() {}
+}
+
+class SharedPostModel {
+    static var myPosts = [SharedPostModel]()
+    static var othersPosts = [SharedPostModel]()
+    
+    var postID: String?
+    var userID: String?
+    var content: String?
+    var date: String?
+    var location: String?
+    var images: [UIImage]?
+    var like: [String]?
+    var saved: [String]?
+    var shared: [Int: String]?
+    var comments: [[[String: String]]]?
+    var views: [String]?
+    
     init() {}
 }
 
@@ -107,4 +143,11 @@ func loadImage(from urlString: String?, fallbackImageName: String, completion: @
     }
 }
 
-
+func currentDateTimeString() -> String {
+    let currentDate = Date()
+    
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    
+    return dateFormatter.string(from: currentDate)
+}
