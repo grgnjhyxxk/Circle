@@ -15,8 +15,8 @@ class MyProfileViewController: BasicUserProfileViewController, UITableViewDelega
     }
     
     override func contentViewSetting() {
-        postsTableView.register(FollowingPostsTableViewCell3.self, forCellReuseIdentifier: "FollowingPostsTableViewCell3")
-        postsTableView.register(FollowingPostsTableViewCell2.self, forCellReuseIdentifier: "FollowingPostsTableViewCell2")
+        postsTableView.register(FollowingPostsTableViewCell.self, forCellReuseIdentifier: "FollowingPostsTableViewCell")
+
         postsTableView.separatorInset.left = 0
         
         postsTableView.dataSource = self
@@ -131,9 +131,10 @@ class MyProfileViewController: BasicUserProfileViewController, UITableViewDelega
                         DispatchQueue.main.async {
                             self.uiViewUpdate()
                             self.postsTableView.reloadData()
-                            self.refreshControl.endRefreshing()
                         }
                     }
+                    
+                    self.refreshControl.endRefreshing()
                 }
             }
         }
@@ -165,33 +166,50 @@ class MyProfileViewController: BasicUserProfileViewController, UITableViewDelega
         let point = sender.convert(CGPoint.zero, to: postsTableView)
         guard let indexPath = postsTableView.indexPathForRow(at: point) else { return }
         
-        // UIAlertController 생성
-        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-
-        // 수정 액션 추가
-        let editAction = UIAlertAction(title: "수정", style: .default) { _ in
-            // 수정 버튼이 눌렸을 때의 동작
-            self.editPostButtonAction()
+        let myProfile = SharedProfileModel.myProfile
+        let myPosts = SharedPostModel.myPosts
+        
+        if myPosts[indexPath.row].userID == myProfile.userID {
+            // UIAlertController 생성
+            let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            
+            // 수정 액션 추가
+            let editAction = UIAlertAction(title: "수정", style: .default) { _ in
+                // 수정 버튼이 눌렸을 때의 동작
+                self.editPostButtonAction(indexPath: indexPath)
+            }
+            alertController.addAction(editAction)
+            
+            // 삭제 액션 추가
+            let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
+                // 삭제 버튼이 눌렸을 때의 동작
+                self.deletePostButtonAction(indexPath: indexPath)
+            }
+            alertController.addAction(deleteAction)
+            
+            // 취소 액션 추가
+            let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+            alertController.addAction(cancelAction)
+            
+            // 액션 시트 표시
+            present(alertController, animated: true, completion: nil)
+        } else {
+            
         }
-        alertController.addAction(editAction)
-
-        // 삭제 액션 추가
-        let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
-            // 삭제 버튼이 눌렸을 때의 동작
-            self.deletePostButtonAction(indexPath: indexPath)
-        }
-        alertController.addAction(deleteAction)
-
-        // 취소 액션 추가
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        alertController.addAction(cancelAction)
-
-        // 액션 시트 표시
-        present(alertController, animated: true, completion: nil)
     }
 
-    func editPostButtonAction() {
-        // "수정" 버튼이 선택되었을 때의 동작 구현
+    func editPostButtonAction(indexPath: IndexPath) {
+        DispatchQueue.main.async {
+            let notificationData: [IndexPath: Any] = [indexPath: "indexPath"]
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "PostEditingIsOn"), object: nil, userInfo: notificationData)
+        }
+        
+        let viewController = UINavigationController(rootViewController: PostEditingViewController())
+        
+        viewController.hidesBottomBarWhenPushed = true
+        viewController.modalPresentationStyle = .fullScreen
+
+        present(viewController, animated: true)
     }
 
     func deletePostButtonAction(indexPath: IndexPath) {
@@ -230,34 +248,21 @@ class MyProfileViewController: BasicUserProfileViewController, UITableViewDelega
         let post = SharedPostModel.myPosts[indexPath.row]
         let userProfile = SharedProfileModel.myProfile
         
-        if post.images?.isEmpty == true {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "FollowingPostsTableViewCell2", for: indexPath) as! FollowingPostsTableViewCell2
+        let cell = tableView.dequeueReusableCell(withIdentifier: "FollowingPostsTableViewCell", for: indexPath) as! FollowingPostsTableViewCell
+                
+        cell.images = post.images
+        cell.feedTextLabel.text = post.content
 
-            cell.feedTextLabel.text = post.content
+        cell.profileImageView.image = userProfile.profileImage
+        cell.profileNameLabel.text = userProfile.profileName
+        cell.userNameLabel.text = userProfile.userName
+        cell.socialValidationImageView.isHidden = !(userProfile.socialValidation ?? false)
 
-            cell.profileImageView.image = userProfile.profileImage
-            cell.profileNameLabel.text = userProfile.profileName
-            cell.userNameLabel.text = userProfile.userName
-            cell.socialValidationImageView.isHidden = !(userProfile.socialValidation ?? false)
-
-            return cell
-        } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "FollowingPostsTableViewCell3", for: indexPath) as! FollowingPostsTableViewCell3
-
-            cell.images = post.images
-            cell.feedTextLabel.text = post.content
-
-            cell.profileImageView.image = userProfile.profileImage
-            cell.profileNameLabel.text = userProfile.profileName
-            cell.userNameLabel.text = userProfile.userName
-            cell.socialValidationImageView.isHidden = !(userProfile.socialValidation ?? false)
-
-            cell.collectionView.reloadData()
-            contentView.layoutIfNeeded()
-            postsTableView.layoutIfNeeded()
-
-            return cell
-        }
+        cell.collectionView.reloadData()
+        contentView.layoutIfNeeded()
+        postsTableView.layoutIfNeeded()
+        
+        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
