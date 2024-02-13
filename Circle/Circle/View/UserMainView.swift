@@ -201,6 +201,21 @@ class UserMainView: UIView {
             return button
         }
         
+        func postEditingBarButton() -> UIButton {
+            let button = UIButton()
+            
+            button.setTitle("수정하기", for: .normal)
+            button.setTitleColor(UIColor.white, for: .normal)
+            button.setTitleColor(UIColor.gray, for: .disabled)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+            button.layer.cornerRadius = 15
+            button.layer.borderWidth = 0.5
+            button.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
+            button.backgroundColor = UIColor.black
+            
+            return button
+        }
+        
         func userProfileBarButton() -> UIButton {
             let button = UIButton()
             var image = UIImage()
