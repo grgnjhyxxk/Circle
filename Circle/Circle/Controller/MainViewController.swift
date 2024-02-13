@@ -190,36 +190,6 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
         }
     }
-
-//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        let offsetY = scrollView.contentOffset.y
-//        let contentHeight = scrollView.contentSize.height
-//        let boundsHeight = scrollView.bounds.size.height
-//
-//        // 스크롤이 맨 아래로 도달했을 때 리프레쉬 실행
-//        if offsetY > contentHeight - boundsHeight {
-//            if !refreshControl.isRefreshing {
-//                refreshControl.beginRefreshing()
-//
-//                retrieveNextFourPosts { posts, error in
-//                    if let error = error {
-//                        print("Failed to retrieve all posts:", error.localizedDescription)
-//                    } else {
-//                        print("All posts retrieved successfully")
-//                        
-//                        DispatchQueue.main.async {
-//                            // Add new posts to the table view
-//                            let indexPaths = (SharedPostModel.othersPosts.count - posts.count ..< SharedPostModel.othersPosts.count).map { IndexPath(row: $0, section: 0) }
-//                            self.followingPostsTableView.insertRows(at: indexPaths, with: .automatic)
-//                            
-//                            // End refreshing after updating UI
-//                            self.refreshControl.endRefreshing()
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y

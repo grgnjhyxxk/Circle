@@ -13,6 +13,8 @@ class BasicPostViewController: UIViewController, UITextViewDelegate, UICollectio
     
     let MAX_CHARACTER_LIMIT = 300
     
+    var postIndexPathForEditing: IndexPath?
+
     var viewList: [UIView] = []
     var scrollViewList: [UIView] = []
     var contentViewList: [UIView] = []
@@ -43,6 +45,8 @@ class BasicPostViewController: UIViewController, UITextViewDelegate, UICollectio
     let postTextView: UITextView = UserMainView.postView().postTextView()
     
     let postingBarButton: UIButton = UserMainView.postView().postingBarButton()
+    let postEditingBarButton: UIButton = UserMainView.postView().postEditingBarButton()
+
     var userProfileBarButton: UIButton = UserMainView.postView().userProfileBarButton()
     var voiceRecordingButton: UIButton = UserMainView.postView().voiceRecordingButton()
     var photoLibraryButton: UIButton = UserMainView.postView().photoLibraryButton()
@@ -84,6 +88,8 @@ class BasicPostViewController: UIViewController, UITextViewDelegate, UICollectio
         collectionView.delegate = self
         photoLibraryImagePicker.delegate = self
         scrollView.delegate = self
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(PostEditingIsOn(_:)), name: NSNotification.Name(rawValue: "PostEditingIsOn"), object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -255,6 +261,38 @@ class BasicPostViewController: UIViewController, UITextViewDelegate, UICollectio
     
     func addTagetsChild() {
         
+    }
+    
+    @objc func PostEditingIsOn(_ notification: Notification) {
+        if let data = notification.userInfo as? [IndexPath: Any],
+            let indexPathValue = data.keys.first {
+            
+            postEditingSetting(indexPath: indexPathValue)
+        }
+    }
+    
+    func postEditingSetting(indexPath: IndexPath) {
+        let myPost = SharedPostModel.myPosts
+        
+        postIndexPathForEditing = indexPath
+        
+        if let postImages = myPost[indexPath.row].images {
+            selectedImages = postImages
+        }
+            
+        if let postContent = myPost[indexPath.row].content {
+            postTextView.text = postContent
+        }
+        
+        if let postLocation = myPost[indexPath.row].location {
+        
+        }
+        
+        DispatchQueue.main.async {
+            let progress = min(1.0, CGFloat(self.postTextView.text.count) / CGFloat(self.MAX_CHARACTER_LIMIT))
+            self.circularProgressBar.updateProgress(to: progress)
+            self.collectionView.reloadData()
+        }
     }
     
     @objc func photoLibraryButtonAction() {
