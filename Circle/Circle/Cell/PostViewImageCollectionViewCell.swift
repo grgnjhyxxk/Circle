@@ -11,7 +11,6 @@ protocol PostViewImageCellDelegate: AnyObject {
     func deleteButtonTapped(cell: PostViewImageCollectionViewCell)
 }
 
-
 class PostViewImageCollectionViewCell: UICollectionViewCell {
     var deleteButtonAction: (() -> Void)?
     
