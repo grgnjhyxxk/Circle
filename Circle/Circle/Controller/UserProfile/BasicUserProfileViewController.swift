@@ -57,7 +57,7 @@ class BasicUserProfileViewController: UIViewController {
         addTargets()
         navigationBarLayout()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(updateProfile(_:)), name: NSNotification.Name(rawValue: "PostUpdated"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updatePost(_:)), name: NSNotification.Name(rawValue: "PostUpdated"), object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -188,7 +188,7 @@ class BasicUserProfileViewController: UIViewController {
         }
     }
     
-    @objc func updateProfile(_ notification: Notification) {
+    @objc func updatePost(_ notification: Notification) {
         postsTableView.reloadData()
     }
     
