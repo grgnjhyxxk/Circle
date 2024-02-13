@@ -337,6 +337,52 @@ func uploadPostData(postData: PostData, images: [UIImage], userID: String, compl
     }
 }
 
+func updatePostData(postID: String, updatedPostData: PostData, updatedImages: [UIImage], userID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    uploadImages(field: "posts", images: updatedImages, userID: userID) { result in
+        switch result {
+        case .success(let uploadedImageURLs):
+            let dataBase = Firestore.firestore()
+            let userCollectionRef = dataBase.collection("users").document(userID).collection("posts")
+            let postCollectionRef = dataBase.collection("posts")
+
+            var updatedData: [String: Any] = [
+                "userID": updatedPostData.userID,
+                "content": updatedPostData.content,
+                "date": updatedPostData.date,
+                "location": updatedPostData.location,
+                "like": updatedPostData.like ?? [],
+                "saved": updatedPostData.saved ?? [],
+                "shared": updatedPostData.shared ?? [],
+                "views": updatedPostData.views ?? [],
+                "images": uploadedImageURLs // 업데이트된 이미지 URL을 게시물 데이터에 추가
+            ]
+
+            // 사용자 컬렉션에서 특정 필드만 업데이트
+            userCollectionRef.document(postID).updateData(updatedData) { userError in
+                if let userError = userError {
+                    completion(.failure(userError))
+                    print("사용자 문서 업데이트 중 오류 발생: \(userError.localizedDescription)")
+                } else {
+                    // 전체 게시물 컬렉션에서도 업데이트
+                    postCollectionRef.document(postID).updateData(updatedData) { postError in
+                        if let postError = postError {
+                            completion(.failure(postError))
+                            print("게시물 문서 업데이트 중 오류 발생: \(postError.localizedDescription)")
+                        } else {
+                            completion(.success(()))
+                            print("문서 업데이트 성공")
+                        }
+                    }
+                }
+            }
+
+        case .failure(let error):
+            completion(.failure(error))
+        }
+    }
+}
+
+
 func uploadImages(field: String, images: [UIImage], userID: String, completion: @escaping (Result<[String], Error>) -> Void) {
     var uploadedImageURLs: [String] = []
     let dispatchGroup = DispatchGroup()
@@ -456,24 +502,17 @@ func retrieveNextFourPosts(completion: @escaping (Error?) -> Void) {
         let database = Firestore.firestore()
         let postCollectionRef = database.collection("posts")
         
-        // 추가: 날짜 기준으로 정렬하되, 이전에 불러온 게시글은 제외
         let lastPost = SharedPostModel.othersPosts.last ?? SharedPostModel()
-        print("count is : \(SharedPostModel.othersPosts.count)")
-        print("text is : \(lastPost.content ?? "No content")")
-        print("Last post date: \(lastPost.date ?? "No date")")
 
         let lastDate = lastPost.date ?? ""
         postCollectionRef.order(by: "date", descending: true).start(after: [lastDate]).limit(to: 4).getDocuments { snapshot, error in
             if let error = error {
                 completion(error)
-                print("1")
                 return
             }
             
-            if snapshot?.documents.isEmpty ?? true {
-                // 컬렉션이 비어있으면 성공으로 처리
+            guard let documents = snapshot?.documents, !documents.isEmpty else {
                 completion(nil)
-                print("2")
                 return
             }
             
@@ -624,7 +663,7 @@ func retrieveMyPosts(userID: String, completion: @escaping (Error?) -> Void) {
         let database = Firestore.firestore()
         let postCollectionRef = database.collection("users").document(userID).collection("posts")
         
-        postCollectionRef.getDocuments { snapshot, error in
+        postCollectionRef.order(by: "date", descending: true).getDocuments { snapshot, error in
             if let error = error {
                 completion(error)
                 return
@@ -652,25 +691,25 @@ func retrieveMyPosts(userID: String, completion: @escaping (Error?) -> Void) {
                 post.comments = document.data()["comments"] as? [[[String: String]]]
                 post.views = document.data()["views"] as? [String]
                 
-                
                 if let imageUrls = document.data()["images"] as? [String] {
                     var images = [UIImage]()
-
+                    
                     for imageUrlString in imageUrls {
                         dispatchGroup.enter()
-
+                        
                         loadImage(from: imageUrlString, fallbackImageName: "PlaceholderImage") { (image) in
                             images.append(image)
                             dispatchGroup.leave()  // 이미지 로딩이 완료되면 leave 호출
                         }
                     }
-
+                    
                     // 이미지 로딩이 완료되지 않은 상태에서 notify 클로저 호출되지 않도록
                     dispatchGroup.notify(queue: .main) {
                         post.images = images
                         retrievedPosts.append(post)
-
+                        
                         if retrievedPosts.count == snapshot?.documents.count {
+                            // 정렬된 데이터를 저장
                             SharedPostModel.myPosts = retrievedPosts
                             print("\(SharedPostModel.myPosts)")
                             completion(nil)
