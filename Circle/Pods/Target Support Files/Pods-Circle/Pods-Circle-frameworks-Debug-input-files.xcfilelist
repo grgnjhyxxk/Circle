@@ -1,0 +1,3 @@
+${PODS_ROOT}/Target Support Files/Pods-Circle/Pods-Circle-frameworks.sh
+${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework
+${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework
