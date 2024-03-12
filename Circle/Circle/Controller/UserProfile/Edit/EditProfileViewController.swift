@@ -10,8 +10,8 @@ import SnapKit
 
 class EditProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     private var viewList: [UIView] = []
-    private var contentViewList: [UIView] = []
-    private let tableViewTitleLabelStringList: [String] = ["프로필 이름", 
+    private var headerViewList: [UIView] = []
+    private let tableViewTitleLabelStringList: [String] = ["프로필 이름",
                                                            "사용자 이름",
                                                            "자기소개",
                                                            "성별",
@@ -19,9 +19,9 @@ class EditProfileViewController: UIViewController, UITableViewDelegate, UITableV
                                                            "이메일",
                                                            "전화번호"]
     
-    private var scrollView: UIScrollView = UIScrollView()
-    private var contentView: UIView = UIView()
+    private var headerView: UIView = UIView()
     private let tableView: UITableView = UITableView()
+    private var separator: UIView = IntroView().separator()
     
     private var userProfileBackgroundImageView: UIImageView = UserMainView().userProfileBackgroundImageView()
     private var userProfileImageView: UIImageView = UserMainView().userProfileImageView()
@@ -39,8 +39,8 @@ class EditProfileViewController: UIViewController, UITableViewDelegate, UITableV
         navigationBarLayout()
         addOnView()
         viewLayout()
-        addOnContentView()
-        contentViewLayout()
+        addOnHeaderView()
+        headerViewLayout()
         addTagets()
         tableView.delegate = self
         tableView.dataSource = self
@@ -53,91 +53,68 @@ class EditProfileViewController: UIViewController, UITableViewDelegate, UITableV
         
         userProfileImageView.image = SharedProfileModel.myProfile.profileImage
         userProfileBackgroundImageView.image = SharedProfileModel.myProfile.backgroundImage
+        
+        navigationBarLayout()
+        tableView.reloadData()
+        tableView.layoutIfNeeded()
     }
     private func addOnView() {
-        viewList = [userProfileBackgroundImageView, scrollView]
+        viewList = [tableView]
         
         for uiView in viewList {
             view.addSubview(uiView)
         }
-        
-        scrollView.addSubview(contentView)
-        scrollView.addSubview(editBackgroundImageButton)
-        scrollView.addSubview(editBackgroundColorButton)
     }
     
     private func viewLayout() {
-        view.backgroundColor = UIColor.black
-        scrollView.backgroundColor = UIColor.clear
-        contentView.backgroundColor = UIColor.black
-        
-        userProfileBackgroundImageView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(contentView.safeAreaLayoutGuide.snp.top)
-        }
-        
-        scrollView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            make.leading.trailing.bottom.equalToSuperview()
-        }
-        
-        editBackgroundImageButton.snp.makeConstraints { make in
-            make.bottom.equalTo(contentView.snp.top).offset(-10)
-            make.trailing.equalToSuperview().offset(-10)
-            make.size.equalTo(CGSize(width: 38, height: 38))
-        }
-        
-        editBackgroundColorButton.snp.makeConstraints { make in
-            make.bottom.equalTo(editBackgroundImageButton)
-            make.trailing.equalTo(editBackgroundImageButton.snp.leading).offset(-10)
-            make.size.equalTo(CGSize(width: 38, height: 38))
-        }
-        
-        contentView.snp.makeConstraints { make in
-            make.top.equalTo(scrollView).offset(120)
-            make.leading.trailing.bottom.equalToSuperview()
-            make.width.equalToSuperview()
-            make.height.equalToSuperview().offset(-85)
-        }
-        
-        scrollView.showsVerticalScrollIndicator = false
-    }
-    
-    func addOnContentView() {
-        contentViewList = [userProfileImageView, tableView,
-                           editProfileImageButton]
-        
-        for uiView in contentViewList {
-            contentView.addSubview(uiView)
-        }
-    }
-    
-    func contentViewLayout() {
-        tableView.backgroundColor = UIColor.black
+        view.backgroundColor = UIColor(named: "BackgroundColor")
+        tableView.backgroundColor = UIColor(named: "BackgroundColor")
+        userProfileImageView.layer.cornerRadius = 40
+        tableView.register(EditProfileTableViewCell.self, forCellReuseIdentifier: "EditProfileTableViewCell")
+//        tableView.rowHeight = UITableView.automaticDimension
+        tableView.tableHeaderView = headerView
+        tableView.separatorInset.left = 0
 
+        tableView.snp.makeConstraints { make in
+            make.top.leading.trailing.bottom.equalToSuperview()
+        }
+        
+        headerView.snp.makeConstraints { make in
+            make.top.leading.trailing.bottom.equalToSuperview()
+            make.width.equalToSuperview()
+            make.height.equalTo(156)
+        }
+    }
+     
+    func addOnHeaderView() {
+        headerViewList = [userProfileImageView,
+                           editProfileImageButton,
+                          separator]
+        
+        for uiView in headerViewList {
+            headerView.addSubview(uiView)
+        }
+    }
+    
+    func headerViewLayout() {
         userProfileImageView.snp.makeConstraints { make in
-            make.top.equalTo(contentView).offset(-45)
-            make.centerX.equalTo(contentView)
-            make.size.equalTo(CGSize(width: 90, height: 90))
+            make.top.equalTo(15)       
+            make.centerX.equalToSuperview()
+            make.size.equalTo(CGSize(width: 80, height: 80))
         }
         
         editProfileImageButton.snp.makeConstraints { make in
-            make.top.equalTo(userProfileImageView.snp.bottom).offset(10)
+            make.top.equalTo(userProfileImageView.snp.bottom).offset(15)
             make.centerX.equalToSuperview()
             make.width.equalTo(editProfileImageButton.titleLabel!.snp.width).offset(52)
             make.height.equalTo(30)
         }
         
-        tableView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(100)
-            make.leading.trailing.bottom.equalToSuperview()
+        separator.snp.makeConstraints { make in
+            make.top.equalTo(editProfileImageButton.snp.bottom).offset(15)
+            make.width.equalToSuperview()
+            make.height.equalTo(1)
         }
-        
-        tableView.isScrollEnabled = false
-        tableView.register(EditProfileTableViewCell.self, forCellReuseIdentifier: "EditProfileTableViewCell")
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.separatorColor = UIColor.white.withAlphaComponent(0.1)
     }
     
     private func navigationBarLayout() {
@@ -179,7 +156,10 @@ class EditProfileViewController: UIViewController, UITableViewDelegate, UITableV
     }
     
     @objc func updateProfile(_ notification: Notification) {
-        tableView.reloadData()
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "ProfileUpdatedAndLayout"), object: nil)
+        }
     }
         
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

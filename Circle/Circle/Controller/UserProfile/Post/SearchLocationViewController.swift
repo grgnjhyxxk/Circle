@@ -46,7 +46,7 @@ class SearchViewController: UIViewController {
     }
     
     func viewLayout() {
-        view.backgroundColor = UIColor.black
+        view.backgroundColor = UIColor(named: "BackgroundColor")
         
         tableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
@@ -54,7 +54,7 @@ class SearchViewController: UIViewController {
         }
         
         tableView.separatorStyle = .none
-        tableView.backgroundColor = UIColor.black
+        tableView.backgroundColor = UIColor(named: "BackgroundColor")
         tableView.register(SearchLocationTableViewCell.self, forCellReuseIdentifier: "SearchLocationTableViewCell")
     }
     

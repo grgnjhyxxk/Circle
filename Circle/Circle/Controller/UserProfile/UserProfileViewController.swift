@@ -16,36 +16,7 @@ class UserProfileViewController: BasicUserProfileViewController {
     }
     
     override func contentViewSetting() {
-        topViewBottomSeparator.snp.makeConstraints { make in
-            make.leading.trailing.equalTo(contentView)
-            make.top.equalTo(subStatusButton.snp.bottom).offset(20)
-            make.height.equalTo(1)
-        }
-        
-        myPersonalPostsFeedButton.snp.makeConstraints { make in
-            make.top.equalTo(topViewBottomSeparator.snp.bottom)
-            make.leading.equalTo(contentView)
-            make.size.equalTo(CGSize(width: view.frame.width / 2, height: 40))
-        }
-        
-        myCirclePostsFeedButton.snp.makeConstraints { make in
-            make.top.equalTo(topViewBottomSeparator.snp.bottom)
-            make.trailing.equalTo(contentView)
-            make.size.equalTo(CGSize(width: view.frame.width / 2, height: 40))
-        }
-        
-        myPersonalPostsFeedButton.addSubview(myPersonalPostsFeedButtonBottomBar)
-        myCirclePostsFeedButton.addSubview(myCirclePostsButtonBottomBar)
-
-        myPersonalPostsFeedButtonBottomBar.snp.makeConstraints { make in
-            make.centerX.bottom.equalToSuperview()
-            make.size.equalTo(CGSize(width: 100, height: 2))
-        }
-        
-        myCirclePostsButtonBottomBar.snp.makeConstraints { make in
-            make.centerX.bottom.equalToSuperview()
-            make.size.equalTo(CGSize(width: 100, height: 2))
-        }
+        profileEditButton.isHidden = true
     }
     
     override func uiViewUpdate() {
@@ -60,35 +31,66 @@ class UserProfileViewController: BasicUserProfileViewController {
         attributedsubStatusButtonString.addAttribute(.font, value: UIFont.systemFont(ofSize: 14, weight: .semibold), range: subStatusButtonStringRangeTwo)
         
         subStatusButton.setAttributedTitle(attributedsubStatusButtonString, for: .normal)
-        profileNameButton.setTitle("\(sharedProfile.profileName ?? "")", for: .normal)
-        userNameTitleLabel.text = sharedProfile.userName
+        profileNameTitleLabel.text = "@\(sharedProfile.profileName ?? "unknown")"
+
+        if sharedProfile.userName == "" {
+            userNameTitleLabel.text = sharedProfile.profileName
+        } else {
+            userNameTitleLabel.text = sharedProfile.userName
+        }
+        
         userCategoryTitleLabel.text = sharedProfile.userCategory
         introductionLabel.text = sharedProfile.introduction
         userProfileImageView.image = sharedProfile.profileImage
-        userProfileBackgroundImageView.image = sharedProfile.backgroundImage
         
-        if sharedProfile.socialValidation ?? false {
-            if let image = UIImage(systemName: "checkmark.seal.fill")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 14, weight: .light)) {
-                profileNameButton.setImage(image, for: .normal)
+        DispatchQueue.main.async {
+            let labelHeight = self.heightForLabel(label: self.introductionLabel)
+            
+            self.contentView.snp.updateConstraints { make in
+                make.height.equalTo(180 + labelHeight + 15)
             }
-        
-            profileNameButton.tintColor = UIColor.systemBlue
-            profileNameButton.imageEdgeInsets = UIEdgeInsets(top: 1, left: 4.5, bottom: 0, right: 0)
-            profileNameButton.semanticContentAttribute = .forceRightToLeft
-            profileNameButton.contentVerticalAlignment = .center
-            profileNameButton.contentHorizontalAlignment = .center
-        } else {
-            profileNameButton.setImage(nil, for: .normal)
         }
+        
+        self.postsTableView.layoutIfNeeded()
+        self.contentView.layoutIfNeeded()
     }
 
     override func navigationBarLayout() {
-        let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.backward")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)), style: .done, target: self, action: #selector(backButtonAction))
+        let settingListBarButton = UIButton()
+        let notificationtBarButton = UIButton()
+
+        settingListBarButton.addTarget(self, action: #selector(settingListButtonAction), for: .touchUpInside)
+        notificationtBarButton.addTarget(self, action: #selector(postingButtonAction), for: .touchUpInside)
         
-        backButton.tintColor = UIColor.white
+        if let image = UIImage(systemName: "list.bullet.circle")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 26, weight: .regular)) {
+            settingListBarButton.setImage(image, for: .normal)
+        }
         
-        navigationItem.leftBarButtonItem = backButton
-        navigationItem.titleView = profileNameButton
+        if let image = UIImage(systemName: "bell")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 26, weight: .regular)) {
+            notificationtBarButton.setImage(image, for: .normal)
+        }
+        
+        settingListBarButton.tintColor = UIColor.white
+        notificationtBarButton.tintColor = UIColor.white
+        
+        settingListBarButton.contentHorizontalAlignment = .fill
+        settingListBarButton.contentVerticalAlignment = .fill
+        
+        notificationtBarButton.contentHorizontalAlignment = .fill
+        notificationtBarButton.contentVerticalAlignment = .fill
+        
+        let righthStackview = UIStackView.init(arrangedSubviews: [notificationtBarButton, settingListBarButton])
+        righthStackview.distribution = .equalSpacing
+        righthStackview.axis = .horizontal
+        righthStackview.alignment = .center
+        righthStackview.spacing = 15
+        
+        let rightStackBarButtonItem = UIBarButtonItem(customView: righthStackview)
+        
+        self.navigationController?.navigationBar.topItem?.title = "뒤로"
+        self.navigationController?.navigationBar.tintColor = UIColor.white
+        
+        navigationItem.rightBarButtonItem = rightStackBarButtonItem
     }
     
     @objc private func backButtonAction() {

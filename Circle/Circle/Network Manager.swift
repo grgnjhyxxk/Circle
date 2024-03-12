@@ -430,14 +430,14 @@ func uploadImages(field: String, images: [UIImage], userID: String, completion: 
     }
 }
 
-// 첫 번째 함수: 처음 4개의 게시글을 불러오는 함수
+// 첫 번째 함수: 처음 10개의 게시글을 불러오는 함수
 func retrieveFirstFourPosts(completion: @escaping (Error?) -> Void) {
     DispatchQueue.global().async {
         let database = Firestore.firestore()
         let postCollectionRef = database.collection("posts")
         
         // 추가: 날짜 기준으로 정렬
-        postCollectionRef.order(by: "date", descending: true).limit(to: 4).getDocuments { snapshot, error in
+        postCollectionRef.order(by: "date", descending: true).limit(to: 10).getDocuments { snapshot, error in
             if let error = error {
                 completion(error)
                 return
@@ -505,7 +505,7 @@ func retrieveNextFourPosts(completion: @escaping (Error?) -> Void) {
         let lastPost = SharedPostModel.othersPosts.last ?? SharedPostModel()
 
         let lastDate = lastPost.date ?? ""
-        postCollectionRef.order(by: "date", descending: true).start(after: [lastDate]).limit(to: 4).getDocuments { snapshot, error in
+        postCollectionRef.order(by: "date", descending: true).start(after: [lastDate]).limit(to: 10).getDocuments { snapshot, error in
             if let error = error {
                 completion(error)
                 return

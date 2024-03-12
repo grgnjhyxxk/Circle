@@ -16,23 +16,14 @@ class MyProfileViewController: BasicUserProfileViewController, UITableViewDelega
     
     override func contentViewSetting() {
         postsTableView.register(FollowingPostsTableViewCell.self, forCellReuseIdentifier: "FollowingPostsTableViewCell")
-
+        
         postsTableView.separatorInset.left = 0
         
         postsTableView.dataSource = self
         postsTableView.delegate = self
         
-        profileEditButton.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(15)
-            make.trailing.equalToSuperview().offset(-15)
-            make.size.equalTo(CGSize(width: 70, height: 30))
-        }
-        
-        topViewBottomSeparator.snp.makeConstraints { make in
-            make.leading.trailing.equalTo(contentView)
-            make.top.equalTo(subStatusButton.snp.bottom).offset(20)
-            make.height.equalTo(1)
-        }
+        followButton.isHidden = true
+        mentionButton.isHidden = true
     }
     
     override func uiViewUpdate() {
@@ -48,33 +39,41 @@ class MyProfileViewController: BasicUserProfileViewController, UITableViewDelega
             attributedsubStatusButtonString.addAttribute(.font, value: UIFont.systemFont(ofSize: 14, weight: .semibold), range: subStatusButtonStringRangeTwo)
             
             self.subStatusButton.setAttributedTitle(attributedsubStatusButtonString, for: .normal)
-            self.profileNameButton.setTitle("\(sharedProfile.profileName ?? "")", for: .normal)
-            self.userNameTitleLabel.text = sharedProfile.userName
+//            self.profileNameTitleLabel.text = sharedProfile.profileName
+            self.profileNameTitleLabel.text = "@\(sharedProfile.profileName ?? "unknown")"
+            if sharedProfile.userName == "" {
+                self.userNameTitleLabel.text = sharedProfile.profileName
+            } else {
+                self.userNameTitleLabel.text = sharedProfile.userName
+            }
+            
             self.userCategoryTitleLabel.text = sharedProfile.userCategory
             self.introductionLabel.text = sharedProfile.introduction
             self.userProfileImageView.image = sharedProfile.profileImage
-            self.userProfileBackgroundImageView.image = sharedProfile.backgroundImage
             
             if sharedProfile.socialValidation ?? false {
-                if let image = UIImage(systemName: "checkmark.seal.fill")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 14, weight: .light)) {
-                    self.profileNameButton.setImage(image, for: .normal)
-                }
-                
-                self.profileNameButton.tintColor = UIColor.systemBlue
-                self.profileNameButton.imageEdgeInsets = UIEdgeInsets(top: 1, left: 4.5, bottom: 0, right: 0)
-                self.profileNameButton.semanticContentAttribute = .forceRightToLeft
-                self.profileNameButton.contentVerticalAlignment = .center
-                self.profileNameButton.contentHorizontalAlignment = .center
+                self.socialValidationImageView.isHidden = false
             } else {
-                self.profileNameButton.setImage(nil, for: .normal)
+                self.socialValidationImageView.isHidden = true
             }
+            
+            DispatchQueue.main.async {
+                let labelHeight = self.heightForLabel(label: self.introductionLabel)
+                
+                self.contentView.snp.updateConstraints { make in
+                    make.height.equalTo(167 + labelHeight + 15)
+                }
+            }
+            
+            self.postsTableView.layoutIfNeeded()
+            self.contentView.layoutIfNeeded()
         }
     }
-
+    
     override func navigationBarLayout() {
         let settingListBarButton = UIButton()
         let postingBarButton = UIButton()
-
+        
         settingListBarButton.addTarget(self, action: #selector(settingListButtonAction), for: .touchUpInside)
         postingBarButton.addTarget(self, action: #selector(postingButtonAction), for: .touchUpInside)
         
@@ -92,28 +91,23 @@ class MyProfileViewController: BasicUserProfileViewController, UITableViewDelega
         settingListBarButton.contentVerticalAlignment = .fill
         postingBarButton.contentHorizontalAlignment = .fill
         postingBarButton.contentVerticalAlignment = .fill
-
-        profileNameButton.snp.makeConstraints { make in
-            make.width.equalTo(200)
-        }
         
         settingListBarButton.snp.makeConstraints { make in
             make.size.equalTo(CGSize(width: 23, height: 21))
         }
         
-        postingBarButton.snp.makeConstraints { make in
-            make.size.equalTo(CGSize(width: 27, height: 24))
-        }
-
-        let righthStackview = UIStackView.init(arrangedSubviews: [postingBarButton, settingListBarButton])
+        let righthStackview = UIStackView.init(arrangedSubviews: [settingListBarButton])
         righthStackview.distribution = .equalSpacing
         righthStackview.axis = .horizontal
         righthStackview.alignment = .center
         righthStackview.spacing = 15
-
-        let rightStackBarButtonItem = UIBarButtonItem(customView: righthStackview)
         
-        navigationItem.titleView = profileNameButton
+        let leftStackView = UIStackView.init(arrangedSubviews: [profileNameButton])
+        
+        let rightStackBarButtonItem = UIBarButtonItem(customView: righthStackview)
+        let leftStackBarButtonItem = UIBarButtonItem(customView: leftStackView)
+        
+        navigationItem.leftBarButtonItem = leftStackBarButtonItem
         navigationItem.rightBarButtonItem = rightStackBarButtonItem
     }
     
@@ -123,7 +117,6 @@ class MyProfileViewController: BasicUserProfileViewController, UITableViewDelega
             if let error = error {
                 print("Error: \(error.localizedDescription)")
             } else {
-                SharedPostModel.myPosts.removeAll()
                 retrieveMyPosts(userID: myProfile.userID!) { (error) in
                     if let error = error {
                         print("Error: \(error.localizedDescription)")
@@ -134,6 +127,7 @@ class MyProfileViewController: BasicUserProfileViewController, UITableViewDelega
                         }
                     }
                     
+                    self.noPostsAvailableImageViewSetting()
                     self.refreshControl.endRefreshing()
                 }
             }
@@ -148,9 +142,8 @@ class MyProfileViewController: BasicUserProfileViewController, UITableViewDelega
     @objc override func postingButtonAction() {
         let viewController = UINavigationController(rootViewController: PostingViewController())
         
-        viewController.hidesBottomBarWhenPushed = true
         viewController.modalPresentationStyle = .fullScreen
-
+        
         present(viewController, animated: true)
     }
     
@@ -163,13 +156,11 @@ class MyProfileViewController: BasicUserProfileViewController, UITableViewDelega
     }
     
     @objc override func postSettingButtonAction(_ sender: UIButton) {
-        let point = sender.convert(CGPoint.zero, to: postsTableView)
-        guard let indexPath = postsTableView.indexPathForRow(at: point) else { return }
-        
+        let indexPath = sender.tag
         let myProfile = SharedProfileModel.myProfile
         let myPosts = SharedPostModel.myPosts
         
-        if myPosts[indexPath.row].userID == myProfile.userID {
+        if myPosts[indexPath].userID == myProfile.userID {
             // UIAlertController 생성
             let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
             
@@ -197,27 +188,36 @@ class MyProfileViewController: BasicUserProfileViewController, UITableViewDelega
             
         }
     }
-
-    func editPostButtonAction(indexPath: IndexPath) {
+    
+    @objc override func updateProfile(_ notification: Notification) {
         DispatchQueue.main.async {
-            let notificationData: [IndexPath: Any] = [indexPath: "indexPath"]
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "PostEditingIsOn"), object: nil, userInfo: notificationData)
+            self.uiViewUpdate()
+        }
+    }
+    
+    func editPostButtonAction(indexPath: Int) {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "PostEditingIsOn"), object: nil)
         }
         
-        let viewController = UINavigationController(rootViewController: PostEditingViewController())
+        let viewController = PostEditingViewController()
         
-        viewController.hidesBottomBarWhenPushed = true
-        viewController.modalPresentationStyle = .fullScreen
-
-        present(viewController, animated: true)
+        viewController.postIndexPathForEditing = indexPath
+        
+        let navigationController = UINavigationController(rootViewController: viewController)
+        
+        navigationController.hidesBottomBarWhenPushed = true
+        navigationController.modalPresentationStyle = .fullScreen
+        
+        present(navigationController, animated: true)
     }
-
-    func deletePostButtonAction(indexPath: IndexPath) {
+    
+    func deletePostButtonAction(indexPath: Int) {
         let myProfile = SharedProfileModel.myProfile
         let myPosts = SharedPostModel.myPosts
         
         if let userID = myProfile.userID {
-            if let postIDForDelete = myPosts[indexPath.row].postID {
+            if let postIDForDelete = myPosts[indexPath].postID {
                 
                 deletePost(userID: userID, postID: postIDForDelete) { (error) in
                     if let error = error {
@@ -249,15 +249,22 @@ class MyProfileViewController: BasicUserProfileViewController, UITableViewDelega
         let userProfile = SharedProfileModel.myProfile
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "FollowingPostsTableViewCell", for: indexPath) as! FollowingPostsTableViewCell
-                
+        
+        cell.moreButton.tag = indexPath.row
+        cell.moreButton.addTarget(self, action: #selector(postSettingButtonAction), for: .touchUpInside)
+        
         cell.images = post.images
         cell.feedTextLabel.text = post.content
-
+        
+        if let date = post.date {
+            cell.dateLabel.text = formatPostTimestamp(date)
+        }
+        
         cell.profileImageView.image = userProfile.profileImage
         cell.profileNameLabel.text = userProfile.profileName
         cell.userNameLabel.text = userProfile.userName
         cell.socialValidationImageView.isHidden = !(userProfile.socialValidation ?? false)
-
+        
         cell.collectionView.reloadData()
         contentView.layoutIfNeeded()
         postsTableView.layoutIfNeeded()
@@ -267,6 +274,36 @@ class MyProfileViewController: BasicUserProfileViewController, UITableViewDelega
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        print(indexPath.row)
+    }
+        
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if section == 0 {
+            // 여기에서 동적으로 헤더의 높이를 계산하고 반환
+            return calculateDynamicHeaderHeight()
+        } else {
+            // 다른 섹션의 경우 다른 높이를 반환하도록 설정
+            return 50.0  // 예제에서는 50.0 포인트로 설정
+        }
+    }
+
+    // ... (기존 코드 생략)
+
+    // contentView의 크기를 동적으로 계산하여 설정
+    func updateContentViewHeight() {
+        let dynamicHeight = calculateDynamicHeaderHeight()
+        contentView.snp.updateConstraints { make in
+            make.height.equalTo(dynamicHeight)
+        }
+    }
+
+    // 헤더 높이를 동적으로 계산하는 메서드 (적절한 로직으로 변경해야 함)
+    private func calculateDynamicHeaderHeight() -> CGFloat {
+        // 예제에서는 고정값으로 설정
+        return 100.0
     }
 }
 

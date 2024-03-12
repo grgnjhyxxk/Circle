@@ -102,7 +102,7 @@ class PostingViewController: BasicPostViewController {
         let progress = min(1.0, CGFloat(updatedText.count) / CGFloat(MAX_CHARACTER_LIMIT))
         circularProgressBar.updateProgress(to: progress)
         
-        postingBarButton.isEnabled = (0...300).contains(updatedText.count)
+        postingBarButton.isEnabled = (1...300).contains(updatedText.count)
         
         return true
     }

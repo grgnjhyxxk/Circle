@@ -11,10 +11,10 @@ class UserMainView: UIView {
     func profileNameButton() -> UIButton {
         let button = UIButton()
         
-        button.setTitle("", for: .normal)
+        button.setTitle("프로필", for: .normal)
         button.setTitleColor(UIColor.white, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .medium)
-        button.titleLabel?.textAlignment = .center
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 28, weight: .bold)
+        button.titleLabel?.textAlignment = .left
         
         return button
     }
@@ -28,12 +28,32 @@ class UserMainView: UIView {
         return view
     }
     
+    func socialValidationImageView() -> UIImageView {
+        let imageView = UIImageView()
+        
+        imageView.tintColor = UIColor.white
+        imageView.isHidden = false
+        imageView.image = UIImage(systemName: "checkmark.seal.fill")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 15, weight: .regular))
+
+        return imageView
+    }
+    
+    func socialValidationBackgroundImageView() -> UIImageView {
+        let imageView = UIImageView()
+        
+        imageView.tintColor = UIColor(named: "BackgroundColor")
+        imageView.isHidden = false
+        imageView.image = UIImage(systemName: "checkmark.seal.fill")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 21, weight: .regular))
+
+        return imageView
+    }
+    
     func userProfileImageView() -> UIImageView {
         let imageView = UIImageView()
         
         imageView.image = UIImage()
         imageView.backgroundColor = UIColor.white.withAlphaComponent(0.1)
-        imageView.layer.cornerRadius = 45
+        imageView.layer.cornerRadius = 30
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         
@@ -55,7 +75,17 @@ class UserMainView: UIView {
         let label = UILabel()
         
         label.textColor = UIColor.white
-        label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+        label.font = UIFont.systemFont(ofSize: 24, weight: .bold)
+        label.textAlignment = .left
+        
+        return label
+    }
+    
+    func profileNameTitleLabel() -> UILabel {
+        let label = UILabel()
+        
+        label.textColor = UIColor.systemGray
+        label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         label.textAlignment = .left
         
         return label
@@ -77,8 +107,8 @@ class UserMainView: UIView {
         
         label.numberOfLines = 0
         label.textColor = UIColor.white
-        label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        label.textAlignment = .left
         label.adjustsFontSizeToFitWidth = true
         label.baselineAdjustment = .alignCenters
         
@@ -89,14 +119,8 @@ class UserMainView: UIView {
         let button = UIButton()
         
         button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        button.tintColor = UIColor.white
-        button.setTitleColor(UIColor.white, for: .normal)
-        button.titleLabel?.textAlignment = .center
-        button.layer.cornerRadius = 15
-        button.layer.borderWidth = 0.5
-        button.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
-        button.backgroundColor = UIColor.black
-        //        button.sizeToFit()
+        button.setTitleColor(UIColor.systemGray, for: .normal)
+        button.titleLabel?.textAlignment = .left
         
         return button
     }
@@ -125,18 +149,64 @@ class UserMainView: UIView {
         return view
     }
     
+    func noPostsAvailableImageView() -> UIImageView {
+        let imageView = UIImageView()
+        
+        imageView.image = UIImage(systemName: "x.circle")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 50, weight: .thin))
+        imageView.tintColor =  UIColor.white.withAlphaComponent(0.85)
+        
+        return imageView
+    }
+    
+    func noPostsAvailableLabel() -> UILabel {
+        let label = UILabel()
+        
+        label.text = "게시물 없음"
+        label.font = UIFont.systemFont(ofSize: 26, weight: .semibold)
+        label.textColor = UIColor.white.withAlphaComponent(0.85)
+        
+        return label
+    }
+    
+    func followButton() -> UIButton {
+        let button = UIButton()
+        
+        button.setTitle("팔로우", for: .normal)
+        button.setTitleColor(UIColor.black, for: .normal)
+        button.backgroundColor = UIColor.white
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        button.titleLabel?.textAlignment = .center
+        button.layer.cornerRadius = 10
+        button.layer.borderWidth = 0.5
+            
+        return button
+    }
+    
+    func mentionwButton() -> UIButton {
+        let button = UIButton()
+        
+        button.setTitle("언급", for: .normal)
+        button.setTitleColor(UIColor.black, for: .normal)
+        button.backgroundColor = UIColor.white
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        button.titleLabel?.textAlignment = .center
+        button.layer.cornerRadius = 10
+        button.layer.borderWidth = 0.5
+            
+        return button
+    }
+    
     class MyProfileView: UIView {
         func profileEditButton() -> UIButton {
             let button = UIButton()
             
-            button.setTitle("편집", for: .normal)
+            button.setTitle("프로필 편집", for: .normal)
             button.setTitleColor(UIColor.white, for: .normal)
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
             button.titleLabel?.textAlignment = .center
-            button.layer.cornerRadius = 15
+            button.layer.cornerRadius = 10
             button.layer.borderWidth = 0.5
             button.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
-            button.backgroundColor = UIColor.black
             
             return button
         }
@@ -153,7 +223,7 @@ class UserMainView: UIView {
             button.layer.cornerRadius = 15
             button.layer.borderWidth = 0.5
             button.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
-            button.backgroundColor = UIColor.black
+            button.backgroundColor = UIColor(named: "BackgroundColor")
             
             return button
         }
@@ -166,7 +236,7 @@ class UserMainView: UIView {
             button.layer.cornerRadius = 19
             button.layer.borderWidth = 0.5
             button.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
-            button.backgroundColor = UIColor.black
+            button.backgroundColor = UIColor(named: "BackgroundColor")
             
             return button
         }
@@ -179,7 +249,7 @@ class UserMainView: UIView {
             button.layer.cornerRadius = 19
             button.layer.borderWidth = 0.5
             button.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
-            button.backgroundColor = UIColor.black
+            button.backgroundColor = UIColor(named: "BackgroundColor")
             
             return button
         }
@@ -196,7 +266,7 @@ class UserMainView: UIView {
             button.layer.cornerRadius = 15
             button.layer.borderWidth = 0.5
             button.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
-            button.backgroundColor = UIColor.black
+            button.backgroundColor = UIColor(named: "BackgroundColor")
             
             return button
         }
@@ -239,7 +309,7 @@ class UserMainView: UIView {
             
             textView.font = UIFont.systemFont(ofSize: 16, weight: .regular)
             textView.textColor = UIColor.white
-            textView.backgroundColor = UIColor.black
+            textView.backgroundColor = UIColor(named: "BackgroundColor")
             textView.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 0, right: 10)
             
             return textView
@@ -248,7 +318,7 @@ class UserMainView: UIView {
         func bottomView() -> UIView {
             let view = UIView()
             
-            view.backgroundColor = UIColor.black
+            view.backgroundColor = UIColor(named: "BackgroundColor")
             
             return view
         }

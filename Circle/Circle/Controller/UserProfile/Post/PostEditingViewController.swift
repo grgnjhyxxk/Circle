@@ -58,7 +58,7 @@ class PostEditingViewController: BasicPostViewController {
         // 포스팅 데이터 업로드 코드
         if let userID = SharedProfileModel.myProfile.userID, let content = postTextView.text {
             if let postIndexPath = postIndexPathForEditing {
-                if let postID = SharedPostModel.myPosts[postIndexPath.row].postID {
+                if let postID = SharedPostModel.myPosts[postIndexPath].postID {
                     let time = currentDateTimeString()
                     let location = selectedLocation ?? ""
                     let postData = PostData(userID: userID, content: content, date: time, location: location)

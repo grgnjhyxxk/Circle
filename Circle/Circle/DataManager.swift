@@ -151,3 +151,36 @@ func currentDateTimeString() -> String {
     
     return dateFormatter.string(from: currentDate)
 }
+
+func formatPostTimestamp(_ timestamp: String) -> String {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    dateFormatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+
+    guard let postDate = dateFormatter.date(from: timestamp) else {
+        return "Invalid Date"
+    }
+
+    let currentDate = Date()
+    let calendar = Calendar.current
+
+    let components = calendar.dateComponents([.second, .minute, .hour, .day, .weekOfMonth, .month, .year], from: postDate, to: currentDate)
+
+    if let years = components.year, years > 0 {
+        return "\(years)년 전"
+    } else if let months = components.month, months > 0 {
+        return "\(months)달 전"
+    } else if let weeks = components.weekOfMonth, weeks > 0 {
+        return "\(weeks)주 전"
+    } else if let days = components.day, days > 0 {
+        return "\(days)일 전"
+    } else if let hours = components.hour, hours > 0 {
+        return "\(hours)시간 전"
+    } else if let minutes = components.minute, minutes > 0 {
+        return "\(minutes)분 전"
+    } else if let seconds = components.second, seconds > 0 {
+        return "\(seconds)초 전"
+    } else {
+        return "방금 전"
+    }
+}

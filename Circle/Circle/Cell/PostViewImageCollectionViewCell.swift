@@ -30,7 +30,7 @@ class PostViewImageCollectionViewCell: UICollectionViewCell {
         let button = UIButton()
         
         button.setImage(UIImage(systemName: "xmark")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 10, weight: .heavy)), for: .normal)
-        button.backgroundColor = UIColor.black
+        button.backgroundColor = UIColor(named: "BackgroundColor")
         button.tintColor = UIColor.white
         button.layer.cornerRadius = 12.5
         button.layer.borderWidth = 0.5
@@ -58,6 +58,7 @@ class PostViewImageCollectionViewCell: UICollectionViewCell {
             make.size.equalTo(CGSize(width: 25, height: 25))
         }
         
+        contentView.backgroundColor = UIColor(named: "BackgroundColor")
         deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
     }
 

@@ -13,8 +13,8 @@ class BasicPostViewController: UIViewController, UITextViewDelegate, UICollectio
     
     let MAX_CHARACTER_LIMIT = 300
     
-    var postIndexPathForEditing: IndexPath?
-
+    var postIndexPathForEditing: Int?
+    
     var viewList: [UIView] = []
     var scrollViewList: [UIView] = []
     var contentViewList: [UIView] = []
@@ -38,6 +38,7 @@ class BasicPostViewController: UIViewController, UITextViewDelegate, UICollectio
         
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
         collectionView.register(PostViewImageCollectionViewCell.self, forCellWithReuseIdentifier: "PostViewImageCollectionViewCell")
+        collectionView.backgroundColor = UIColor(named: "BackgroundColor")
         
         return collectionView
     }()
@@ -106,9 +107,9 @@ class BasicPostViewController: UIViewController, UITextViewDelegate, UICollectio
     }
     
     func viewLayout() {
-        view.backgroundColor = UIColor.black
-        scrollView.backgroundColor = UIColor.clear
-        contentView.backgroundColor = UIColor.black
+        view.backgroundColor = UIColor(named: "BackgroundColor")
+        scrollView.backgroundColor = UIColor(named: "BackgroundColor")
+        contentView.backgroundColor = UIColor(named: "BackgroundColor")
         
         scrollView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
@@ -198,7 +199,7 @@ class BasicPostViewController: UIViewController, UITextViewDelegate, UICollectio
             make.top.equalTo(postTextView.snp.bottom).offset(10)
             make.leading.equalToSuperview().offset(15)
             make.trailing.equalToSuperview().offset(-15)
-            make.height.equalTo(10)
+            make.height.equalTo(1)
         }
         
         locationNotiButton.snp.makeConstraints { make in
@@ -264,27 +265,24 @@ class BasicPostViewController: UIViewController, UITextViewDelegate, UICollectio
     }
     
     @objc func PostEditingIsOn(_ notification: Notification) {
-        if let data = notification.userInfo as? [IndexPath: Any],
-            let indexPathValue = data.keys.first {
-            
-            postEditingSetting(indexPath: indexPathValue)
+        if let indexPath = postIndexPathForEditing {
+            postEditingSetting(indexPath: indexPath)
+            print(indexPath)
         }
     }
     
-    func postEditingSetting(indexPath: IndexPath) {
+    func postEditingSetting(indexPath: Int) {
         let myPost = SharedPostModel.myPosts
-        
-        postIndexPathForEditing = indexPath
-        
-        if let postImages = myPost[indexPath.row].images {
+                
+        if let postImages = myPost[indexPath].images {
             selectedImages = postImages
         }
             
-        if let postContent = myPost[indexPath.row].content {
+        if let postContent = myPost[indexPath].content {
             postTextView.text = postContent
         }
         
-        if let postLocation = myPost[indexPath.row].location {
+        if let postLocation = myPost[indexPath].location {
         
         }
         

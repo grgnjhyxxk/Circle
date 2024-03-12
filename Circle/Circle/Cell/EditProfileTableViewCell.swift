@@ -33,7 +33,8 @@ class EditProfileTableViewCell: UITableViewCell {
 //        contentView.backgroundColor = UIColor.black
         contentView.addSubview(titleLabel)
         contentView.addSubview(subLabel)
-
+        contentView.backgroundColor = UIColor(named: "BackgroundColor")
+        
         titleLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.leading.equalToSuperview().offset(15)

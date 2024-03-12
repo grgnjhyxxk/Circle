@@ -6,13 +6,15 @@
 //
 
 import UIKit
+import SnapKit
 
 class TabBarController: UITabBarController {
-
+    let floatingButton: UIButton = SystemView().floatingButton()
     let addViewControllerNavigationButton = UIButton()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.addSubview(floatingButton)
         configureLayout()
     }
     
@@ -23,9 +25,13 @@ class TabBarController: UITabBarController {
     
     func configureLayout() {
         self.tabBar.tintColor = UIColor.white
-        self.tabBar.unselectedItemTintColor = UIColor.white.withAlphaComponent(0.75)
-//        self.tabBar.backgroundColor = UIColor.black.withAlphaComponent(0.75)
+        self.tabBar.unselectedItemTintColor = UIColor.white.withAlphaComponent(0.35)
+        self.tabBar.backgroundColor = UIColor(named: "BackgroundColor")
+        self.tabBar.barTintColor = UIColor(named: "BackgroundColor")
+        self.tabBar.standardAppearance.backgroundColor = UIColor(named: "BackgroundColor")
+        self.tabBar.shadowImage = UIImage()
         self.tabBar.isTranslucent = false
+        self.tabBar.clipsToBounds = true
         
         let myProfileViewController = MyProfileViewController()
         let myProfileNavigationController = UINavigationController(rootViewController: myProfileViewController)
@@ -36,58 +42,44 @@ class TabBarController: UITabBarController {
         let mainViewController = MainViewController()
         let mainNavigationController = UINavigationController(rootViewController: mainViewController)
 
-        let circlesViewController = MainViewController()
-        let circleNavigationController = UINavigationController(rootViewController: circlesViewController)
+        let reactViewController = MainViewController()
+        let reactNavigationController = UINavigationController(rootViewController: reactViewController)
         
-        circleNavigationController.tabBarItem.selectedImage = UIImage(systemName: "envelope.fill")
-        circleNavigationController.tabBarItem.image = UIImage(systemName: "envelope")
-
-        searchInformationNavigationController.tabBarItem.selectedImage = UIImage(systemName: "magnifyingglass")
-        searchInformationNavigationController.tabBarItem.image = UIImage(systemName: "magnifyingglass")?.withConfiguration(UIImage.SymbolConfiguration(weight: .light))
+        let messageViewController = MainViewController()
+        let messagNavigationController = UINavigationController(rootViewController: messageViewController)
 
         mainNavigationController.tabBarItem.selectedImage = UIImage(systemName: "house.fill")
         mainNavigationController.tabBarItem.image = UIImage(systemName: "house")
-
-        viewControllers = [mainNavigationController, searchInformationNavigationController, circleNavigationController, myProfileNavigationController]
-
-        if let profileImage = SharedProfileModel.myProfile.profileImage {
-            let circularImage = profileImage.circularImage(size: CGSize(width: 10, height: 10)) // 원형 이미지 생성
-            let selectedCircularImage = profileImage.circularImage(size: CGSize(width: 10, height: 10), borderWidth: 0.2, borderColor: UIColor.white) // border 추가
-
-            myProfileNavigationController.tabBarItem.selectedImage = selectedCircularImage.withRenderingMode(.alwaysOriginal) // 선택된 이미지 설정
-            myProfileNavigationController.tabBarItem.image = circularImage.withRenderingMode(.alwaysOriginal) // 비선택된 이미지 설정
+        
+        searchInformationNavigationController.tabBarItem.selectedImage = UIImage(systemName: "magnifyingglass")
+        searchInformationNavigationController.tabBarItem.image = UIImage(systemName: "magnifyingglass")?.withConfiguration(UIImage.SymbolConfiguration(weight: .light))
+        
+        myProfileNavigationController.tabBarItem.selectedImage = UIImage(systemName: "person.fill")
+        myProfileNavigationController.tabBarItem.image = UIImage(systemName: "person")
+        
+        reactNavigationController.tabBarItem.selectedImage = UIImage(systemName: "heart.fill")
+        reactNavigationController.tabBarItem.image = UIImage(systemName: "heart")
+        
+        messagNavigationController.tabBarItem.selectedImage = UIImage(systemName: "envelope.fill")
+        messagNavigationController.tabBarItem.image = UIImage(systemName: "envelope")
+        
+        viewControllers = [mainNavigationController, searchInformationNavigationController, myProfileNavigationController, reactNavigationController, messagNavigationController]
+        
+        
+        floatingButton.snp.makeConstraints { make in
+            make.bottom.equalTo(-100)
+            make.trailing.equalTo(-15)
+            make.size.equalTo(CGSize(width: 60, height: 60))
         }
+        
+        floatingButton.addTarget(self, action: #selector(floatingButtonAction), for: .touchUpInside)
     }
-}
-
-extension UIImage {
-    func circularImage(size: CGSize, borderWidth: CGFloat = 0, borderColor: UIColor = .clear) -> UIImage {
-        let scale = UIScreen.main.scale
-        let radius = size.width / 2 * scale
-        let borderWidth = borderWidth * scale
-        let totalSize = CGSize(width: size.width * scale, height: size.height * scale)
-
-        UIGraphicsBeginImageContextWithOptions(totalSize, false, 0)
-        let context = UIGraphicsGetCurrentContext()!
-
-        let circlePath = UIBezierPath(
-            roundedRect: CGRect(x: borderWidth, y: borderWidth, width: totalSize.width - borderWidth * 2, height: totalSize.height - borderWidth * 2),
-            cornerRadius: radius
-        )
-        context.addPath(circlePath.cgPath)
-        context.clip()
-
-        let rect = CGRect(x: 0, y: 0, width: totalSize.width, height: totalSize.height)
-        draw(in: rect)
-
-        if borderWidth > 0 {
-            borderColor.setStroke()
-            circlePath.lineWidth = borderWidth * 2
-            circlePath.stroke()
-        }
-
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()!
-        UIGraphicsEndImageContext()
-        return newImage
+    
+    @objc func floatingButtonAction() {
+        let viewController = UINavigationController(rootViewController: PostingViewController())
+        
+        viewController.modalPresentationStyle = .fullScreen
+        
+        present(viewController, animated: true)
     }
 }

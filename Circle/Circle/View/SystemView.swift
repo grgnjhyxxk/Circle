@@ -8,6 +8,16 @@
 import UIKit
 
 class SystemView: UIView {
+    func floatingButton() -> UIButton {
+        let button = UIButton()
+        
+        button.backgroundColor = UIColor.white
+        button.setImage(UIImage(systemName: "pencil.and.outline")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)), for: .normal)
+        button.tintColor = UIColor.black
+        button.layer.cornerRadius = 30
+        
+        return button
+    }
     
     func errorTextLabel() -> UILabel {
         let label = UILabel()

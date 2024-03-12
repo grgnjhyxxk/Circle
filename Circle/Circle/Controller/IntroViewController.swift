@@ -70,7 +70,7 @@ class IntroViewController: UIViewController {
     }
     
     private func viewLayout() {
-        view.backgroundColor = .black
+        view.backgroundColor = UIColor(named: "BackgroundColor")
 
         startButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
@@ -253,6 +253,14 @@ class IntroViewController: UIViewController {
                                                         self.errorTextLabel.isHidden = true
                                                         tabBarController.modalPresentationStyle = .fullScreen
                                                         self.present(tabBarController, animated: true)
+                                                        
+                                                        let myProfile = SharedProfileModel.myProfile
+                                                        
+                                                        UserDefaults.standard.set(true, forKey: "loginState")
+                                                        UserDefaults.standard.set(myProfile.profileName, forKey: "profileName")
+                                                        UserDefaults.standard.set(myProfile.password, forKey: "password")
+                                                        UserDefaults.standard.set(myProfile.userID, forKey: "userID")
+
                                                     }
                                                 }
                                             }

@@ -67,7 +67,7 @@ class BaseSignUpViewController: UIViewController, UITextFieldDelegate {
     }
     
     func viewLayout() {
-        view.backgroundColor = UIColor.black
+        view.backgroundColor = UIColor(named: "BackgroundColor")
         
         mainTitleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(100)

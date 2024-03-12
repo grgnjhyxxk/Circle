@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseCore
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -13,13 +14,60 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
+        FirebaseApp.configure()
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
-        window?.makeKeyAndVisible()
-        window?.rootViewController = IntroViewController().isLoggedIn()
+        
+        // UserDefaults에서 로그인 상태, 아이디, 비밀번호 확인
+        let loginState = UserDefaults.standard.bool(forKey: "loginState")
+        let id = UserDefaults.standard.string(forKey: "profileName")
+        let password = UserDefaults.standard.string(forKey: "password")
+
+        if loginState {
+            let dispatchGroup = DispatchGroup()
+            
+            dispatchGroup.enter()
+            fetchUserData(profileName: id!) { error in
+                defer {
+                    dispatchGroup.leave()
+                }
+                if let error = error {
+                    print("Error fetching user data: \(error.localizedDescription)")
+                }
+            }
+            
+            dispatchGroup.enter()
+            retrieveFirstFourPosts { error in
+                defer {
+                    dispatchGroup.leave()
+                }
+                if let error = error {
+                    print("Error fetching first four posts: \(error.localizedDescription)")
+                } else {
+                    print("First four posts retrieved successfully")
+                }
+            }
+            
+            dispatchGroup.notify(queue: DispatchQueue.main) {
+                print("All asynchronous tasks are completed. Continue with the next steps.")
+                
+                let myProfile = SharedProfileModel.myProfile
+                
+                retrieveMyPosts(userID: myProfile.userID!) { (error) in
+                    if let error = error {
+                        print("Error retrieving user posts: \(error.localizedDescription)")
+                    } else {
+                        let rootViewController = TabBarController()
+                        rootViewController.modalPresentationStyle = .fullScreen
+                        self.window?.rootViewController = rootViewController
+                        self.window?.makeKeyAndVisible()
+                    }
+                }
+            }
+        } else {
+            window?.rootViewController = IntroViewController().isLoggedIn()
+            window?.makeKeyAndVisible()
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

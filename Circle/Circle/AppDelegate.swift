@@ -7,14 +7,14 @@
 
 import UIKit
 import CoreData
-import FirebaseCore
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        FirebaseApp.configure()
+        
+        AppAppearance.setupAppearance()
+        
         return true
     }
 
@@ -79,3 +79,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+final class AppAppearance {
+    static func setupAppearance() {
+        UINavigationBar.appearance().backgroundColor = UIColor(named: "BackgroundColor")
+        UINavigationBar.appearance().barTintColor = UIColor(named: "BackgroundColor")
+    }
+}

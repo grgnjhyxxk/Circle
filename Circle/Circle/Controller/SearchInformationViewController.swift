@@ -43,8 +43,8 @@ class SearchInformationViewController: UIViewController, UITableViewDelegate, UI
     }
 
     private func viewLayout() {
-        view.backgroundColor = UIColor.black
-        tableView.backgroundColor = UIColor.black
+        view.backgroundColor = UIColor(named: "BackgroundColor")
+        tableView.backgroundColor = UIColor(named: "BackgroundColor")
         
         navigationItem.titleView = searchController.searchBar
         definesPresentationContext = true
@@ -97,8 +97,17 @@ class SearchInformationViewController: UIViewController, UITableViewDelegate, UI
         
         userProfileVC.indexPath = indexPath.row
         
-//        show(userProfileVC, sender: nil)
-        navigationController?.pushViewController(userProfileVC, animated: true)
+        let userProfile = SharedProfileModel.otherUsersProfiles[indexPath.row]
+        
+        if let userID = userProfile.userID {
+            retrieveMyPosts(userID: userID) { (error) in
+                if let error = error {
+                    print("Error: \(error.localizedDescription)")
+                } else {
+                    self.navigationController?.pushViewController(userProfileVC, animated: true)
+                }
+            }
+        }
     }
     
     @objc func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {

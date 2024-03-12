@@ -28,7 +28,7 @@ class SettingTableViewController: UIViewController {
     }
 
     private func viewLayout() {
-        view.backgroundColor = UIColor.black
+        view.backgroundColor = UIColor(named: "BackgroundColor")
         
     }
 }

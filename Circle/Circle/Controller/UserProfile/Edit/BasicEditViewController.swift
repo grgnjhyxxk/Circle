@@ -61,7 +61,7 @@ class BasicEditViewController: UIViewController, UITextFieldDelegate, UITextView
     }
     
     func viewLayout() {
-        view.backgroundColor = UIColor.black
+        view.backgroundColor = UIColor(named: "BackgroundColor")
         
         mainTextField.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(120)
@@ -82,11 +82,8 @@ class BasicEditViewController: UIViewController, UITextFieldDelegate, UITextView
     }
     
     func navigationBarLayout() {
-        let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.backward")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)), style: .done, target: self, action: #selector(backButtonAction))
-        
-        backButton.tintColor = UIColor.white
-        
-        navigationItem.leftBarButtonItem = backButton
+        self.navigationController?.navigationBar.topItem?.title = "뒤로"
+        self.navigationController?.navigationBar.tintColor = UIColor.white
     }
     
     func validateEmail(email: String) -> Bool {

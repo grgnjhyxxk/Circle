@@ -9,6 +9,7 @@
 	</dict>
 	<key>UIAppFonts</key>
 	<array>
+		<string>pilgi.ttf</string>
 		<string>NotoSans-Bold.ttf</string>
 		<string>NotoSans-Medium.ttf</string>
 		<string>NotoSans-Regular.ttf</string>

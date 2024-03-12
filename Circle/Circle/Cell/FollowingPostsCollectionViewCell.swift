@@ -8,19 +8,25 @@
 import UIKit
 import SnapKit
 
+protocol FollowingPostsTableViewCellDelegate: AnyObject {
+    func didTapLikeButton(in cell: FollowingPostsTableViewCell)
+}
+
 class BaseFollowingPostsTableViewCell: UITableViewCell {
-    
+    let feedbackGenerator = UISelectionFeedbackGenerator()
+    weak var delegate: FollowingPostsTableViewCellDelegate?
+
     var contentViewList: [UIView] = []
     
-    let topView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.black
-        return view
-    }()
+//    let topView: UIView = {
+//        let view = UIView()
+//        view.backgroundColor = UIColor(named: "BackgroundColor")
+//        return view
+//    }()
     
     let bottomView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.black
+        view.backgroundColor = UIColor(named: "BackgroundColor")
         return view
     }()
     
@@ -30,14 +36,18 @@ class BaseFollowingPostsTableViewCell: UITableViewCell {
         imageView.layer.cornerRadius = 20
         imageView.clipsToBounds = true
         imageView.backgroundColor = UIColor(white: 1, alpha: 0.75)
+        imageView.layer.borderColor = UIColor.white.withAlphaComponent(0.15).cgColor
+        imageView.layer.borderWidth = 1
         return imageView
     }()
     
     let profileNameLabel: UILabel = {
         let label = UILabel()
+        
         label.text = ""
         label.textColor = UIColor.white
         label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        
         return label
     }()
     
@@ -51,7 +61,7 @@ class BaseFollowingPostsTableViewCell: UITableViewCell {
     
     let socialValidationImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.tintColor = UIColor.systemBlue
+        imageView.tintColor = UIColor.white
         imageView.isHidden = false
         imageView.image = UIImage(systemName: "checkmark.seal.fill")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 12, weight: .light))
         return imageView
@@ -69,21 +79,11 @@ class BaseFollowingPostsTableViewCell: UITableViewCell {
     let likeButton: UIButton = {
         let button = UIButton()
         
-        if let image = UIImage(systemName: "heart")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 16, weight: .regular)) {
+        if let image = UIImage(systemName: "heart")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 19, weight: .medium)) {
             button.setImage(image, for: .normal)
         }
         
-        button.tintColor = UIColor.systemGray
-                
-        return button
-    }()
-    
-    let likeDigitsButton: UIButton = {
-        let button = UIButton()
-        
-        button.setTitle("0", for: .normal)
-        button.setTitleColor(UIColor.systemGray, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        button.tintColor = UIColor.white
                 
         return button
     }()
@@ -91,21 +91,11 @@ class BaseFollowingPostsTableViewCell: UITableViewCell {
     let commentButton: UIButton = {
         let button = UIButton()
         
-        if let image = UIImage(systemName: "message")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 14, weight: .regular)) {
+        if let image = UIImage(systemName: "message")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 17, weight: .medium)) {
             button.setImage(image, for: .normal)
         }
         
-        button.tintColor = UIColor.systemGray
-                
-        return button
-    }()
-    
-    let commentDigitsButton: UIButton = {
-        let button = UIButton()
-        
-        button.setTitle("0", for: .normal)
-        button.setTitleColor(UIColor.systemGray, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        button.tintColor = UIColor.white
                 
         return button
     }()
@@ -113,43 +103,23 @@ class BaseFollowingPostsTableViewCell: UITableViewCell {
     let rewriteButton: UIButton = {
         let button = UIButton()
         
-        if let image = UIImage(systemName: "arrow.2.squarepath")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 14, weight: .regular)) {
+        if let image = UIImage(systemName: "arrow.2.squarepath")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 17, weight: .medium)) {
             button.setImage(image, for: .normal)
         }
         
-        button.tintColor = UIColor.systemGray
+        button.tintColor = UIColor.white
                 
         return button
     }()
     
-    let rewriteButtonDigitsButton: UIButton = {
+    let massageButton: UIButton = {
         let button = UIButton()
         
-        button.setTitle("0", for: .normal)
-        button.setTitleColor(UIColor.systemGray, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-                
-        return button
-    }()
-    
-    let savePostButton: UIButton = {
-        let button = UIButton()
-        
-        if let image = UIImage(systemName: "square.and.arrow.down")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 14, weight: .regular)) {
+        if let image = UIImage(systemName: "envelope")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 17, weight: .medium)) {
             button.setImage(image, for: .normal)
         }
         
-        button.tintColor = UIColor.systemGray
-                
-        return button
-    }()
-    
-    let savePostButtonDigitsButton: UIButton = {
-        let button = UIButton()
-        
-        button.setTitle("0", for: .normal)
-        button.setTitleColor(UIColor.systemGray, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        button.tintColor = UIColor.white
                 
         return button
     }()
@@ -161,50 +131,35 @@ class BaseFollowingPostsTableViewCell: UITableViewCell {
             button.setImage(image, for: .normal)
         }
         
-        button.tintColor = UIColor.systemGray
+        button.tintColor = UIColor.white
                 
         return button
     }()
     
-    let saveButton: UIButton = {
-        let button = UIButton()
+    let dateLabel: UILabel = {
+        let label = UILabel()
         
-        if let image = UIImage(systemName: "bookmark")?.withConfiguration(UIImage.SymbolConfiguration(weight: .regular)) {
-            button.setImage(image, for: .normal)
-        }
+        label.text = ""
+        label.textColor = UIColor.systemGray
+        label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         
-        button.tintColor = UIColor.systemGray
-                
-        return button
+        return label
     }()
-    
+        
     func addOnContentView() {
-        contentViewList = [topView, bottomView, feedTextLabel]
+        contentViewList = [profileImageView, profileNameLabel, userNameLabel, socialValidationImageView, moreButton, dateLabel, bottomView, feedTextLabel]
         for uiView in contentViewList {
             contentView.addSubview(uiView)
         }
-        topView.addSubview(profileImageView)
-        topView.addSubview(profileNameLabel)
-        topView.addSubview(userNameLabel)
-        topView.addSubview(socialValidationImageView)
-        topView.addSubview(moreButton)
 
         bottomView.addSubview(likeButton)
-        bottomView.addSubview(likeDigitsButton)
         bottomView.addSubview(commentButton)
-        bottomView.addSubview(commentDigitsButton)
         bottomView.addSubview(rewriteButton)
-        bottomView.addSubview(rewriteButtonDigitsButton)
-        bottomView.addSubview(savePostButton)
-        bottomView.addSubview(savePostButtonDigitsButton)
-        bottomView.addSubview(saveButton)
-        
-        
-        moreButton.addTarget(MyProfileViewController().self, action: #selector(MyProfileViewController().postSettingButtonAction), for: .touchUpInside)
+        bottomView.addSubview(massageButton)
     }
     
     func contentViewLayout() {
-        // Layout constraints for common UI elements
+
     }
 }
 
@@ -212,42 +167,189 @@ class FollowingPostsTableViewCell: BaseFollowingPostsTableViewCell, UICollection
     
     lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
+        
         layout.scrollDirection = .horizontal
         
         collectionView = UICollectionView(frame: contentView.bounds, collectionViewLayout: layout)
         collectionView.register(PostViewImageCollectionViewCell.self, forCellWithReuseIdentifier: "PostViewImageCollectionViewCell")
-        collectionView.backgroundColor = .black
+        collectionView.backgroundColor = UIColor(named: "BackgroundColor")
+        collectionView.showsHorizontalScrollIndicator = false
+        
         return collectionView
     }()
     
     var images: [UIImage]? {
         didSet {
             if let images = images, !images.isEmpty {
-                collectionView.snp.updateConstraints { make in
-                    make.height.equalTo(200) // 높이 값을 원하는 값으로 설정
+                if images.count != 1 {
+                    collectionView.contentInset = UIEdgeInsets(top: 0, left: 60, bottom: 0, right: 0)
+
+                    collectionView.snp.updateConstraints { make in
+                        make.top.equalTo(feedTextLabel.snp.bottom)
+                        make.bottom.equalTo(bottomView.snp.top).offset(-5)
+                        make.leading.equalTo(0)
+                        make.trailing.equalTo(0)
+                        make.height.equalTo(200)
+                    }
+                    
+                    feedTextLabel.snp.updateConstraints { make in
+                        make.top.equalTo(profileNameLabel.snp.bottom).offset(5)
+                        make.leading.equalTo(profileImageView).offset(50)
+                        make.trailing.equalToSuperview().offset(-15)
+                        make.bottom.equalTo(collectionView.snp.top).offset(-10)
+                    }
+                } else {
+                    collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+
+                    collectionView.snp.updateConstraints { make in
+                        make.top.equalTo(feedTextLabel.snp.bottom)
+                        make.bottom.equalTo(bottomView.snp.top).offset(-5)
+                        make.leading.equalTo(60)
+                        make.trailing.equalTo(-15)
+                        make.height.equalTo(200) // 높이 값을 원하는 값으로 설정
+                    }
+                    
+                    feedTextLabel.snp.updateConstraints { make in
+                        make.top.equalTo(profileNameLabel.snp.bottom).offset(5)
+                        make.leading.equalTo(profileImageView).offset(50)
+                        make.trailing.equalToSuperview().offset(-15)
+                        make.bottom.equalTo(collectionView.snp.top).offset(-10)
+                    }
                 }
+                
+                collectionView.isHidden = false
+                
             } else {
                 collectionView.snp.updateConstraints { make in
                     make.height.equalTo(0)
                 }
+                
+                feedTextLabel.snp.updateConstraints { make in
+                    make.top.equalTo(profileNameLabel.snp.bottom).offset(5)
+                    make.leading.equalTo(profileImageView).offset(50)
+                    make.trailing.equalToSuperview().offset(-15)
+                    make.bottom.equalTo(collectionView.snp.top)
+                }
+                
+                collectionView.isHidden = true
             }
 
             collectionView.reloadData()
             contentView.layoutIfNeeded()
         }
     }
-
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         addOnContentView()
         contentView.addSubview(collectionView)
         contentViewLayout()
+        addOnTargets()
         collectionView.delegate = self
         collectionView.dataSource = self
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func addOnTargets() {
+        likeButton.addTarget(self, action: #selector(likeButtonAction), for: .touchUpInside)
+    }
+    
+    @objc func likeButtonAction(button: UIButton) {
+        if button.isSelected {
+            if let image = UIImage(systemName: "heart")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 19, weight: .medium)) {
+                button.setImage(image, for: .normal)
+            }
+            likeButton.tintColor = .white
+            button.isSelected = false
+            delegate?.didTapLikeButton(in: self)
+        } else {
+            if let image = UIImage(systemName: "heart.fill")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 19, weight: .medium)) {
+                button.setImage(image, for: .normal)
+            }
+            likeButton.tintColor = .red
+            button.isSelected = true
+            delegate?.didTapLikeButton(in: self)
+        }
+    }
+    
+    override func contentViewLayout() {
+        super.contentViewLayout()
+        
+        contentView.backgroundColor = UIColor(named: "BackgroundColor")
+        
+        profileImageView.snp.makeConstraints { make in
+            make.top.equalTo(15)
+            make.leading.equalToSuperview().offset(15)
+            make.size.equalTo(CGSize(width: 40, height: 40))
+        }
+        
+        profileNameLabel.snp.makeConstraints { make in
+            make.top.equalTo(profileImageView).offset(-5)
+            make.leading.equalTo(profileImageView.snp.trailing).offset(10)
+        }
+        
+        moreButton.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().offset(-15)
+            make.top.equalTo(profileNameLabel)
+        }
+        
+        dateLabel.snp.makeConstraints { make in
+            make.centerY.equalTo(moreButton)
+            make.trailing.equalTo(moreButton.snp.leading).offset(-10)
+        }
+
+        socialValidationImageView.snp.makeConstraints { make in
+            make.centerY.equalTo(profileNameLabel)
+            make.leading.equalTo(profileNameLabel.snp.trailing).offset(4)
+        }
+        
+        feedTextLabel.snp.makeConstraints { make in
+            make.top.equalTo(profileNameLabel.snp.bottom).offset(5)
+            make.leading.equalTo(profileImageView).offset(50)
+            make.trailing.equalToSuperview().offset(-15)
+            make.bottom.equalTo(collectionView.snp.top)
+        }
+        
+        collectionView.snp.makeConstraints { make in
+            make.top.equalTo(feedTextLabel.snp.bottom)
+            make.leading.equalTo(60)
+            make.trailing.equalTo(-15)
+            make.bottom.equalTo(bottomView.snp.top).offset(-5)
+            make.height.equalTo(200)
+        }
+        
+        bottomView.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().offset(-5)
+            make.width.equalToSuperview()
+            make.height.equalTo(45)
+        }
+        
+        likeButton.snp.makeConstraints { make in
+            make.centerY.equalTo(bottomView)
+            make.leading.equalTo(profileImageView).offset(48)
+            make.width.equalTo(23)
+        }
+        
+        commentButton.snp.makeConstraints { make in
+            make.centerY.equalTo(bottomView)
+            make.leading.equalTo(likeButton.snp.trailing).offset(12)
+            make.width.equalTo(23)
+        }
+
+        rewriteButton.snp.makeConstraints { make in
+            make.centerY.equalTo(bottomView)
+            make.leading.equalTo(commentButton.snp.trailing).offset(12)
+            make.width.equalTo(23)
+        }
+        
+        massageButton.snp.makeConstraints { make in
+            make.centerY.equalTo(bottomView)
+            make.leading.equalTo(rewriteButton.snp.trailing).offset(12)
+            make.width.equalTo(23)
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -298,123 +400,5 @@ class FollowingPostsTableViewCell: BaseFollowingPostsTableViewCell, UICollection
             
             return CGSize(width: cellWidth, height: cellHeight)
         }
-    }
-    
-    override func contentViewLayout() {
-        super.contentViewLayout()
-        
-        contentView.backgroundColor = UIColor.black
-                
-        topView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(10)
-            make.width.equalToSuperview()
-            make.height.equalTo(40)
-        }
-        
-        profileImageView.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.leading.equalToSuperview().offset(10)
-            make.size.equalTo(CGSize(width: 40, height: 40))
-        }
-        
-        profileNameLabel.snp.makeConstraints { make in
-            make.top.equalTo(profileImageView)
-            make.leading.equalTo(profileImageView.snp.trailing).offset(10)
-        }
-        
-        moreButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-10)
-            make.top.equalTo(profileNameLabel)
-        }
-        
-        userNameLabel.snp.makeConstraints { make in
-            make.centerY.equalToSuperview().offset(8)
-            make.leading.equalTo(profileImageView.snp.trailing).offset(10)
-        }
-
-        socialValidationImageView.snp.makeConstraints { make in
-            make.centerY.equalTo(profileNameLabel)
-            make.leading.equalTo(profileNameLabel.snp.trailing).offset(2)
-        }
-        
-        feedTextLabel.snp.makeConstraints { make in
-            make.top.equalTo(topView.snp.bottom)
-            make.leading.equalTo(60)
-            make.trailing.equalToSuperview().offset(-15)
-            make.bottom.equalTo(collectionView.snp.top).offset(-7)
-        }
-        
-        collectionView.snp.makeConstraints { make in
-            make.top.equalTo(feedTextLabel.snp.bottom).offset(10)
-            make.leading.equalTo(60)
-            make.trailing.equalTo(-15)
-            make.bottom.equalTo(bottomView.snp.top)
-            make.height.equalTo(200)
-        }
-        
-        bottomView.snp.makeConstraints { make in
-            make.bottom.equalToSuperview()
-            make.width.equalToSuperview()
-            make.height.equalTo(40)
-        }
-        
-        likeButton.snp.makeConstraints { make in
-            make.centerY.equalTo(bottomView)
-            make.leading.equalTo(58)
-            make.width.equalTo(23)
-        }
-        
-        likeDigitsButton.snp.makeConstraints { make in
-            make.centerY.equalTo(bottomView)
-            make.leading.equalTo(likeButton.snp.trailing).offset(0)
-            make.width.equalTo(18)
-            make.height.equalTo(18)
-        }
-        
-        commentButton.snp.makeConstraints { make in
-            make.centerY.equalTo(bottomView)
-            make.leading.equalTo(likeDigitsButton.snp.trailing).offset(30)
-            make.width.equalTo(23)
-        }
-        
-        commentDigitsButton.snp.makeConstraints { make in
-            make.centerY.equalTo(bottomView)
-            make.leading.equalTo(commentButton.snp.trailing).offset(0)
-            make.width.equalTo(18)
-            make.height.equalTo(18)
-        }
-        
-        rewriteButton.snp.makeConstraints { make in
-            make.centerY.equalTo(bottomView)
-            make.leading.equalTo(commentDigitsButton.snp.trailing).offset(30)
-            make.width.equalTo(23)
-        }
-        
-        rewriteButtonDigitsButton.snp.makeConstraints { make in
-            make.centerY.equalTo(bottomView)
-            make.leading.equalTo(rewriteButton.snp.trailing).offset(0)
-            make.width.equalTo(18)
-            make.height.equalTo(18)
-        }
-        
-        savePostButton.snp.makeConstraints { make in
-            make.centerY.equalTo(bottomView)
-            make.leading.equalTo(rewriteButtonDigitsButton.snp.trailing).offset(30)
-            make.width.equalTo(23)
-        }
-        
-        savePostButtonDigitsButton.snp.makeConstraints { make in
-            make.centerY.equalTo(bottomView)
-            make.leading.equalTo(savePostButton.snp.trailing).offset(0)
-            make.width.equalTo(18)
-            make.height.equalTo(18)
-        }
-        
-        saveButton.snp.makeConstraints { make in
-            make.centerY.equalTo(bottomView)
-            make.trailing.equalToSuperview().offset(-10)
-            make.size.equalTo(CGSize(width: 18, height: 18))
-        }
-
     }
 }
