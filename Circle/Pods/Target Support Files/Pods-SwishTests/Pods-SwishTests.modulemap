@@ -1,0 +1,6 @@
+framework module Pods_SwishTests {
+  umbrella header "Pods-SwishTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

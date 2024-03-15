@@ -1,0 +1,6 @@
+framework module Pods_Swish {
+  umbrella header "Pods-Swish-umbrella.h"
+
+  export *
+  module * { export * }
+}
