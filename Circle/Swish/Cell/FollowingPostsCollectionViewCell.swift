@@ -242,7 +242,6 @@ class FollowingPostsTableViewCell: BaseFollowingPostsTableViewCell, UICollection
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         addOnContentView()
-        contentView.addSubview(collectionView)
         contentViewLayout()
         addOnTargets()
         collectionView.delegate = self
@@ -379,12 +378,6 @@ class FollowingPostsTableViewCell: BaseFollowingPostsTableViewCell, UICollection
             let cellWidth = min(image.size.width, screenWidth)
             let cellHeight = cellWidth / aspectRatio
 
-            collectionView.snp.updateConstraints { make in
-                make.height.equalTo(cellHeight)
-            }
-            
-            collectionView.layoutIfNeeded()
-            
             return CGSize(width: cellWidth, height: cellHeight)
             
         }  else {
