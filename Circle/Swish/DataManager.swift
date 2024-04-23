@@ -8,6 +8,13 @@
 import UIKit
 import SDWebImage
 
+class ViewControllerTracker {
+    static var myProfileViewController = ViewControllerTracker()
+    static var mainViewController = ViewControllerTracker()
+
+    var state: Bool = false
+}
+
 struct UserData {
     var signDate: String
     var profileName: String
@@ -40,14 +47,55 @@ struct PostData {
     var like: [String]?
     var saved: [String]?
     var shared: [Int: String]?
-    var comments: [[[String: String]]]?
+    var comments: Int?
     var views: [String]?
+}
+
+struct CommentData {
+    var rootID: String?
+    var parentID: String?
+    var commentID: String?
+    var userID: String
+    var content: String
+    var date: String
+    var location: String
+    var images: [UIImage]?
+    var like: [String]?
+    var saved: [String]?
+    var shared: [Int: String]?
+    var comments: Int?
+    var views: [String]?
+}
+
+struct RecentSearchesRecordData {
+    var recentSearchesRecordID: String?
+    var searchesData: String
+    var searchesType: String
+    var searchTime: String
+}
+
+class SharedRecentSearchesRecordModel {
+    static var nomarl = [SharedRecentSearchesRecordModel]()
+    
+    var recentSearchesRecordID: String?
+    var searchesData: String?
+    var searchesType: String?
+    var searchTime: String?
 }
 
 class SharedProfileModel {
     static var myProfile = SharedProfileModel()
-    static var otherUsersProfiles = [SharedProfileModel]()
-    static var postsProfile = [SharedProfileModel]()
+    
+    static var searchUsersProfiles = [SharedProfileModel]()
+    
+    static var postsProfiles = [SharedProfileModel]()
+    static var commentsProfiles = [SharedProfileModel]()
+    static var searchPostsProfiles = [SharedProfileModel]()
+    
+    static var likeUserProfilesForPost = [SharedProfileModel]()
+    static var likeUserProfilesForComment = [SharedProfileModel]()
+    static var recommendationsProfiles = [SharedProfileModel]()
+    static var recentSearchesRecordProfiles = [SharedProfileModel]()
     
     var signDate: String?
     var profileName: String?
@@ -74,9 +122,10 @@ class SharedProfileModel {
 
 class SharedPostModel {
     static var myPosts = [SharedPostModel]()
-    static var othersPosts = [SharedPostModel]()
     static var searchUserPosts = [SharedPostModel]()
-    
+    static var othersPosts = [SharedPostModel]()
+    static var searchPosts = [SharedPostModel]()
+
     var postID: String?
     var userID: String?
     var content: String?
@@ -86,7 +135,27 @@ class SharedPostModel {
     var like: [String]?
     var saved: [String]?
     var shared: [Int: String]?
-    var comments: [[[String: String]]]?
+    var comments: Int?
+    var views: [String]?
+    
+    init() {}
+}
+
+class SharedCommentModel {
+    static var comments = [SharedCommentModel]()
+
+    var rootID: String?
+    var parentID: String?
+    var commentID: String?
+    var userID: String?
+    var content: String?
+    var date: String?
+    var location: String?
+    var images: [UIImage]?
+    var like: [String]?
+    var saved: [String]?
+    var shared: [Int: String]?
+    var comments: Int?
     var views: [String]?
     
     init() {}
