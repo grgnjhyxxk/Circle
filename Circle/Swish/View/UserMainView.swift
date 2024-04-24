@@ -56,6 +56,8 @@ class UserMainView: UIView {
         imageView.layer.cornerRadius = 30
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
+        imageView.layer.borderColor = UIColor.white.withAlphaComponent(0.15).cgColor
+        imageView.layer.borderWidth = 1
         
         return imageView
     }
@@ -109,7 +111,7 @@ class UserMainView: UIView {
         label.textColor = UIColor.white
         label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         label.textAlignment = .left
-        label.adjustsFontSizeToFitWidth = true
+//        label.adjustsFontSizeToFitWidth = true
         label.baselineAdjustment = .alignCenters
         
         return label
@@ -178,7 +180,8 @@ class UserMainView: UIView {
         button.titleLabel?.textAlignment = .center
         button.layer.cornerRadius = 10
         button.layer.borderWidth = 0.5
-            
+        button.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
+
         return button
     }
     
@@ -186,13 +189,13 @@ class UserMainView: UIView {
         let button = UIButton()
         
         button.setTitle("언급", for: .normal)
-        button.setTitleColor(UIColor.black, for: .normal)
-        button.backgroundColor = UIColor.white
+        button.setTitleColor(UIColor.white, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         button.titleLabel?.textAlignment = .center
         button.layer.cornerRadius = 10
         button.layer.borderWidth = 0.5
-            
+        button.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
+
         return button
     }
     
@@ -259,31 +262,45 @@ class UserMainView: UIView {
         func postingBarButton() -> UIButton {
             let button = UIButton()
             
-            button.setTitle("게시하기", for: .normal)
-            button.setTitleColor(UIColor.white, for: .normal)
-            button.setTitleColor(UIColor.gray, for: .disabled)
+            button.setTitle("게시", for: .normal)
+            button.setTitleColor(UIColor.black, for: .normal)
             button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
             button.layer.cornerRadius = 15
-            button.layer.borderWidth = 0.5
-            button.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
-            button.backgroundColor = UIColor(named: "BackgroundColor")
+            button.backgroundColor = UIColor.white.withAlphaComponent(0.2)
             
             return button
         }
         
-        func postEditingBarButton() -> UIButton {
-            let button = UIButton()
+        func linkLineView() -> UIView {
+            let view = UIView()
             
-            button.setTitle("수정하기", for: .normal)
-            button.setTitleColor(UIColor.white, for: .normal)
-            button.setTitleColor(UIColor.gray, for: .disabled)
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-            button.layer.cornerRadius = 15
-            button.layer.borderWidth = 0.5
-            button.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
-            button.backgroundColor = UIColor.black
+            view.backgroundColor = UIColor.darkGray
+            view.layer.cornerRadius = 3
             
-            return button
+            return view
+        }
+        
+        func linkLineLabel() -> UILabel {
+            let label = UILabel()
+            
+            label.text = "포스트에 추가"
+            label.textColor = UIColor.systemGray
+            label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+            
+            return label
+        }
+        
+        func linkLinProfileImageView() -> UIImageView {
+            let imageView = UIImageView()
+            
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            imageView.layer.cornerRadius = 10
+            imageView.clipsToBounds = true
+            imageView.backgroundColor = UIColor(white: 1, alpha: 0.75)
+            imageView.layer.borderColor = UIColor.white.withAlphaComponent(0.15).cgColor
+            imageView.layer.borderWidth = 1
+            
+            return imageView
         }
         
         func userProfileBarButton() -> UIButton {
@@ -309,16 +326,18 @@ class UserMainView: UIView {
             
             textView.font = UIFont.systemFont(ofSize: 16, weight: .regular)
             textView.textColor = UIColor.white
-            textView.backgroundColor = UIColor(named: "BackgroundColor")
+            textView.backgroundColor = UIColor(named: "SubBackgroundColor_2")
             textView.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 0, right: 10)
-            
+            textView.isScrollEnabled = false
+            textView.tintColor = UIColor.white
+
             return textView
         }
         
         func bottomView() -> UIView {
             let view = UIView()
             
-            view.backgroundColor = UIColor(named: "BackgroundColor")
+            view.backgroundColor = UIColor(named: "SubBackgroundColor_2")
             
             return view
         }
@@ -326,8 +345,8 @@ class UserMainView: UIView {
         func voiceRecordingButton() -> UIButton {
             let button = UIButton()
             
-            button.setImage(UIImage(systemName: "recordingtape"), for: .normal)
-            button.tintColor = UIColor.white
+            button.setImage(UIImage(systemName: "mic"), for: .normal)
+            button.tintColor = UIColor.systemGray
             button.layer.cornerRadius = 15
 
             return button
@@ -336,8 +355,8 @@ class UserMainView: UIView {
         func photoLibraryButton() -> UIButton {
             let button = UIButton()
             
-            button.setImage(UIImage(systemName: "camera.on.rectangle"), for: .normal)
-            button.tintColor = UIColor.white
+            button.setImage(UIImage(systemName: "photo.on.rectangle.angled"), for: .normal)
+            button.tintColor = UIColor.systemGray
             button.layer.cornerRadius = 15
 
             return button
@@ -346,8 +365,8 @@ class UserMainView: UIView {
         func locationButton() -> UIButton {
             let button = UIButton()
             
-            button.setImage(UIImage(systemName: "map"), for: .normal)
-            button.tintColor = UIColor.white
+            button.setImage(UIImage(systemName: "pin"), for: .normal)
+            button.tintColor = UIColor.systemGray
             button.layer.cornerRadius = 15
             
             return button
