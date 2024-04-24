@@ -22,6 +22,8 @@ class PostViewImageCollectionViewCell: UICollectionViewCell {
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFit
+        imageView.layer.borderColor = UIColor.white.withAlphaComponent(0.15).cgColor
+        imageView.layer.borderWidth = 1
         
         return imageView
     }()
@@ -58,7 +60,7 @@ class PostViewImageCollectionViewCell: UICollectionViewCell {
             make.size.equalTo(CGSize(width: 25, height: 25))
         }
         
-        contentView.backgroundColor = UIColor(named: "BackgroundColor")
+        contentView.backgroundColor = UIColor.clear
         deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
     }
 
