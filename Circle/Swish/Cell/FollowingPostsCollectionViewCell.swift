@@ -10,6 +10,8 @@ import SnapKit
 
 protocol FollowingPostsTableViewCellDelegate: AnyObject {
     func didTapLikeButton(in cell: FollowingPostsTableViewCell)
+    func didTaplikeStatusButton(in cell: FollowingPostsTableViewCell)
+    func didTapMoreButton(in cell: FollowingPostsTableViewCell)
 }
 
 class BaseFollowingPostsTableViewCell: UITableViewCell {
@@ -18,13 +20,13 @@ class BaseFollowingPostsTableViewCell: UITableViewCell {
 
     var contentViewList: [UIView] = []
     
-//    let topView: UIView = {
-//        let view = UIView()
-//        view.backgroundColor = UIColor(named: "BackgroundColor")
-//        return view
-//    }()
-    
     let bottomView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(named: "BackgroundColor")
+        return view
+    }()
+    
+    let fakeView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(named: "BackgroundColor")
         return view
@@ -145,26 +147,47 @@ class BaseFollowingPostsTableViewCell: UITableViewCell {
         
         return label
     }()
+    
+    let likeStatusButton: UIButton = {
+        let button = UIButton()
         
-    func addOnContentView() {
-        contentViewList = [profileImageView, profileNameLabel, userNameLabel, socialValidationImageView, moreButton, dateLabel, bottomView, feedTextLabel]
-        for uiView in contentViewList {
-            contentView.addSubview(uiView)
-        }
+        button.setTitle("좋아요 0", for: .normal)
+        button.setTitleColor(UIColor.systemGray, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
 
-        bottomView.addSubview(likeButton)
-        bottomView.addSubview(commentButton)
-        bottomView.addSubview(rewriteButton)
-        bottomView.addSubview(massageButton)
-    }
+        return button
+    }()
     
-    func contentViewLayout() {
-
-    }
-}
-
-class FollowingPostsTableViewCell: BaseFollowingPostsTableViewCell, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+    let centerDotLabel: UILabel = {
+        let label = UILabel()
+        
+        label.text = " · "
+        label.textColor = UIColor.systemGray
+        label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        
+        return label
+    }()
     
+    let commentStatusButton: UIButton = {
+        let button = UIButton()
+        
+        button.setTitle("댓글 0", for: .normal)
+        button.setTitleColor(UIColor.systemGray, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+
+        return button
+    }()
+    
+    let locationStatusButton: UIButton = {
+        let button = UIButton()
+        
+        button.setTitle("location", for: .normal)
+        button.setTitleColor(UIColor.systemGray, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        
+        return button
+    }()
+
     lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         
@@ -174,9 +197,11 @@ class FollowingPostsTableViewCell: BaseFollowingPostsTableViewCell, UICollection
         collectionView.register(PostViewImageCollectionViewCell.self, forCellWithReuseIdentifier: "PostViewImageCollectionViewCell")
         collectionView.backgroundColor = UIColor(named: "BackgroundColor")
         collectionView.showsHorizontalScrollIndicator = false
-        
+
         return collectionView
     }()
+    
+    let loading: UIActivityIndicatorView = UIActivityIndicatorView()
     
     var images: [UIImage]? {
         didSet {
@@ -199,6 +224,13 @@ class FollowingPostsTableViewCell: BaseFollowingPostsTableViewCell, UICollection
                         make.bottom.equalTo(collectionView.snp.top).offset(-10)
                     }
                 } else {
+                    let image = images[0]
+                    let screenWidth = collectionView.bounds.width  // 화면의 너비
+                    
+                    let aspectRatio = image.size.width / image.size.height
+                    let cellWidth = min(image.size.width, screenWidth)
+                    let cellHeight = cellWidth / aspectRatio
+                    
                     collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 
                     collectionView.snp.updateConstraints { make in
@@ -206,7 +238,7 @@ class FollowingPostsTableViewCell: BaseFollowingPostsTableViewCell, UICollection
                         make.bottom.equalTo(bottomView.snp.top).offset(-5)
                         make.leading.equalTo(60)
                         make.trailing.equalTo(-15)
-                        make.height.equalTo(200) // 높이 값을 원하는 값으로 설정
+                        make.height.equalTo(cellHeight) // 높이 값을 원하는 값으로 설정
                     }
                     
                     feedTextLabel.snp.updateConstraints { make in
@@ -233,20 +265,140 @@ class FollowingPostsTableViewCell: BaseFollowingPostsTableViewCell, UICollection
                 
                 collectionView.isHidden = true
             }
-
+            
             collectionView.reloadData()
+            feedTextLabel.layoutIfNeeded()
             contentView.layoutIfNeeded()
         }
     }
     
+    var likeAndCommentCount: (Int, Int)? {
+        didSet {
+            if let likeCount = likeAndCommentCount?.0, let commentCount = likeAndCommentCount?.1, likeCount > 0 && commentCount == 0 {
+                bottomView.snp.updateConstraints { make in
+                    make.bottom.equalToSuperview()
+                    make.width.equalToSuperview()
+                    make.height.equalTo(90)
+                }
+                
+                likeButton.snp.updateConstraints { make in
+                    make.centerY.equalTo(bottomView).offset(-22.5)
+                    make.leading.equalTo(profileImageView).offset(48)
+                    make.width.equalTo(23)
+                }
+
+                likeStatusButton.isHidden = false
+                
+                centerDotLabel.isHidden = true
+                commentStatusButton.isHidden = true
+            } else if let likeCount = likeAndCommentCount?.0, let commentCount = likeAndCommentCount?.1, likeCount == 0 && commentCount > 0 {
+                bottomView.snp.updateConstraints { make in
+                    make.bottom.equalToSuperview()
+                    make.width.equalToSuperview()
+                    make.height.equalTo(90)
+                }
+                
+                likeButton.snp.updateConstraints { make in
+                    make.centerY.equalTo(bottomView).offset(-22.5)
+                    make.leading.equalTo(profileImageView).offset(48)
+                    make.width.equalTo(23)
+                }
+                
+                commentStatusButton.snp.removeConstraints()
+    
+                commentStatusButton.snp.updateConstraints { make in
+                    make.top.equalTo(likeButton.snp.bottom).offset(10)
+                    make.leading.equalTo(profileNameLabel)
+                    make.width.equalTo(commentStatusButton.titleLabel!.snp.width)
+                }
+
+                commentStatusButton.isHidden = false
+                
+                centerDotLabel.isHidden = true
+                likeStatusButton.isHidden = true
+            } else if let likeCount = likeAndCommentCount?.0, let commentCount = likeAndCommentCount?.1, likeCount > 0 && commentCount > 0 {
+                
+                bottomView.snp.updateConstraints { make in
+                    make.bottom.equalToSuperview()
+                    make.width.equalToSuperview()
+                    make.height.equalTo(90)
+                }
+                
+                likeButton.snp.updateConstraints { make in
+                    make.centerY.equalTo(bottomView).offset(-22.5)
+                    make.leading.equalTo(profileImageView).offset(48)
+                    make.width.equalTo(23)
+                }
+                
+                commentStatusButton.snp.removeConstraints()
+    
+                commentStatusButton.snp.updateConstraints { make in
+                    make.top.equalTo(likeButton.snp.bottom).offset(10)
+                    make.leading.equalTo(centerDotLabel.snp.trailing)
+                    make.width.equalTo(commentStatusButton.titleLabel!.snp.width)
+                }
+
+                likeStatusButton.isHidden = false
+                centerDotLabel.isHidden = false
+                commentStatusButton.isHidden = false
+            } else if let likeCount = likeAndCommentCount?.0, let commentCount = likeAndCommentCount?.1, likeCount == 0 && commentCount == 0 {
+                bottomView.snp.updateConstraints { make in
+                    make.bottom.equalToSuperview().offset(-5)
+                    make.width.equalToSuperview()
+                    make.height.equalTo(45)
+                }
+                
+                likeButton.snp.updateConstraints { make in
+                    make.centerY.equalTo(bottomView)
+                    make.leading.equalTo(profileImageView).offset(48)
+                    make.width.equalTo(23)
+                }
+
+                likeStatusButton.isHidden = true
+                centerDotLabel.isHidden = true
+                commentStatusButton.isHidden = true
+            }
+            
+            bottomView.layoutIfNeeded()
+        }
+    }
+    
+    func addOnContentView() {
+        contentViewList = [profileImageView, profileNameLabel, userNameLabel, socialValidationImageView, moreButton, dateLabel, bottomView, feedTextLabel, locationStatusButton, loading]
+        for uiView in contentViewList {
+            contentView.addSubview(uiView)
+        }
+
+        bottomView.addSubview(likeButton)
+        bottomView.addSubview(commentButton)
+        bottomView.addSubview(rewriteButton)
+        bottomView.addSubview(massageButton)
+        
+        bottomView.addSubview(likeStatusButton)
+        bottomView.addSubview(centerDotLabel)
+        bottomView.addSubview(commentStatusButton)
+    }
+    
+    func contentViewLayout() {
+
+    }
+}
+
+class FollowingPostsTableViewCell: BaseFollowingPostsTableViewCell, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         addOnContentView()
+        contentView.addSubview(collectionView)
         contentViewLayout()
         addOnTargets()
         collectionView.delegate = self
         collectionView.dataSource = self
     }
+    
+//    override func layoutSubviews() {
+//        super.layoutSubviews()
+//        collectionView.reloadData()
+//    }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -254,6 +406,8 @@ class FollowingPostsTableViewCell: BaseFollowingPostsTableViewCell, UICollection
     
     func addOnTargets() {
         likeButton.addTarget(self, action: #selector(likeButtonAction), for: .touchUpInside)
+        likeStatusButton.addTarget(self, action: #selector(likeStatusButtonAction), for: .touchUpInside)
+        moreButton.addTarget(self, action: #selector(moreButtonAction), for: .touchUpInside)
     }
     
     @objc func likeButtonAction(button: UIButton) {
@@ -274,6 +428,14 @@ class FollowingPostsTableViewCell: BaseFollowingPostsTableViewCell, UICollection
         }
     }
     
+    @objc func likeStatusButtonAction(button: UIButton) {
+        delegate?.didTaplikeStatusButton(in: self)
+    }
+    
+    @objc func moreButtonAction(button: UIButton) {
+        delegate?.didTapMoreButton(in: self)
+    }
+    
     override func contentViewLayout() {
         super.contentViewLayout()
         
@@ -286,7 +448,7 @@ class FollowingPostsTableViewCell: BaseFollowingPostsTableViewCell, UICollection
         }
         
         profileNameLabel.snp.makeConstraints { make in
-            make.top.equalTo(profileImageView).offset(-5)
+            make.top.equalTo(profileImageView).offset(-2.5)
             make.leading.equalTo(profileImageView.snp.trailing).offset(10)
         }
         
@@ -298,6 +460,11 @@ class FollowingPostsTableViewCell: BaseFollowingPostsTableViewCell, UICollection
         dateLabel.snp.makeConstraints { make in
             make.centerY.equalTo(moreButton)
             make.trailing.equalTo(moreButton.snp.leading).offset(-10)
+        }
+        
+        loading.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().offset(-15)
+            make.top.equalTo(profileNameLabel)
         }
 
         socialValidationImageView.snp.makeConstraints { make in
@@ -333,22 +500,53 @@ class FollowingPostsTableViewCell: BaseFollowingPostsTableViewCell, UICollection
         }
         
         commentButton.snp.makeConstraints { make in
-            make.centerY.equalTo(bottomView)
+            make.centerY.equalTo(likeButton)
             make.leading.equalTo(likeButton.snp.trailing).offset(12)
             make.width.equalTo(23)
         }
 
         rewriteButton.snp.makeConstraints { make in
-            make.centerY.equalTo(bottomView)
+            make.centerY.equalTo(likeButton)
             make.leading.equalTo(commentButton.snp.trailing).offset(12)
             make.width.equalTo(23)
         }
         
         massageButton.snp.makeConstraints { make in
-            make.centerY.equalTo(bottomView)
+            make.centerY.equalTo(likeButton)
             make.leading.equalTo(rewriteButton.snp.trailing).offset(12)
             make.width.equalTo(23)
         }
+        
+        likeStatusButton.snp.makeConstraints { make in
+            make.top.equalTo(likeButton.snp.bottom).offset(10)
+            make.leading.equalTo(profileImageView).offset(48)
+            make.width.equalTo(likeStatusButton.titleLabel!.snp.width)
+        }
+        
+        centerDotLabel.snp.makeConstraints { make in
+            make.centerY.equalTo(likeStatusButton)
+            make.leading.equalTo(likeStatusButton.snp.trailing)
+        }
+        
+        commentStatusButton.snp.makeConstraints { make in
+            make.top.equalTo(likeButton.snp.bottom).offset(10)
+            make.leading.equalTo(profileNameLabel)
+            make.width.equalTo(commentStatusButton.titleLabel!.snp.width)
+        }
+    }
+    
+    func startLoading() {
+        loading.startAnimating()
+        dateLabel.isHidden = true
+        moreButton.isHidden = true
+        isUserInteractionEnabled = false
+    }
+    
+    func stopLoading() {
+        loading.stopAnimating()
+        dateLabel.isHidden = false
+        moreButton.isHidden = false
+        isUserInteractionEnabled = true
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -363,8 +561,15 @@ class FollowingPostsTableViewCell: BaseFollowingPostsTableViewCell, UICollection
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PostViewImageCollectionViewCell", for: indexPath) as? PostViewImageCollectionViewCell else {
             return UICollectionViewCell()
         }
-        cell.imageView.image = images![indexPath.row]
+        
+        if let images = self.images, !images.isEmpty {
+            cell.imageView.image = images[indexPath.row]
+        } else {
+            cell.imageView.image = nil
+        }
+        
         cell.deleteButton.isHidden = true
+                
         return cell
     }
     
@@ -377,6 +582,13 @@ class FollowingPostsTableViewCell: BaseFollowingPostsTableViewCell, UICollection
             let aspectRatio = image.size.width / image.size.height
             let cellWidth = min(image.size.width, screenWidth)
             let cellHeight = cellWidth / aspectRatio
+            
+            collectionView.snp.updateConstraints { make in
+                make.height.equalTo(cellHeight)
+            }
+            
+//            collectionView.layoutIfNeeded()
+//            contentView.layoutIfNeeded()
 
             return CGSize(width: cellWidth, height: cellHeight)
             
@@ -389,9 +601,33 @@ class FollowingPostsTableViewCell: BaseFollowingPostsTableViewCell, UICollection
                 make.height.equalTo(cellHeight)
             }
             
-            collectionView.layoutIfNeeded()
-            
+//            collectionView.layoutIfNeeded()
+//            contentView.layoutIfNeeded()
+
             return CGSize(width: cellWidth, height: cellHeight)
         }
+    }
+}
+
+class spacingCell: UITableViewCell {
+    let spacingView: UIImageView = {
+        let view = UIImageView()
+        
+        view.backgroundColor = UIColor(named: "BackgroundColor")
+        return view
+    }()
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        contentView.addSubview(spacingView)
+        
+        spacingView.snp.makeConstraints { make in
+            make.top.leading.trailing.bottom.equalToSuperview()
+            make.height.equalTo(40)
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
