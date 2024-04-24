@@ -129,5 +129,84 @@ class PostView: UIView {
         
         return view
     }
+    
+    func commetingView() -> UIView {
+        let view = UIView()
+        
+        view.backgroundColor = UIColor(named: "BackgroundColor")
+
+        return view
+    }
+    
+    func commentingButton() -> UIButton {
+        let button = UIButton()
+        
+        button.backgroundColor = UIColor(named: "SubBackgroundColor")
+        button.layer.cornerRadius = 20
+        
+        return button
+    }
+    
+    func commentingLabel() -> UILabel {
+        let label = UILabel()
+        
+        label.text = ""
+        label.textColor = UIColor.systemGray
+        label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        
+        return label
+    }
+    
+    func placeholderLabel() -> UILabel {
+        let label = UILabel()
+        
+        label.text = "새로운 소식이 있나요?"
+        label.textColor = UIColor.systemGray2
+        label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        
+        return label
+    }
+    
+    func locationStatusButton() -> UIButton {
+        let button = UIButton()
+        
+        button.setTitle("", for: .normal)
+        button.setTitleColor(UIColor.systemGray, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        button.titleLabel?.numberOfLines = 0
+    
+        return button
+    }
+    
+    func likeStatusButton() -> UIButton {
+        let button = UIButton()
+        
+        button.setTitle("좋아요 0", for: .normal)
+        button.setTitleColor(UIColor.systemGray, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        
+        return button
+    }
+
+    func centerDotLabel() -> UILabel {
+        let label = UILabel()
+        
+        label.text = " · "
+        label.textColor = UIColor.systemGray
+        label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        
+        return label
+    }
+
+    func commentStatusButton() -> UIButton {
+        let button = UIButton()
+        
+        button.setTitle("댓글 0", for: .normal)
+        button.setTitleColor(UIColor.systemGray, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        
+        return button
+    }
+
 }
 
