@@ -14,7 +14,7 @@ class SystemView: UIView {
         button.backgroundColor = UIColor.white
         button.setImage(UIImage(systemName: "pencil.and.outline")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)), for: .normal)
         button.tintColor = UIColor.black
-        button.layer.cornerRadius = 30
+        button.layer.cornerRadius = 25
         
         return button
     }
