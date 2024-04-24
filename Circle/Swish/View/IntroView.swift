@@ -81,11 +81,11 @@ class IntroView: UIView {
     func separator() -> UIView {
         let separatorView = UIView()
         
-        separatorView.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+        separatorView.backgroundColor = UIColor(named: "SeperatorColor")
         
         return separatorView
     }
-    
+
     func separatorTitleLabel() -> UILabel {
         let label = UILabel()
         
