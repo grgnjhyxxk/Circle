@@ -37,7 +37,6 @@ class AccountEmailViewController: BaseSignUpViewController {
     }
     
     override func nextButtonAction() {
-        print("ㅇㅇ")
         if mainTextFieldBlurView.isHidden == false && checkTextFieldBlurView.isHidden == false {
             if let navigationController = self.view.window?.rootViewController as? UINavigationController {
                 errorTextLabel.alpha = 0
@@ -133,8 +132,6 @@ class AccountEmailViewController: BaseSignUpViewController {
     }
     
     @objc private func sendEmailVerificationButtonAction() {
-        print("checkButtonAction")
-        
         mainTextField.isEnabled = false
         checkTextField.isEnabled = true
         
@@ -146,9 +143,7 @@ class AccountEmailViewController: BaseSignUpViewController {
         sendEmailVerificationButtonActiveDisable()
     }
     
-    @objc private func verifyCodeButtonAction() {
-        print("verifyCodeButton")
-        
+    @objc private func verifyCodeButtonAction() {        
         checkTextField.isEnabled = false
         checkTextFieldBlurView.isHidden = false
         
